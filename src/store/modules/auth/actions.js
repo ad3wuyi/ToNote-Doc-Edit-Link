@@ -102,7 +102,7 @@ export const setAuthentication = ({ commit }, data) => {
         });
       }
       if (data.status != '') {
-        return router.push({ name: "document.dashboard", query: { status: data.status } })
+        return router.push({ name: "Document", query: { status: data.status } })
       }
     })
     .catch((error) => {
@@ -131,7 +131,7 @@ export const loginUser = ({ commit }, formData) => {
       User.show()
         .then((response) => {
           commit("SET_USER_PROFILE", response.data.data);
-          router.push({ name: "document.dashboard" });
+          router.push({ name: "Document" });
 
           toast.success("Welcome to ToNote ", {
             timeout: 5000,

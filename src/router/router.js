@@ -22,7 +22,7 @@ const DocumentUserVerify = () =>
   import(
     /* webpackChunkName: "auth-verify" */ "@/components/Auth/UserVerify.vue"
   );
-  
+
 const routes = [
   {
     path: "/",
@@ -53,7 +53,7 @@ const routes = [
     children: [
       {
         path: "",
-        name: "document.dashboard",
+        name: "Document",
         component: DocumentDashboard,
         meta: {
           title: "User | Document - ToNote",
