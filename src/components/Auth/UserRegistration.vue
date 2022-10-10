@@ -74,7 +74,7 @@ import { useRouter } from "vue-router";
 
 const route = useRouter();
 const { useActions } = createNamespacedHelpers("auth");
-const { userVerifyOTP } = useActions(["userVerifyOTP"]);
+const { createUserAccount } = useActions(["createUserAccount"]);
 
 const uri = ref("");
 const firstName = ref("");
@@ -97,9 +97,11 @@ const createUser = () => {
     last_name: lastName.value,
     email: email.value,
     phone: phone.value,
+    role: 'User',
     password: password.value,
   }
-  userVerifyOTP({ flag: flag.value, payload: userInfo });
+
+  createUserAccount(userInfo);
 };
 
 onMounted(() => {

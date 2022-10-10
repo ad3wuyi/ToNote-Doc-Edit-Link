@@ -152,3 +152,38 @@ export const loginUser = ({ commit }, formData) => {
       }
     });
 };
+
+export const createUserAccount = ({ commit }, formData) => {
+  User.register(formData)
+    .then((response) => {
+      commit("SET_TOKEN", response.data.token);
+      commit("SET_TOKEN_TYPE", response.data.token_type);
+
+      User.show()
+        .then((response) => {
+          commit("SET_USER_PROFILE", response.data.data);
+          router.push({ name: "Document" });
+
+          toast.success("Welcome to ToNote ", {
+            timeout: 5000,
+            position: "top-right",
+          });
+        })
+    })
+    .catch((error) => {
+      if (error.response.status == 401 || error.response.status == 404) {
+        commit("SET_AUTH_ERROR", error.response.data.message);
+        toast.error(`${error.response.data.errors.root}`, {
+          timeout: 5000,
+          position: "top-right",
+        });
+      }
+      if (error.response.status == 422) {
+        commit("SET_AUTH_ERROR", error.response.data.message);
+        toast.error(`${error.response.data.message}`, {
+          timeout: 5000,
+          position: "top-right",
+        });
+      }
+    });
+};

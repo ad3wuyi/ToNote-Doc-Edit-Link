@@ -3,6 +3,10 @@ import Api from "./Api";
 const END_POINT = "user";
 
 export default {
+  register(data) {
+    return Api.post(`${END_POINT}/register`, data);
+  },
+
   login(data) {
     return Api.post(`${END_POINT}/login`, data);
   },
