@@ -111,7 +111,7 @@ const createUser = () => {
 onMounted(() => {
   setTimeout(() => {
     isVerified.value = false
-  }, 100);
+  }, 1000);
 
   uri.value = route.currentRoute.value.query;
   email.value = uri.value.e;
