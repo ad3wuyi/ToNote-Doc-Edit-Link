@@ -19,8 +19,9 @@
 
                   <Form class="auth-login-form mt-2" @submit="onSubmit" :validation-schema="schema" v-slot="{ errors }">
                     <div class="mb-1">
-                      <label class="form-lable">Email</label>
-                      <Field name="email" type="text" class="form-control" :class="{ 'is-invalid': errors.email }" />
+                      <label class="form-label">Email</label>
+                      <Field name="email" type="text" class="form-control" :class="{ 'is-invalid': errors.email }"
+                        placeholder="Enter email" />
                       <div class="invalid-feedback">{{ errors.email }}</div>
                     </div>
 
@@ -32,7 +33,7 @@
                         </label>
                       </div>
                       <Field name="password" type="password" class="form-control"
-                        :class="{ 'is-invalid': errors.password }" />
+                        :class="{ 'is-invalid': errors.password }" placeholder="********" />
                       <div class="invalid-feedback">{{ errors.password }}</div>
                     </div>
 
