@@ -13,7 +13,7 @@
 
           <h2 class="card-title fw-bolder mb-1">Enter your details 💬</h2>
 
-          <form class="mt-2" @submit.prevent="verifyAccess">
+          <form class="mt-2" @submit.prevent="createUser">
             <div class="row">
               <div class="col-md-6">
                 <div class="form-group">
@@ -92,7 +92,7 @@ const isVerified = ref(true);
 const flag = ref("");
 const forgotPassword = ref("");
 
-const verifyAccess = () => {
+const createUser = () => {
   // const verificationObj = {
   //   document_id: documentId.value,
   //   email: email.value,

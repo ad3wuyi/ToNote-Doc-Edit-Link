@@ -23,9 +23,9 @@ const DocumentEdit = () =>
     /* webpackChunkName: "edit-document" */ "@/views/documents/DocumentEdit.vue"
   );
 
-const DocumentUserVerify = () =>
+const UserRegistration = () =>
   import(
-    /* webpackChunkName: "auth-verify" */ "@/components/Auth/UserVerify.vue"
+    /* webpackChunkName: "auth-register" */ "@/components/Auth/UserRegistration.vue"
   );
 
 const routes = [
@@ -50,18 +50,18 @@ const routes = [
 
   {
     path: "/register",
-    name: "Verify",
-    component: DocumentUserVerify,
+    name: "Register",
+    component: UserRegistration,
     meta: {
-      title: "Verification | ToNote",
+      title: "Create Link | ToNote",
       metaTags: [
         {
           name: "description",
-          content: "The easy link verification page of ToNote.",
+          content: "The easy link registration page of ToNote.",
         },
         {
           property: "og:description",
-          content: "The easy link verification page of ToNote.",
+          content: "The easy link registration page of ToNote.",
         },
       ],
     },
