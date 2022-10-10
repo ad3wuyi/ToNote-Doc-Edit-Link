@@ -36,13 +36,18 @@
                       <div class="invalid-feedback">{{ errors.password }}</div>
                     </div>
 
-                    <div class="form-button">
+                    <div class="form-button mb-1">
                       <button id="submit" type="submit"
                         class="btn btn-primary w-100 waves-effect waves-float waves-light" :disabled="loading">
                         <span v-show="loading" class="spinner-border spinner-border-sm"></span>
                         <span>Proceed</span>
                       </button>
                     </div>
+                    <span>
+                      Don't have an account?
+                      <router-link :to="{name:'Register'}">Create an account!</router-link>
+                    </span>
+
                   </Form>
                 </div>
               </div>

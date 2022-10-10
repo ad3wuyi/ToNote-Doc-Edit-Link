@@ -61,7 +61,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary mb-1 w-100" tabindex="4">
-              Create
+              Proceed to sign document
             </button>
             <span>Already have an account? <router-link :to="{name:'Login'}">Login in instead</router-link></span>
           </form>
@@ -111,7 +111,7 @@ const createUser = () => {
 onMounted(() => {
   setTimeout(() => {
     isVerified.value = false
-  }, 1000);
+  }, 100);
 
   uri.value = route.currentRoute.value.query;
   email.value = uri.value.e;
