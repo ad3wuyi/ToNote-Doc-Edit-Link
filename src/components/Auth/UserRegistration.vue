@@ -49,15 +49,10 @@
               </div>
 
               <div class="form-group">
-                <div class="d-flex justify-content-between align-items-center">
-                  <label for="security" class="form-label">Password</label>
-                  <label class="form-label">
-                    <a :href="forgotPassword">Forgot Password?</a>
-                  </label>
-                </div>
-                <input type="password" v-model="password" class="form-control numeral-mask mb-1" id="security"
-                  placeholder="********" />
+                <label for="security" class="form-label">Password</label>
               </div>
+              <input type="password" v-model="password" class="form-control numeral-mask mb-1" id="security"
+                placeholder="********" />
             </div>
 
             <button type="submit" class="btn btn-primary mb-1 w-100" tabindex="4">
@@ -90,7 +85,6 @@ const password = ref("");
 const documentId = ref("");
 const isVerified = ref(true);
 const flag = ref("");
-const forgotPassword = ref("");
 
 const createUser = () => {
   // const verificationObj = {
@@ -117,11 +111,6 @@ onMounted(() => {
   email.value = uri.value.e;
   documentId.value = uri.value.di;
   flag.value = uri.value.f;
-
-  forgotPassword.value =
-    process.env.NODE_ENV != "development"
-      ? process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LIVE
-      : process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LOCAL;
 });
 </script>
 
