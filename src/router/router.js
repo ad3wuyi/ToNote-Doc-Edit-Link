@@ -18,6 +18,11 @@ const DocumentUpload = () =>
     /* webpackChunkName: "upload-document" */ "@/views/documents/DocumentUpload.vue"
   );
 
+const DocumentPrepare = () =>
+  import(
+    /* webpackChunkName: "prepare-document" */ "@/views/documents/DocumentPrepare.vue"
+  );
+
 const DocumentEdit = () =>
   import(
     /* webpackChunkName: "edit-document" */ "@/views/documents/DocumentEdit.vue"
@@ -116,6 +121,25 @@ const routes = [
             {
               property: "og:description",
               content: "The document upload's page of ToNote.",
+            },
+          ],
+        },
+      },
+      {
+        path: "prepare",
+        name: "document.prepare",
+        component: DocumentPrepare,
+        meta: {
+          title: "Prepare Document | ToNote",
+          requiresAuth: true,
+          metaTags: [
+            {
+              name: "description",
+              content: "The document setup page of ToNote.",
+            },
+            {
+              property: "og:description",
+              content: "The document setup page of ToNote.",
             },
           ],
         },
