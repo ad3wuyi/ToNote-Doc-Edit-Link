@@ -16,28 +16,15 @@
       <div class="bookmark-wrapper d-flex align-items-center">
         <ul class="nav navbar-nav bookmark-icons">
           <li class="nav-item">
-            <template v-if="isDevelopment">
-              <router-link :to="{ name: 'document.upload' }">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  class="feather feather-chevron-left font-medium-4" style="height: 2rem !important">
-                  <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-                <span class="visually-hidden"></span>
-                Back
-              </router-link>
-            </template>
-            <template v-else>
-              <a class="text-primary fw-bold" :href="redirectToUserDashboard + '/redirecting?qt=' + token">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  class="feather feather-chevron-left font-medium-4" style="height: 2rem !important">
-                  <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-                <span class="visually-hidden"></span>
-                Back
-              </a>
-            </template>
+            <router-link :to="{ name: 'document.upload' }">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="feather feather-chevron-left font-medium-4" style="height: 2rem !important">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+              <span class="visually-hidden"></span>
+              Back
+            </router-link>
           </li>
         </ul>
       </div>
