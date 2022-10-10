@@ -1,5 +1,5 @@
 <template>
   <div>
-    <h1>Welcome to ToNote Document Editing Dashboard</h1>
+    <h1 class="text-center my-5 py-5">Welcome to ToNote Link Creation</h1>
   </div>
 </template>

@@ -5,7 +5,7 @@
 
   <section class="custom-width" v-else>
     <div class="mb-2">
-      <h4 class="text-dark">Easy Link</h4>
+      <h4 class="text-dark">ToNote Link</h4>
       <ul>
         <li>Lorem ipsum dolor sit amet consectetur adipisicing elit.</li>
         <li>Lorem ipsum dolor sit amet consectetur.</li>
