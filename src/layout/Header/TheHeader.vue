@@ -5,9 +5,9 @@
     <div class="navbar-header d-lg-block d-none">
       <ul class="nav navbar-nav">
         <li class="nav-item">
-          <a href="https://www.gettonote.com" class="navbar-brand me-0">
+          <router-link :to="{name:'Document'}" class="navbar-brand me-0">
             <img src="@/assets/logo-dark.png" alt="ToNote" height="26" />
-          </a>
+          </router-link>
         </li>
       </ul>
     </div>
@@ -16,7 +16,7 @@
       <div class="bookmark-wrapper d-flex align-items-center">
         <ul class="nav navbar-nav bookmark-icons">
           <li class="nav-item">
-            <router-link :to="{ name: 'document.upload' }">
+            <a role="button" class="text-primary fw-bold" @click='$router.go(-1)'>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                 class="feather feather-chevron-left font-medium-4" style="height: 2rem !important">
@@ -24,15 +24,15 @@
               </svg>
               <span class="visually-hidden"></span>
               Back
-            </router-link>
+            </a>
           </li>
         </ul>
       </div>
 
       <div class="d-lg-none d-md-block text-center">
-        <a href="https://www.gettonote.com" class="navbar-brand me-0">
+        <router-link :to="{name:'Document'}" class="navbar-brand me-0">
           <img src="@/assets/logo-dark.png" alt="ToNote" height="20" />
-        </a>
+        </router-link>
       </div>
 
       <ul v-if="isVerifyPage || dashboard.token != null || token != null" class="nav navbar-nav align-items-center">
