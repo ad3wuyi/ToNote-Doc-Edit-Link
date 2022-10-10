@@ -31,7 +31,6 @@ const documentId = ref("");
 const environment = ref('')
 
 onMounted(() => {
-  console.log(process.env.VUE_APP_URL_AUTH_LIVE)
   uri.value = route.currentRoute.value.query;
   token.value = uri.value.qt;
   documentId.value = uri.value.di;
@@ -45,7 +44,7 @@ onMounted(() => {
   if (environment.value == 'development') return
 
   if (token.value == undefined)
-    return (window.location.href = process.env.VUE_APP_URL_AUTH_LIVE);
+    return route.push({ name: 'Document' })
 
   setAuthentication({ token: token.value, status: status.value, documentId: documentId.value });
 });

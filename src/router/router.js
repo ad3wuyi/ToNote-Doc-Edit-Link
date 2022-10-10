@@ -13,6 +13,11 @@ const DocumentDashboard = () =>
     /* webpackChunkName: "document" */ "@/views/documents/DocumentDashboard.vue"
   );
 
+const DocumentUpload = () =>
+  import(
+    /* webpackChunkName: "upload-document" */ "@/views/documents/DocumentUpload.vue"
+  );
+
 const DocumentEdit = () =>
   import(
     /* webpackChunkName: "edit-document" */ "@/views/documents/DocumentEdit.vue"
@@ -57,7 +62,6 @@ const routes = [
         component: DocumentDashboard,
         meta: {
           title: "User | Document - ToNote",
-          requiresAuth: true,
         },
       },
       {
@@ -93,6 +97,24 @@ const routes = [
             {
               property: "og:description",
               content: "The verification page of ToNote.",
+            },
+          ],
+        },
+      },
+      {
+        path: "upload",
+        name: "document.upload",
+        component: DocumentUpload,
+        meta: {
+          title: "Upload Document | ToNote",
+          metaTags: [
+            {
+              name: "description",
+              content: "The document upload's page of ToNote.",
+            },
+            {
+              property: "og:description",
+              content: "The document upload's page of ToNote.",
             },
           ],
         },
