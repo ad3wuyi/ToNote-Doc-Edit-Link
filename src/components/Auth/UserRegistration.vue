@@ -50,9 +50,9 @@
 
               <div class="form-group">
                 <label for="security" class="form-label">Password</label>
+                <input type="password" v-model="password" class="form-control numeral-mask mb-1" id="security"
+                  placeholder="********" />
               </div>
-              <input type="password" v-model="password" class="form-control numeral-mask mb-1" id="security"
-                placeholder="********" />
             </div>
 
             <button type="submit" class="btn btn-primary mb-1 w-100" tabindex="4">
