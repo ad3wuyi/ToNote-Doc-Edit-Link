@@ -61,9 +61,9 @@
             </div>
 
             <button type="submit" class="btn btn-primary mb-1 w-100" tabindex="4">
-              Proceed to sign document
+              Create
             </button>
-            <span>Already have an account? <router-link :to="{name:'Login'}">Login in instead</router-link></span>
+            <span>Already have an account? <router-link :to="{name:'Login'}">Login in instead.</router-link></span>
           </form>
         </div>
       </div>
