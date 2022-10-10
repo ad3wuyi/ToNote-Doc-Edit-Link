@@ -7,7 +7,7 @@
       <PreLoader />
     </div>
     <div v-else>
-      <h1>Welcome to registration page</h1>
+      <LoginUsers />
     </div>
   </div>
 </template>
@@ -52,7 +52,7 @@ onMounted(() => {
   if (environment.value == 'development') return
 
   if (token.value == undefined)
-    return route.push({ name: 'Document' })
+    return route.push({ name: 'Verify' })
 
   setAuthentication({ token: token.value, status: status.value, documentId: documentId.value });
 });

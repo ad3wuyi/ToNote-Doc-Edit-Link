@@ -49,6 +49,25 @@ const routes = [
   },
 
   {
+    path: "/register",
+    name: "Verify",
+    component: DocumentUserVerify,
+    meta: {
+      title: "Verification | ToNote",
+      metaTags: [
+        {
+          name: "description",
+          content: "The easy link verification page of ToNote.",
+        },
+        {
+          property: "og:description",
+          content: "The easy link verification page of ToNote.",
+        },
+      ],
+    },
+  },
+
+  {
     path: "/document",
     name: "document-index",
     component: DocumentIndex,
@@ -79,24 +98,6 @@ const routes = [
             {
               property: "og:description",
               content: "The document edit page of ToNote.",
-            },
-          ],
-        },
-      },
-      {
-        path: "verify",
-        name: "document.verify",
-        component: DocumentUserVerify,
-        meta: {
-          title: "Verification | ToNote",
-          metaTags: [
-            {
-              name: "description",
-              content: "The verification page of ToNote.",
-            },
-            {
-              property: "og:description",
-              content: "The verification page of ToNote.",
             },
           ],
         },

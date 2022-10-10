@@ -1,10 +1,7 @@
 <template>
-  <body
-    class="vertical-layout vertical-menu-modern blank-page navbar-floating footer-static"
-    data-open="click"
-    data-menu="vertical-menu-modern"
-    data-col="blank-page"
-  >
+
+  <body class="vertical-layout vertical-menu-modern blank-page navbar-floating footer-static" data-open="click"
+    data-menu="vertical-menu-modern" data-col="blank-page">
     <div class="app-content content">
       <div class="content-overlay"></div>
       <div class="header-navbar-shadow"></div>
@@ -15,45 +12,35 @@
             <div class="auth-inner my-2">
               <div class="card mb-0">
                 <div class="card-body">
-                  <Form
-                    class="auth-login-form mt-2"
-                    @submit="onSubmit"
-                    :validation-schema="schema"
-                    v-slot="{ errors }"
-                  >
+                  <div class="brand-logo">
+                    <img src="@/assets/logo-dark.png" alt="" height="26" />
+                  </div>
+
+                  <h2 class="card-title fw-bolder mb-1">Enter your credentials 💬</h2>
+
+                  <Form class="auth-login-form mt-2" @submit="onSubmit" :validation-schema="schema" v-slot="{ errors }">
                     <div class="mb-1">
-                      <label>Email</label>
-                      <Field
-                        name="email"
-                        type="text"
-                        class="form-control"
-                        :class="{ 'is-invalid': errors.email }"
-                      />
+                      <label class="form-lable">Email</label>
+                      <Field name="email" type="text" class="form-control" :class="{ 'is-invalid': errors.email }" />
                       <div class="invalid-feedback">{{ errors.email }}</div>
                     </div>
 
                     <div class="mb-1">
-                      <label>Password</label>
-                      <Field
-                        name="password"
-                        type="password"
-                        class="form-control"
-                        :class="{ 'is-invalid': errors.password }"
-                      />
+                      <div class="d-flex justify-content-between align-items-center">
+                        <label for="security" class="form-label">Password</label>
+                        <label class="form-label">
+                          <a :href="forgotPassword">Forgot Password?</a>
+                        </label>
+                      </div>
+                      <Field name="password" type="password" class="form-control"
+                        :class="{ 'is-invalid': errors.password }" />
                       <div class="invalid-feedback">{{ errors.password }}</div>
                     </div>
 
                     <div class="form-button">
-                      <button
-                        id="submit"
-                        type="submit"
-                        class="btn btn-primary w-100 waves-effect waves-float waves-light"
-                        :disabled="loading"
-                      >
-                        <span
-                          v-show="loading"
-                          class="spinner-border spinner-border-sm"
-                        ></span>
+                      <button id="submit" type="submit"
+                        class="btn btn-primary w-100 waves-effect waves-float waves-light" :disabled="loading">
+                        <span v-show="loading" class="spinner-border spinner-border-sm"></span>
                         <span>Proceed</span>
                       </button>
                     </div>
@@ -69,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useActions } from "vuex-composition-helpers/dist";
 import { Form, Field } from "vee-validate";
 import * as Yup from "yup";
@@ -84,6 +71,7 @@ const schema = Yup.object().shape({
 });
 
 const loading = ref(false);
+const forgotPassword = ref("");
 
 const onSubmit = (params) => {
   loading.value = true;
@@ -94,6 +82,15 @@ const onSubmit = (params) => {
 //  const { token } = useGetters({
 //   token: "auth/token",
 // });
+
+onMounted(() => {
+  forgotPassword.value =
+    process.env.NODE_ENV != "development"
+      ? process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LIVE
+      : process.env.VUE_APP_URL_AUTH_FORGOT_PASSWORD_LOCAL;
+})
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>
