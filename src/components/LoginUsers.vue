@@ -1,6 +1,5 @@
 <template>
-
-  <body class="vertical-layout vertical-menu-modern blank-page navbar-floating footer-static" data-open="click"
+  <div class="vertical-layout vertical-menu-modern blank-page navbar-floating footer-static" data-open="click"
     data-menu="vertical-menu-modern" data-col="blank-page">
     <div class="app-content content">
       <div class="content-overlay"></div>
@@ -52,7 +51,7 @@
         </div>
       </div>
     </div>
-  </body>
+  </div>
 </template>
 
 <script setup>

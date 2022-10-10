@@ -51,10 +51,8 @@ onMounted(() => {
 
   if (environment.value == 'development') return
 
-  if (token.value == undefined)
-    return route.push({ name: 'Register' })
-
-  setAuthentication({ token: token.value, status: status.value, documentId: documentId.value });
+  if (token.value != undefined)
+    setAuthentication({ token: token.value, status: status.value, documentId: documentId.value });
 });
 </script>
 
