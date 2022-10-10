@@ -31,6 +31,7 @@ const documentId = ref("");
 const environment = ref('')
 
 onMounted(() => {
+  console.log(process.env.VUE_APP_URL_AUTH_LIVE)
   uri.value = route.currentRoute.value.query;
   token.value = uri.value.qt;
   documentId.value = uri.value.di;
