@@ -22,12 +22,7 @@ const DocumentUserVerify = () =>
   import(
     /* webpackChunkName: "auth-verify" */ "@/components/Auth/UserVerify.vue"
   );
-
-const TestParent = () =>
-  import(
-    /* webpackChunkName: "edit-document" */ "@/components/Test/TestParent.vue"
-  );
-
+  
 const routes = [
   {
     path: "/",
@@ -46,13 +41,6 @@ const routes = [
         },
       ],
     },
-  },
-
-  {
-    path: "/test",
-    name: "Test",
-    component: TestParent,
-    meta: { title: "Testing Ground | ToNote" },
   },
 
   {

@@ -102,7 +102,7 @@ export const setAuthentication = ({ commit }, data) => {
         });
       }
       if (data.status != '') {
-        return router.push({ name: "dashboard.dashboard", query: { status: data.status } })
+        return router.push({ name: "document.dashboard", query: { status: data.status } })
       }
     })
     .catch((error) => {
