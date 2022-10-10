@@ -1,5 +1,5 @@
 <template>
-  <nav v-if="isVerifyPage || dashboard.token != null || token != null" style="height: 70px"
+  <nav style="height: 70px"
     class="header-navbar navbar-expand-lg navbar navbar-fixed align-items-center navbar-shadow navbar-brand-center"
     data-nav="brand-center">
     <div class="navbar-header d-lg-block d-none">
@@ -17,7 +17,7 @@
         <ul class="nav navbar-nav bookmark-icons">
           <li class="nav-item">
             <template v-if="isDevelopment">
-              <router-link :to="{ name: 'Document' }">
+              <router-link :to="{ name: 'document.upload' }">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                   class="feather feather-chevron-left font-medium-4" style="height: 2rem !important">
@@ -48,7 +48,7 @@
         </a>
       </div>
 
-      <ul class="nav navbar-nav align-items-center">
+      <ul v-if="isVerifyPage || dashboard.token != null || token != null" class="nav navbar-nav align-items-center">
         <li class="nav-item dropdown dropdown-user">
           <a class="nav-link dropdown-toggle dropdown-user-link" id="dropdown-user" href="#" data-bs-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">

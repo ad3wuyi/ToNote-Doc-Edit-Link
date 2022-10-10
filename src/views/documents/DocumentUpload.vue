@@ -76,17 +76,17 @@
 import PreLoader from "@/components/PreLoader.vue";
 import DropZone from "@/components/DropZone.vue";
 import { Form, Field } from "vee-validate";
-import { dashboard } from "@/store/dashboard";
+// import { dashboard } from "@/store/dashboard";
 
 import { ref, toRaw, onMounted } from "vue";
 
-import { useRouter } from "vue-router";
+// import { useRouter } from "vue-router";
 
-import { useActions, useGetters } from "vuex-composition-helpers/dist";
+import { useActions } from "vuex-composition-helpers/dist";
 
-const { token } = useGetters({ token: "auth/token" });
+// const { token } = useGetters({ token: "auth/token" });
 
-const { setAuthForDocumentUpload, fileUploads, getUserPrints } = useActions({
+const { fileUploads } = useActions({
   setAuthForDocumentUpload: "auth/setAuthForDocumentUpload",
   fileUploads: "document/fileUploads",
   getUserPrints: "print/getUserPrints",
@@ -151,25 +151,25 @@ const onProceed = (params) => {
   setTimeout(() => { isSubmitted.value = false }, 10000);
 };
 
-const route = useRouter();
-const uri = ref("");
 const isLoading = ref(true);
-const hasToken = ref("");
+// const route = useRouter();
+// const uri = ref("");
+// const hasToken = ref("");
 
 onMounted(() => {
-  uri.value = route.currentRoute.value.query;
-  hasToken.value =
-    uri.value.qt != undefined || uri.value.qt != null ? uri.value.qt : token.value;
+  // uri.value = route.currentRoute.value.query;
+  // hasToken.value =
+  //   uri.value.qt != undefined || uri.value.qt != null ? uri.value.qt : token.value;
 
-  if (hasToken.value == undefined || hasToken.value == "" || hasToken.value == null) {
-    return route.push({ name: 'Register' })
-  }
+  // if (hasToken.value == undefined || hasToken.value == "" || hasToken.value == null) {
+  //   return route.push({ name: 'Register' })
+  // }
 
-  dashboard.value.setToken(hasToken.value)
+  // dashboard.value.setToken(hasToken.value)
 
-  getUserPrints(hasToken.value);
+  // getUserPrints(hasToken.value);
 
-  setAuthForDocumentUpload(hasToken.value);
+  // setAuthForDocumentUpload(hasToken.value);
   isLoading.value = false;
 });
 </script>
