@@ -1,5 +1,5 @@
 <template>
-  <div class="my-5 py-5 w-50 mx-auto">
+  <div class="landing mx-auto">
     <h1 class="text-center mb-3">Welcome to ToNote Link Creation</h1>
 
     <ul>
@@ -26,3 +26,17 @@
     </p>
   </div>
 </template>
+
+<style scoped>
+.landing {
+  width: 50%;
+  margin: 6rem 0;
+}
+
+@media screen and (max-width: 991.5px) {
+  .landing {
+    width: 100%;
+    margin: 0;
+  }
+}
+</style>
