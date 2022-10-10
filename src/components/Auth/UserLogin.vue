@@ -3,8 +3,11 @@
     <LoginUsers />
   </div>
   <div v-else>
-    <div class="grid">
-      <pre-loader />
+    <div v-if="isLoading" class="grid">
+      <PreLoader />
+    </div>
+    <div v-else>
+      <h1>Welcome to registration page</h1>
     </div>
   </div>
 </template>
@@ -29,8 +32,13 @@ const token = ref("");
 const status = ref("");
 const documentId = ref("");
 const environment = ref('')
+const isLoading = ref(true)
 
 onMounted(() => {
+  setTimeout(() => {
+    isLoading.value = false
+  }, 1000);
+
   uri.value = route.currentRoute.value.query;
   token.value = uri.value.qt;
   documentId.value = uri.value.di;
