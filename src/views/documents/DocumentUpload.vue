@@ -187,8 +187,8 @@ onMounted(() => {
 }
 
 .avatar-sm {
-  height: 3rem;
-  width: 3rem;
+  height: 2rem;
+  width: 2rem;
 }
 
 @media screen and (max-width: 991.5px) {
