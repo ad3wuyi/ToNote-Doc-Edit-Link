@@ -1,5 +1,17 @@
 <template>
-  <div>
-    <h1 class="text-center my-5 py-5">Welcome to ToNote Link Creation</h1>
+  <div class="my-5 py-5">
+    <h1 class="text-center">Welcome to ToNote Link Creation</h1>
+
+    <ul>
+      <li>Copy a link having the document id inclusive
+        <ul>
+          <li>
+            <a href="https://tonote-doc-link.netlify.app/document/edit/f80e326b-5d4b-427e-ab39-280126aa1acd"
+              target="_blank">
+              https://tonote-doc-link.netlify.app/document/edit/f80e326b-5d4b-427e-ab39-280126aa1acd</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
   </div>
 </template>
