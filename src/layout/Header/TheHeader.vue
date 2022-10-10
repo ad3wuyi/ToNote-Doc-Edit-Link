@@ -5,7 +5,7 @@
     <div class="navbar-header d-lg-block d-none">
       <ul class="nav navbar-nav">
         <li class="nav-item">
-          <a href="#!" class="navbar-brand me-0">
+          <a href="https://www.gettonote.com" class="navbar-brand me-0">
             <img src="@/assets/logo-dark.png" alt="ToNote" height="26" />
           </a>
         </li>
@@ -43,7 +43,7 @@
       </div>
 
       <div class="d-lg-none d-md-block text-center">
-        <a href="#!" class="navbar-brand me-0">
+        <a href="https://www.gettonote.com" class="navbar-brand me-0">
           <img src="@/assets/logo-dark.png" alt="ToNote" height="20" />
         </a>
       </div>

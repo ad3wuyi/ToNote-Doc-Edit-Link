@@ -11,7 +11,7 @@ export const logoutUser = ({ commit }, formData) => {
       if (process.env.NODE_ENV == 'development') {
         window.location.href = process.env.VUE_APP_URL_AUTH_LOCAL
       } else {
-        window.location.href = process.env.VUE_APP_URL_AUTH_LIVE;
+        window.location.href = router.push({ name: 'Login' });
       }
     })
     .catch((error) => {
