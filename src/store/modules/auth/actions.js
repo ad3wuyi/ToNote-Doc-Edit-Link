@@ -147,5 +147,12 @@ export const loginUser = ({ commit }, formData) => {
           position: "top-right",
         });
       }
+      if (error.response.status == 422) {
+        commit("SET_AUTH_ERROR", error.response.data.message);
+        toast.error(`${error.response.data.message}`, {
+          timeout: 5000,
+          position: "top-right",
+        });
+      }
     });
 };
