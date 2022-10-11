@@ -331,20 +331,42 @@ const deleteParticipant = () => {
   removeParticipantModal.value = false;
 };
 
+function getOS() {
+  let userAgent = window.navigator.userAgent,
+    platform = window.navigator.platform,
+    macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"],
+    windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"],
+    iosPlatforms = ["iPhone", "iPad", "iPod"],
+    os = null;
+  if (macosPlatforms.indexOf(platform) !== -1) {
+    os = "Mac OS";
+  } else if (iosPlatforms.indexOf(platform) !== -1) {
+    os = "iOS";
+  } else if (windowsPlatforms.indexOf(platform) !== -1) {
+    os = "Windows";
+  } else if (/Android/.test(userAgent)) {
+    os = "Android";
+  } else if (/Linux/.test(platform)) {
+    os = "Linux";
+  }
+  return os;
+}
+const hasOS = ref("");
+hasOS.value = getOS();
+
 const addMouseMoveListener = (params) => {
   tempData.value = true;
-
   let count = 1;
   tempStorage.value = params;
-
+  let customValue = hasOS.value == "Mac OS" ? 26 : 70;
   $(document).bind("mousemove", function (e) {
     count = count + 1;
     tool_id.value = count;
     $("." + params.toolId).attr("id", count);
     $("." + params.toolId).css({
       display: "block",
-      left: e.pageX - 80,
-      top: e.pageY - 200,
+      left: e.pageX - customValue,
+      top: e.pageY - 164,
     });
   });
 };
@@ -354,10 +376,10 @@ $(document).on("click", "#mainWrapper", function (e) {
   $("#" + tool_id.value).css("display", "none");
   removeMouseMoveListener();
 
-  let offset = $(this).offset();
-
-  let x = e.pageX - offset.left - 10;
-  let y = e.pageY - offset.top - 35;
+  let posX = $(this).offset().left;
+  let posY = $(this).offset().top;
+  let x = e.pageX - posX;
+  let y = e.pageY - posY;
 
   const toolName = tempStorage.value.tool_name;
   if (toolName == "Sign" || toolName == "Initial") {
@@ -372,7 +394,7 @@ $(document).on("click", "#mainWrapper", function (e) {
 
   let saveTools = {
     document_upload_id: watchFileId.value,
-    user_id: profile.value.id,
+    user_id: participantId.value == "" ? profile.value.id : participantId.value,
     tool_name: toolName,
     tool_class: tool_class.value,
     tool_width: toolName == "Textarea" ? "120" : "100",

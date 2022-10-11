@@ -26,6 +26,7 @@
     "simple-vue-camera": "^1.1.2",
     "vee-validate": "^4.5.11",
     "vue": "^3.2.36",
+    "vue-advanced-cropper": "^2.8.6",
     "vue-axios": "^3.4.1",
     "vue-loader": "^17.0.0",
     "vue-router": "^4.0.13",

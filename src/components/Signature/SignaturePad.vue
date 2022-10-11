@@ -19,9 +19,19 @@
         <div v-for="(sign, index) in prints.Signature" :key="index">
           <template v-if="sign.category == 'Draw'">
             <div class="grid-draw">
-              <img :src="sign.file" class="img-thumbnail" style="width:155px" alt="Signature" />
+              <img :src="sign.file" class="img-thumbnail" style="width: 155px" alt="Signature" />
               <template v-if="imgBase64.length > 0">
-                <img :src="imgBase64" class="img-thumbnail" style="width:155px" alt="Signature" />
+                <cropper ref="cropped" :src="imgBase64" />
+                <div class="text-center">
+                  <button class="btn btn-sm btn-primary" @click="cropImage">Crop</button>
+                </div>
+                <template v-if="prevImg != ''">
+                  <img :src="prevImg" class="img-thumbnail d-block mx-auto" alt="preview" />
+                </template>
+                <template v-else>
+                  <img src="@/assets/empty.png" class="img-thumbnail d-block mx-auto" width="150" alt="preview" />
+                </template>
+                <!-- <img :src="imgBase64" class="img-thumbnail" style="width:155px" alt="Signature" /> -->
               </template>
             </div>
           </template>
@@ -29,10 +39,20 @@
       </template>
       <template v-else>
         <template v-if="imgBase64.length > 0">
-          <img :src="imgBase64" class="img-thumbnail" style="width:155px" alt="Signature" />
+          <cropper ref="cropped" class="example-cropper" :src="imgBase64" />
+          <div class="text-center">
+            <button class="btn btn-sm btn-primary" @click="cropImage">Crop</button>
+          </div>
+          <template v-if="prevImg != ''">
+            <img :src="prevImg" class="img-thumbnail d-block mx-auto" alt="preview" />
+          </template>
+          <template v-else>
+            <img src="@/assets/empty.png" class="img-thumbnail d-block mx-auto" width="150" alt="Preview" />
+          </template>
+          <!-- <img :src="imgBase64" class="img-thumbnail" style="width:155px" alt="Signature" /> -->
         </template>
         <template v-else>
-          <img src="@/assets/empty.png" class="img-thumbnail" style="width:155px" alt="Signature" />
+          <img src="@/assets/empty.png" class="img-thumbnail" style="width: 155px" alt="Signature" />
         </template>
       </template>
     </div>
@@ -48,7 +68,17 @@
 
 <script setup>
 import SignaturePad from "signature_pad";
-import { defineProps, onMounted, reactive, watch, defineExpose, ref, defineEmits, } from "vue";
+import { Cropper } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
+import {
+  defineProps,
+  onMounted,
+  reactive,
+  watch,
+  defineExpose,
+  ref,
+  defineEmits,
+} from "vue";
 
 import { createNamespacedHelpers } from "vuex-composition-helpers/dist";
 const { useActions, useGetters } = createNamespacedHelpers(["print"]);
@@ -66,7 +96,7 @@ const props = defineProps({
     type: Object,
     default: () => {
       return {
-        backgroundColor: "rgba(255,255,255,0.1)",
+        backgroundColor: "rgba(255, 255, 255, 0.1)",
         penColor: "rgb(0, 0, 0)",
       };
     },
@@ -102,7 +132,7 @@ const props = defineProps({
 let state = reactive({
   sig: () => { },
   option: {
-    backgroundColor: "rgb(255,255,255)",
+    backgroundColor: "rgb(255, 255, 255)",
     penColor: "rgb(0, 0, 0)",
   },
   uid: "",
@@ -136,17 +166,8 @@ const draw = () => {
     if (!isEmpty()) {
       url = save();
     }
-    // let ratio = Math.max(window.devicePixelRatio || 1, 1);
-    // const reg = RegExp(/px/);
     c.width = 290;
     c.height = 316;
-    // c.width = reg.test(props.w)
-    //   ? props.w.replace(/px/g, "") * ratio
-    //   : c.offsetWidth * ratio;
-
-    // c.height = reg.test(props.h)
-    //   ? props.h.replace(/px/g, "") * ratio
-    //   : c.offsetHeight * ratio;
 
     c.getContext("2d").scale(1, 1);
     clear();
@@ -174,27 +195,22 @@ const clear = () => {
   generate.value.checked = false;
   create.value.disabled = true;
   imgBase64.value = 0;
+  prevImg.value = ''
 };
 
 const save = (format) => {
   const dataResult = format ? state.sig.toDataURL(format) : state.sig.toDataURL();
-
   imgBase64.value = dataResult;
-  generate.value.checked = true;
-
-  if (generate.value.checked === true) {
-    create.value.disabled = false;
-  }
-  // signaturePad.toDataURL(); // save image as PNG
-  // signaturePad.toDataURL("image/jpeg"); // save image as JPEG
-  // signaturePad.toDataURL("image/svg+xml"); // save image as SVG
 };
+
 const fromDataURL = (url) => {
   state.sig.fromDataURL(url);
 };
+
 const isEmpty = () => {
   return state.sig.isEmpty();
 };
+
 const undo = () => {
   let data = state.sig.toData();
   if (data) {
@@ -202,6 +218,7 @@ const undo = () => {
     state.sig.fromData(data);
   }
 };
+
 const addWaterMark = (data) => {
   if (!(Object.prototype.toString.call(data) == "[object Object]")) {
     throw new Error("Expected Object, got " + typeof data + ".");
@@ -231,6 +248,19 @@ const addWaterMark = (data) => {
   }
 };
 
+const cropped = ref("");
+const prevImg = ref("");
+
+const cropImage = () => {
+  const result = cropped.value[0].getResult();
+  prevImg.value = result.canvas.toDataURL();
+  generate.value.checked = true;
+
+  if (generate.value.checked) {
+    create.value.disabled = false;
+  }
+};
+
 onMounted(() => {
   create.value.disabled = true;
   draw();
@@ -247,13 +277,13 @@ defineExpose({
 
 const createDrawSignature = () => {
   const drawnSignature = {
-    file: imgBase64.value,
+    file: prevImg.value,
     type: "Signature",
     category: "Draw",
   };
 
   savePrint(drawnSignature);
-  imgBase64.value = 0
+  imgBase64.value = 0;
   emit("close", true);
 };
 </script>
@@ -334,13 +364,12 @@ canvas {
 }
 
 @media screen and (max-width: 991.5px) {
-
   .grid {
     grid-template-columns: 1fr;
   }
 
   .grid-draw {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
   }
 }
 </style>

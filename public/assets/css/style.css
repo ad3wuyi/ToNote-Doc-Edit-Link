@@ -9,3 +9,8 @@ html body {
 .text-primary {
   color: #003bb3 !important;
 }
+
+.vue-advanced-cropper__background,
+.vue-advanced-cropper__foreground {
+  background: chocolate !important;
+}
