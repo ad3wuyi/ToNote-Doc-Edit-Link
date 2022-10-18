@@ -3,7 +3,7 @@
     <div class="navbar-header">
       <ul class="nav navbar-nav flex-row">
         <li class="nav-item me-auto">
-          <router-link class="navbar-brand" :to="{ name: 'Dashboard' }">
+          <router-link class="navbar-brand" :to="{ name: 'Document' }">
             <span class="brand-logo">
               <img src="@/assets/logo-dark.png" width="150" />
             </span>
@@ -200,7 +200,7 @@ watch(
 const page = (params) => {
   isPage.value = params != "" ? params : "New";
   dashboard.value.setStatus(isPage.value);
-  route.push({ name: 'Dashboard', query: { status: (isPage.value).toLowerCase() } })
+  route.push({ name: 'Document', query: { status: (isPage.value).toLowerCase() } })
 };
 
 const numberOfEnvelopLeft = ref("");

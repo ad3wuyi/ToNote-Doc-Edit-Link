@@ -1,42 +1,55 @@
 <template>
-  <div class="landing mx-auto">
-    <h1 class="text-center mb-3">Welcome to ToNote Link Creation</h1>
+  <div class="pace-done vertical-layout navbar-floating footer-static" :class="[
+    ['md','xs'].includes(type) ? 'vertical-overlay-menu' : 'menu-expanded vertical-menu-modern',
+    dashboard.isOpened ? 'menu-open' : 'menu-hide',
+  ]">
+    <DashboardHeader />
 
-    <ul>
-      <li>
-        Copy a link having a document ID inclusive e.g.
-        <ul>
-          <li>
-            <a href="https://tonote-doc-link.netlify.app/document/edit/f80e326b-5d4b-427e-ab39-280126aa1acd"
-              target="_blank">
-              https://tonote-doc-link.netlify.app/document/edit/f80e326b-5d4b-427e-ab39-280126aa1acd</a>
-          </li>
-        </ul>
-      </li>
-    </ul>
+    <DashboardNav />
 
-    <div class="my-2"></div>
+    <DashboardContent />
 
-    <h1 class="text-center mb-2">OR</h1>
-
-    <p class="text-center">
-      <router-link :to="{ name: 'document.upload' }" class="btn btn-sm btn-primary">
-        Upload a document
-      </router-link>
-    </p>
+    <div class="sidenav-overlay" :class="{ show: dashboard.isOpened }" @click="dashboard.setIsOpened(false)"></div>
   </div>
 </template>
 
-<style scoped>
-.landing {
-  width: 50%;
-  margin: 6rem 0;
+<script setup>
+import DashboardNav from "@/components/Document/Dashboard/DashboardNav.vue";
+import DashboardHeader from "@/components/Document/Dashboard/DashboardHeader.vue";
+import DashboardContent from "@/components/Document/Dashboard/DashboardContent.vue";
+import { dashboard } from "@/store/dashboard";
+
+import { computed, onMounted, onUnmounted, ref } from "vue";
+
+function useBreakpoints() {
+  let windowWidth = ref(window.innerWidth);
+
+  const onWidthChange = () => (windowWidth.value = window.innerWidth);
+  onMounted(() => {
+    window.addEventListener("resize", onWidthChange)
+    setTimeout(() => {
+      if (window.Tawk_API) {
+        window.Tawk_API.showWidget();
+      }
+    }, 500);
+  });
+  onUnmounted(() => window.removeEventListener("resize", onWidthChange));
+
+  const type = computed(() => {
+    if (windowWidth.value < 550) return "xs";
+    if (windowWidth.value >= 550 && windowWidth.value < 1200) return "md";
+    if (windowWidth.value >= 1200) return "lg";
+    return null;
+  });
+
+  const width = computed(() => windowWidth.value);
+
+  return { width, type };
 }
 
-@media screen and (max-width: 991.5px) {
-  .landing {
-    width: 100%;
-    margin: 0;
-  }
-}
+const { type } = useBreakpoints();
+</script>
+
+<style scoped>
+@import "@/assets/css/vertical-menu.min.css";
 </style>

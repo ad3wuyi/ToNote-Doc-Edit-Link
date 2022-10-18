@@ -74,20 +74,31 @@ const routes = [
 
   {
     path: "/document",
+    name: "Document",
+    component: DocumentDashboard,
+    meta: {
+      title: "User | Document - ToNote",
+      metaTags: [
+        {
+          name: "description",
+          content: "The easy link page of ToNote.",
+        },
+        {
+          property: "og:description",
+          content: "The easy link page of ToNote.",
+        },
+      ],
+    },
+  },
+
+  {
+    path: "/edit",
     name: "document-index",
     component: DocumentIndex,
     meta: {
       title: "Documents - ToNote",
     },
     children: [
-      {
-        path: "",
-        name: "Document",
-        component: DocumentDashboard,
-        meta: {
-          title: "User | Document - ToNote",
-        },
-      },
       {
         path: "edit/:document_id",
         name: "document.edit",

@@ -1,5 +1,5 @@
 {
-  "name": "tonote-doc-edit-link",
+  "name": "ToNote",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -31,6 +31,7 @@
     "vue-loader": "^17.0.0",
     "vue-router": "^4.0.13",
     "vue-toast-notification": "^3.0.4",
+    "vue3-clipboard": "^1.0.0",
     "vue3-draggable-resizable": "^1.6.5",
     "vue3-otp-input": "^0.3.6",
     "vuex": "^4.0.2",
