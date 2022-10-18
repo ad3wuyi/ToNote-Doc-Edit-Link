@@ -66,15 +66,6 @@
       </li>
       <!-- other buttons  -->
       <li class="nav-item border-0">
-        <button title="Activate form fields" class="btn btn-sm position-relative"
-          :class="[dashboard.enableAnno ? 'btn-primary' : 'btn-secondary']" @click="dashboard.setAnnotation()">
-          {{ dashboard.enableAnno ? "Disable" : "Enable" }} Tools
-
-          <span
-            class="position-absolute top-0 start-100 translate-middle badge border border-light rounded-circle bg-warning"
-            style="padding:5px">
-            <span class="visually-hidden">unread messages</span></span>
-        </button>
         <button class="btn btn-sm btn-primary mx-1" @click="doneModal = true">
           Save
         </button>
@@ -128,13 +119,6 @@
           </li>
         </ul>
       </div>
-
-      <button title="Activate form fields" class="btn btn-sm position-relative"
-        :class="[dashboard.enableAnno ? 'btn-primary' : 'btn-secondary']" @click="dashboard.setAnnotation()">
-        {{ dashboard.enableAnno ? "Disable" : "Enable" }} Tools
-
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">New</span>
-      </button>
 
       <ul class="nav navbar-nav align-items-center">
         <li class="nav-item d-none d-sm-block">
