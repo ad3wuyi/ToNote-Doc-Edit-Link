@@ -3,56 +3,49 @@
     <div class="sidebar">
       <div class="sidebar-content email-app-sidebar">
         <div class="email-app-menu">
-          <div class="sidebar-menu-list sidebar-nav text-center py-3 px-1" style="width: 260px;">
-            <img src="@/assets/logo.png" class="w-25 mb-2" alt="ToNote Logo" />
-            <p>
-              We help thousands of customers sign and notarise documents the easy way.
-            </p>
-            <p>We continue to work hard to ensure that our notary process is fully automated, legally binding and
-              affordable for all our customers.
-            </p>
-            <h4>Contact Us</h4>
-            <p>Office Address: 1625b Saka Jojo Street, Victoria Island, Lagos.</p>
-            <p>Phone: +2348146507035</p>
-            <p>Email : ask@gettonote.com</p>
-
-            <div class="list-group list-group-messages d-none">
-              <div class="list-group-item list-group-item-action border-bottom">
-                Tool Management
-              </div>
-
-              <div class="list-group-item list-group-item-action border-bottom">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    Added Tool ({{ workingTools.length > 0 ? workingTools.length : 0 }})
-                  </div>
-                </div>
-              </div>
-
-              <template v-if="userDocument.is_the_owner_of_document === true">
+          <div class="sidebar-menu-list sidebar-nav py-3 px-1" style="width: 260px;">
+            <template v-if="userDocument.is_the_owner_of_document === true">
+              <div class="list-group list-group-messages">
                 <div class="list-group-item list-group-item-action border-bottom">
-                  <p>Signers ({{ userDocument.participants_count }})</p>
+                  Tool Management
+                </div>
 
-                  <div class="avatar-group">
-                    <div v-for="(init, index) in userDocument.participants" data-popup="tooltip-custom"
-                      data-bs-placement="top" :title="init.user.first_name + ' ' + init.user.last_name"
-                      class="avatar pull-up" :data-bs-original-title="init.user.first_name" :data-id="init.id"
-                      :key="index">
-                      <div class="avatar-content">
-                        {{
-                        getFirstLetters(init.user.first_name + " " + init.user.last_name)
-                        }}
-                      </div>
+                <div class="list-group-item list-group-item-action border-bottom">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      Added Tool ({{ workingTools.length > 0 ? workingTools.length : 0 }})
                     </div>
                   </div>
                 </div>
 
-                <div role="button" class="list-group-item list-group-item-action border-bottom"
-                  @click="editSignerModal = true">
-                  <span class="isHover">View all signers <span>&rightarrow;</span></span>
-                </div>
-              </template>
-            </div>
+                <template v-if="userDocument.is_the_owner_of_document === true">
+                  <div class="list-group-item list-group-item-action border-bottom">
+                    <p>Signers ({{ userDocument.participants_count }})</p>
+
+                    <div class="avatar-group">
+                      <div v-for="(init, index) in userDocument.participants" data-popup="tooltip-custom"
+                        data-bs-placement="top" :title="init.user.first_name + ' ' + init.user.last_name"
+                        class="avatar pull-up" :data-bs-original-title="init.user.first_name" :data-id="init.id"
+                        :key="index">
+                        <div class="avatar-content">
+                          {{
+                          getFirstLetters(init.user.first_name + " " + init.user.last_name)
+                          }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div role="button" class="list-group-item list-group-item-action border-bottom"
+                    @click="editSignerModal = true">
+                    <span class="isHover">View all signers <span>&rightarrow;</span></span>
+                  </div>
+                </template>
+              </div>
+            </template>
+            <template v-else>
+              <h3 class="text-center">Content coming soon!</h3>
+            </template>
           </div>
         </div>
       </div>
