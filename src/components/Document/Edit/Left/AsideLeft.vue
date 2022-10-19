@@ -40,14 +40,6 @@
                 <div class="list-group-item border-bottom">
                   Tool Management
                 </div>
-
-                <div class="list-group-item border-bottom">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      Added Tool ({{ workingTools.length > 0 ? workingTools.length : 0 }})
-                    </div>
-                  </div>
-                </div>
               </div>
               <div v-show="!hasRole" class="text-center mt-5">
                 <span class="spinner-border spinner-border-sm"></span>

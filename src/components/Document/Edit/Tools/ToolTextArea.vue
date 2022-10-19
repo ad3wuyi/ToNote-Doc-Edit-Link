@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-  <Vue3DraggableResizable v-show="dashboard.enableAnno" :key="tool.id" :initH="Number(tool.tool_height)"
+  <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_height)"
     :initW="Number(tool.tool_width)" :minW="70" :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)"
     v-model:x="x" v-model:y="y" v-model:h="h" v-model:w="w" :parent="true" @drag-end="onDragEnd($event, tool)"
     @resize-end="onResizeEnd(tool, w, h)" :data-can-drag-tool="tool.can_drag_tool" :data-user="tool.user_id"
@@ -54,7 +54,6 @@ import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
 
 import { defineProps, ref } from "vue";
 import { useActions } from "vuex-composition-helpers/dist";
-import { dashboard } from "@/store/dashboard";
 
 const props = defineProps({ tool: Object, owner: Object });
 

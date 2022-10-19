@@ -1,6 +1,6 @@
 <template>
   <template v-if="tool.append_print == null">
-    <Vue3DraggableResizable v-show="dashboard.enableAnno" :key="tool.id" :initH="100" :initW="100"
+    <Vue3DraggableResizable :key="tool.id" :initH="100" :initW="100"
       :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)" v-model:x="x" v-model:y="y" v-model:h="h"
       v-model:w="w" :parent="true"
       :draggable="profile.id == tool.user_id || userDocument.is_the_owner_of_document == true" :resizable="false"
@@ -50,7 +50,7 @@
   </template>
 
   <template v-else>
-    <Vue3DraggableResizable v-show="dashboard.enableAnno" :key="tool.id" :initH="Number(tool.tool_width)"
+    <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_width)"
       :initW="Number(tool.tool_width)" :minW="100" :minH="100" :x="Number(tool.tool_pos_left)"
       :y="Number(tool.tool_pos_top)" :parent="true" v-model:x="x" v-model:y="y" v-model:h="h" v-model:w="w"
       :draggable="profile.id == tool.user_id || userDocument.is_the_owner_of_document == true" :resizable="
@@ -112,7 +112,6 @@
 import ModalComp from "@/components/ModalComp.vue";
 import PassportPhotograph from "@/components/Passport/PassportPhotograph.vue";
 import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
-import { dashboard } from "@/store/dashboard";
 
 import { ref, defineProps, defineEmits } from "vue";
 

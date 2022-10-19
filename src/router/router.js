@@ -73,7 +73,7 @@ const routes = [
   },
 
   {
-    path: "/document",
+    path: "/dashboard",
     name: "Document",
     component: DocumentDashboard,
     meta: {
@@ -92,13 +92,25 @@ const routes = [
   },
 
   {
-    path: "/edit",
+    path: "/document",
     name: "document-index",
     component: DocumentIndex,
     meta: {
       title: "Documents - ToNote",
     },
     children: [
+      {
+        path: "",
+        name: "document.dashboard",
+        component: DocumentDashboard,
+        beforeEnter(to, from, next) {
+          next({ name: "Document" });
+        },
+        meta: {
+          title: "User | Document - ToNote",
+          requiresAuth: true,
+        },
+      },
       {
         path: "edit/:document_id",
         name: "document.edit",

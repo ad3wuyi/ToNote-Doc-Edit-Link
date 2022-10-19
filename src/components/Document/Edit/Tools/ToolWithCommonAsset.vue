@@ -1,5 +1,5 @@
 <template>
-  <Vue3DraggableResizable v-show="dashboard.enableAnno" :key="tool.id" :initH="Number(tool.tool_height)"
+  <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_height)"
     :initW="Number(tool.tool_width)" :minW="70" :minH="30" :x="Number(tool.tool_pos_left)"
     :y="Number(tool.tool_pos_top)" :parent="true" v-model:x="x" v-model:y="y" v-model:h="h" v-model:w="w"
     :draggable="profile.id == tool.user_id || userDocument.is_the_owner_of_document == true"
@@ -51,7 +51,6 @@
 
 <script setup>
 import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
-import { dashboard } from "@/store/dashboard";
 
 import { defineProps, defineEmits, ref } from "vue";
 
