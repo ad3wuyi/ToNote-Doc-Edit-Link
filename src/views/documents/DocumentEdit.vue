@@ -67,7 +67,7 @@
       <!-- other buttons  -->
       <li class="nav-item border-0">
         <button class="btn btn-sm btn-primary mx-1" @click="doneModal = true">
-          Save
+          Submit
         </button>
         <button class="btn btn-sm btn-primary" @click="emailModal = true">Share</button>
       </li>
@@ -130,7 +130,7 @@
         <li class="nav-item" v-show="hasRole">
           <a class="nav-link nav-link-style">
             <button class="btn btn-sm btn-primary waves-effect" @click="done">
-              Save
+              Submit
             </button></a>
         </li>
         <li class="nav-item d-none d-sm-block" v-if="userDocument.is_the_owner_of_document === true">
