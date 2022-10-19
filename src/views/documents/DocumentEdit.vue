@@ -109,11 +109,13 @@
               </button>
               <div class="dropdown-menu dropdown-menu-end" data-popper-placement="bottom-start">
                 <a @click="affixModal = true" class="dropdown-item" href="#" id="viewSignature">My Signature</a>
-                <template v-if="plan == 'Business'">
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#" @click="sealModal = true">My Seal</a>
-                  <a class="dropdown-item" href="#" @click="stampModal = true">My Stamp</a>
-                </template>
+                <div class="d-none">
+                  <template v-if="plan == 'Business'">
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#" @click="sealModal = true">My Seal</a>
+                    <a class="dropdown-item" href="#" @click="stampModal = true">My Stamp</a>
+                  </template>
+                </div>
               </div>
             </div>
           </li>
