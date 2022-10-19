@@ -27,6 +27,18 @@
                     </button>
                   </div>
                 </div>
+
+                <div class="list-group-item border-bottom">
+                  Tool Management
+                </div>
+
+                <div v-show="!hasRole" class="text-center mt-5">
+                  <span class="spinner-border spinner-border-sm"></span>
+                  Loading...
+                </div>
+                <div v-if="hasRole">
+                  <ToolKits @bindTool="addMouseMoveListener" />
+                </div>
               </template>
               <template v-else>
                 <div class="list-group-item border-bottom">
@@ -36,19 +48,6 @@
                   </p>
                 </div>
               </template>
-              <div class="">
-                <div class="list-group-item border-bottom">
-                  Tool Management
-                </div>
-              </div>
-              <div v-show="!hasRole" class="text-center mt-5">
-                <span class="spinner-border spinner-border-sm"></span>
-                Loading...
-              </div>
-              <div v-if="hasRole">
-                <ToolKits @bindTool="addMouseMoveListener" />
-              </div>
-
             </div>
           </div>
         </div>

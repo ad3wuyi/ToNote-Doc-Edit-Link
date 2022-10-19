@@ -6,7 +6,7 @@
           <div class="card-body" v-if="!isHidden">
             <div class="row mt-75">
               <div class="col-sm-12 col-lg-12">
-                <div class="card-header d-flex justify-content-lg-between py-1 p-0">
+                <div class="card-header d-flex justify-content-lg-between pb-1 p-0">
                   <h4 class="card-title">Template Links</h4>
 
                   <router-link :to="{ name: 'document.upload' }" class="btn btn-sm btn-primary">

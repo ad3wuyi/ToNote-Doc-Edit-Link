@@ -121,6 +121,21 @@
                   {{ count?.Deleted ?? 0 }}</span>
               </a>
             </li>
+
+            <li>
+              <router-link :to="{ name: 'document.upload' }" class="d-flex align-items-center"
+                href="http://localhost:8080/document" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-link">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                </svg>
+                <span class="menu-item text-truncate">Sign link</span>
+                <span class="badge badge-light-dark rounded-pill ms-auto me-1">
+                  {{ count?.Deleted ?? 0 }}</span>
+              </router-link>
+            </li>
           </ul>
         </li>
 
@@ -193,14 +208,16 @@ const uri = ref("");
 
 watch(
   () => documents.value,
-  (newDoc) => { count.value = newDoc.stats },
+  (newDoc) => {
+    count.value = newDoc.stats;
+  },
   { deep: true }
 );
 
 const page = (params) => {
   isPage.value = params != "" ? params : "New";
   dashboard.value.setStatus(isPage.value);
-  route.push({ name: 'Document', query: { status: (isPage.value).toLowerCase() } })
+  route.push({ name: "Document", query: { status: isPage.value.toLowerCase() } });
 };
 
 const numberOfEnvelopLeft = ref("");
@@ -213,7 +230,7 @@ const remainingEnvelops = (str, arr) => {
 onMounted(() => {
   redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
   uri.value = capitalizeFirstLetter(route.currentRoute.value.query.status);
-  page(uri.value)
+  page(uri.value);
 
   getTeams(token.value);
 
@@ -224,7 +241,7 @@ onMounted(() => {
 
   setTimeout(() => {
     if (teams.value.length > 0) {
-      plan.value = teams.value[0].subscription.plan.name
+      plan.value = teams.value[0].subscription.plan.name;
     }
 
     teams.value.map((team) => {
