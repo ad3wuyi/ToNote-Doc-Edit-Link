@@ -3,7 +3,7 @@
     <div class="sidebar">
       <div class="sidebar-content email-app-sidebar">
         <div class="email-app-menu">
-          <div class="sidebar-menu-list sidebar-nav py-3 px-1" style="width: 260px;">
+          <div class="sidebar-menu-list sidebar-nav" style="width: 260px;">
             <template v-if="userDocument.is_the_owner_of_document === true">
               <div class="list-group list-group-messages">
                 <div class="list-group-item list-group-item-action border-bottom">
