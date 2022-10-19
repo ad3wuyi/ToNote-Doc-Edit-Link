@@ -44,13 +44,13 @@
             </svg></span>
         </span>
       </template>
-      <ParticipantName :userId="tool.user_id" />
+      <!-- <ParticipantName :userId="tool.user_id" /> -->
     </div>
   </Vue3DraggableResizable>
 </template>
 
 <script setup>
-import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
+// // import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
 
 import { defineProps, ref } from "vue";
 import { useActions } from "vuex-composition-helpers/dist";

@@ -42,7 +42,7 @@
           </svg></span>
       </span>
     </template>
-    <ParticipantName :userId="tool.user_id" />
+    <!-- <ParticipantName :userId="tool.user_id" /> -->
   </Vue3DraggableResizable>
 
   <Teleport to="body">
@@ -100,7 +100,7 @@ import SealAppend from "@/components/Notary/Seal/SealAppend.vue";
 import StampAppend from "@/components/Notary/Stamp/StampAppend.vue";
 import SignaturePrintFull from "@/components/Signature/SignaturePrintFull.vue";
 import SignaturePrintInitial from "@/components/Signature/SignaturePrintInitial.vue";
-import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
+// // import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
 
 import { ref, defineProps, defineEmits } from "vue";
 import { useActions, useGetters } from "vuex-composition-helpers/dist";

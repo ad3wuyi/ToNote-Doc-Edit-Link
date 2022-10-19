@@ -1,8 +1,7 @@
 <template>
-  <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_height)"
-    :initW="Number(tool.tool_width)" :minW="70" :minH="30" :x="Number(tool.tool_pos_left)"
-    :y="Number(tool.tool_pos_top)" :parent="true" v-model:x="x" v-model:y="y" v-model:h="h" v-model:w="w"
-    :draggable="profile.id == tool.user_id || userDocument.is_the_owner_of_document == true"
+  <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_height)" :initW="Number(tool.tool_width)" :minW="70"
+    :minH="30" :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)" :parent="true" v-model:x="x" v-model:y="y"
+    v-model:h="h" v-model:w="w" :draggable="profile.id == tool.user_id || userDocument.is_the_owner_of_document == true"
     :resizable="profile.id == tool.user_id || userDocument.is_the_owner_of_document == true"
     @drag-end="onDragEnd($event, tool)" @resize-end="onResizeEnd(tool, w, h)" class="image-area"
     :lockAspectRatio="['Seal', 'Stamp'].includes(tool.tool_name) ? true : false" :handles="['tl', 'tr', 'bl', 'br']"
@@ -45,12 +44,12 @@
           </svg></span>
       </span>
     </template>
-    <ParticipantName :userId="tool.user_id" />
+    <!-- <ParticipantName :userId="tool.user_id" /> -->
   </Vue3DraggableResizable>
 </template>
 
 <script setup>
-import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
+// // import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
 
 import { defineProps, defineEmits, ref } from "vue";
 
