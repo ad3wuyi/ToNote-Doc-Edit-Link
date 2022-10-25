@@ -57,7 +57,7 @@
               <div class="my-auto" v-if="!closed">
                 <table class="table table-borderless mb-5" role="grid" :id="theId">
                   <thead>
-                    <tr role="row">
+                    <tr role="row" class="text-center">
                       <th rowspan="1" colspan="1" style="width: 0px" aria-label="">
                         <input type="checkbox" @click="checkAll" v-model="isCheckAll" class="form-check-input"
                           id="selectAllCheck" />
@@ -102,16 +102,14 @@
                           </template>
                         </td>
                         <td>
-                          <span class="badge rounded-pill badge-light-primary">
-                            <span class="badge rounded-pill badge-light-primary">
-                              https://tonote-doc-link.netlify.app/document/edit/c63ce012-0373-4067-8bc9-2e984b3088a2
-                            </span>
+                          <span class="badge rounded-pill badge-light-dark fw-normal">
+                            https://tonote-doc-link.netlify.app/document/edit/c63ce012-0373-4067-8bc9-2e984b3088a2
                           </span>
                         </td>
 
                         <td>
                           <span class="badge rounded-pill badge-light-success fw-normal">
-                            {{ doc.participants_count }} Participant(s)
+                            {{ doc.participants_count }} response(s)
                           </span>
                         </td>
                         <td>
@@ -164,8 +162,18 @@
                                     </svg>
                                     <span>Edit</span>
                                   </a>
+                                  <a class="dropdown-item" role="button" @click="moveToLocker">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round" class="feather feather-folder me-50">
+                                      <path
+                                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+                                      </path>
+                                    </svg>
+                                    <span>Move to locker</span>
+                                  </a>
                                 </template>
-                                <a class="dropdown-item" href="#" @click="deleteDocument">
+                                <a class="dropdown-item" role="button" @click="deleteDocument">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round" class="feather feather-trash me-50">
