@@ -1,9 +1,9 @@
 <template>
   <div class="sidebar-left custom-md-none" :class="{ show: openSide }">
     <div class="sidebar">
-      <div class="sidebar-content email-app-sidebar">
+      <div class="email-app-sidebar">
         <div class="email-app-menu">
-          <div class="sidebar-menu-list sidebar-nav" style="width: 260px;">
+          <div class="sidebar-menu-list sidebar-nav sticky" style="width: 260px;">
             <template v-if="userDocument.is_the_owner_of_document === true">
               <div class="list-group list-group-messages">
                 <div class="list-group-item list-group-item-action border-bottom">
@@ -164,9 +164,6 @@ import ModalComp from "@/components/ModalComp.vue";
 import { computed, onMounted, ref, defineEmits, defineProps, watch } from "vue";
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
 
-import "jquery/dist/jquery.min";
-import $ from "jquery";
-
 const { userDocument, profile, workingTools } = useGetters({
   profile: "auth/profile",
   userDocument: "document/userDocument",
@@ -269,29 +266,19 @@ onMounted(() => {
         return (isOwner.value = participant.ownerDocument);
     });
   }
-
-  const $sidebar = $('.sidebar-nav');
-  let sidebarTop = $sidebar.position().top != undefined ? $sidebar.position().top : 0;
-
-  $(window).scroll(fixSidebarOnScroll);
-  function fixSidebarOnScroll() {
-    const windowScrollTop = $(window).scrollTop();
-    if (windowScrollTop <= sidebarTop) {
-      $sidebar.removeClass('sticky');
-    } else if (windowScrollTop >= sidebarTop) {
-      if (!$sidebar.hasClass('sticky')) {
-        $sidebar.addClass('sticky');
-      }
-    }
-  }
 });
 </script>
 
 <style scoped>
+.email-app-sidebar {
+  background: transparent !important;
+}
+
 .sidebar-nav.sticky {
   position: fixed !important;
   top: 165px;
   bottom: 0;
+  background-color: #fff;
 }
 
 .isHover {

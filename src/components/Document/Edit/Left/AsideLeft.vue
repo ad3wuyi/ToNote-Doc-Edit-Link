@@ -1,9 +1,9 @@
 <template>
   <div class="sidebar-left">
     <div class="sidebar">
-      <div class="sidebar-content email-app-sidebar">
+      <div class="email-app-sidebar">
         <div class="email-app-menu">
-          <div class="sidebar-menu-list sidebar-nav" style="width: 260px">
+          <div class="sidebar-menu-list sidebar-nav sticky" style="width: 260px">
             <div class="list-group list-group-messages">
               <template v-if="userDocument.is_the_owner_of_document === true">
                 <div class="list-group-item border-bottom">
@@ -238,30 +238,19 @@ onMounted(() => {
   setTimeout(() => {
     hasRole.value = true;
   }, 1000);
-
-  const $sidebar = $(".sidebar-nav");
-  let sidebarTop =
-    $sidebar.position().top != undefined ? $sidebar.position().top : 0;
-
-  $(window).scroll(fixSidebarOnScroll);
-  function fixSidebarOnScroll() {
-    const windowScrollTop = $(window).scrollTop();
-    if (windowScrollTop <= sidebarTop) {
-      $sidebar.removeClass("sticky");
-    } else if (windowScrollTop >= sidebarTop) {
-      if (!$sidebar.hasClass("sticky")) {
-        $sidebar.addClass("sticky");
-      }
-    }
-  }
 });
 </script>
 
 <style scoped>
+.email-app-sidebar {
+  background: transparent !important;
+}
+
 .sidebar-nav.sticky {
   position: fixed !important;
   top: 165px;
   bottom: 0;
+  background-color: #fff;
 }
 
 .btn.custom {
