@@ -71,9 +71,6 @@
                       <th tabindex="0" rowspan="1" colspan="1" style="width: 227px" aria-label="Responses">
                         Response(s)
                       </th>
-                      <th rowspan="1" colspan="1" style="width: 348px" aria-label="Created at">
-                        Created at
-                      </th>
                       <th rowspan="1" colspan="1" style="width: 115px" aria-label="Actions">
                         Actions
                       </th>
@@ -107,7 +104,7 @@
                         <td>
                           <span class="badge rounded-pill badge-light-primary">
                             <span class="badge rounded-pill badge-light-primary">
-                              https://www.tonotte.com
+                              https://tonote-doc-link.netlify.app/document/edit/c63ce012-0373-4067-8bc9-2e984b3088a2
                             </span>
                           </span>
                         </td>
@@ -117,8 +114,6 @@
                             {{ doc.participants_count }} Participant(s)
                           </span>
                         </td>
-                        <td>{{ dateTime(doc.created_at) }}</td>
-
                         <td>
                           <div class="d-flex align-items-center">
                             <button type="button" class="btn btn-sm btn-outline-primary waves-effect"
@@ -271,7 +266,7 @@
 <script setup>
 import { Icon } from "@iconify/vue";
 import ModalComp from "@/components/ModalComp.vue";
-import moment from "moment";
+// import moment from "moment";
 
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-bs5";
@@ -442,9 +437,9 @@ const onError = (e) => {
   alert('Failed to copy texts', e)
 }
 
-const dateTime = (value) => {
-  return moment(value).format("Do MMM YYYY, HH:mm A");
-};
+// const dateTime = (value) => {
+//   return moment(value).format("Do MMM YYYY, HH:mm A");
+// };
 
 const theId = ref("");
 onUpdated(() => {
@@ -455,7 +450,7 @@ onUpdated(() => {
     } else {
       if (filtered.value.length > 0) {
         $("#" + theId.value).DataTable({
-          columnDefs: [{ orderable: false, targets: [0, 5] }],
+          columnDefs: [{ orderable: false, targets: [0, 4] }],
           aaSorting: [],
           lengthMenu: [
             [5, 10, 25, 50, -1],
