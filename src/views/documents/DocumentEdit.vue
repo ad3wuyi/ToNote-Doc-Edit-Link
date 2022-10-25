@@ -155,7 +155,7 @@
     </div>
   </nav>
 
-  <div class="content-area-wrapper container-xxl p-0 mt-5 overflow-x-scroll">
+  <div class="content-area-wrapper container-xxl p-0 mt-5 overflow-x-scroll border-0">
     <AsideLeft :chunkFileId="pageId" :isOpen="editSignerModal" @close="editSignerModal = false" />
     <MainContent @docId="getDocId" @open="open" />
     <AsideRight />

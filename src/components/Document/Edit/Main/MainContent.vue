@@ -41,7 +41,7 @@
               <p>Title: {{ userDocument.title }}</p>
               <!-- <p class="mt-2">Title: {{ userDocument.title }}</p> -->
               <div class="target">
-                <div id="mainWrapper" class="mx-auto" style="width: 820px; height: auto">
+                <div id="mainWrapper" class="mx-auto shadow" style="width: 820px; height: auto">
                   <template v-if="theTools?.length != 0 && documentHeight">
                     <div v-for="(tool, index) in theTools" :key="index" class="parent"
                       :style="{ height: documentHeight + 'px' }">
