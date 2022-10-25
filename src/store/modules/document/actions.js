@@ -1,6 +1,7 @@
 import Document from "@/api/Document";
 import Tool from "@/api/Tool";
 import router from "@/router/router";
+import store from "@/store";
 import { useToast } from "vue-toast-notification";
 const toast = useToast();
 
@@ -70,11 +71,40 @@ export const fileUploads = ({ commit }, formData) => {
 
 export const removeDocument = ({ commit }, formData) => {
   Document.deleteDocument(formData)
-    .then((response) => {
-      commit("SET_DOCUMENTS", response.data.data);
-      commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+    .then(() => {
+      const status = router.currentRoute.value.query.status;
+      const capitalizedStatus = status.charAt(0).toUpperCase() + status.slice(1);
+
+      if (!['Received', 'Deleted'].includes(capitalizedStatus)) {
+        Document.allDocumentByStatus(capitalizedStatus)
+          .then((response) => {
+            commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+          })
+      }
 
       toast.success("Document deleted successfully", {
+        timeout: 5000,
+        position: "top-right",
+      });
+    })
+    .catch((error) => {
+      toast.error(`${error.message}`, {
+        timeout: 5000,
+        position: "top-right",
+      });
+    });
+};
+
+export const retrieveDocument = ({ commit }, formData) => {
+  Document.restoreDocument(formData)
+    .then((response) => {
+      const token = store.getters["auth/token"];
+      Document.allDeletedDocuments(token)
+        .then((response) => {
+          commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+        })
+
+      toast.success(`${response.data.data.message}`, {
         timeout: 5000,
         position: "top-right",
       });
@@ -234,8 +264,7 @@ export const editToolWithAsset = ({ commit }, formData) => {
 
       if (index !== -1) { parsedData.splice(index, 1, data) }
 
-      commit("SET_RESOURCE_TOOLS", parsedData)
-      commit("SET_RESOURCE_TOOL_WITH_ASSET", parsedData)
+      formData.hasAsset ? commit("SET_RESOURCE_TOOL_WITH_ASSET", parsedData) : commit("SET_RESOURCE_TOOLS", parsedData)
     })
     .catch((error) => {
       console.log(error);

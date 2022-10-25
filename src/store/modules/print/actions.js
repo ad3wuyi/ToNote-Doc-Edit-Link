@@ -35,6 +35,9 @@ export const savePrint = ({ commit }, formData) => {
       });
     })
     .catch((error) => {
+      if (error.response.status == 403) {
+        commit("SET_PRINT_NOTIFICATION", true);
+      }
       toast.error(`${error.response.data.data.error}`, {
         timeout: 5000,
         position: "top-right",
@@ -67,4 +70,3 @@ export const removePrint = ({ commit }, formData) => {
       });
     });
 };
-

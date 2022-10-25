@@ -29,43 +29,49 @@
               </div>
             </div>
 
-            <DropZone @drop.prevent="drop" @change="selectedFile">
-              <template #format>Upload PDF</template>
-              <template #input>
-                <input type="file" id="dropzoneFile" multiple class="dropzoneFile" accept=".pdf" />
-              </template>
-            </DropZone>
+            <template v-if="!initialUpload">
+              <DropZone @drop.prevent="drop" @change="selectedFile($event, true)">
+                <template #format>Upload PDF</template>
+                <template #input>
+                  <input type="file" id="dropzoneFile" multiple class="dropzoneFile" accept=".pdf" />
+                </template>
+              </DropZone>
+            </template>
+            <template v-else>
+              <label for="choose" class="btn btn-primary">
+                <input type="file" id="choose" @change="selectedFile($event, true)" multiple accept=".pdf" />
+                Upload more
+              </label>
+            </template>
+          </div>
+        </div>
 
-            <div class="mb-2"></div>
+        <div class="card mb-1 mb-0 shadow-none border" v-for="(prev, index) in previewFile" :key="index">
+          <div class="p-2">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <img data-dz-thumbnail src="@/assets/default.png" class="avatar-sm rounded bg-light" :alt="prev" />
+              </div>
 
-            <div v-for="(prev, index) in previewFile" :key="index">
-              <div class="p-1 mb-1 border rounded">
-                <div class="row align-items-center">
-                  <div class="col-auto">
-                    <img data-dz-thumbnail src="@/assets/default.png" class="avatar-sm rounded bg-light" :alt="prev" />
-                  </div>
+              <div class="col ps-0">
+                <a href="javascript:void(0)" class="text-muted fw-bold" data-dz-name></a>
+                <p class="mb-0" data-dz-size>{{ prev }}</p>
+              </div>
 
-                  <div class="col ps-0">
-                    <a href="javascript:void(0)" class="text-muted fw-bold" data-dz-name></a>
-                    <p class="mb-0" data-dz-size>{{ prev }}</p>
-                  </div>
-
-                  <div class="col-auto">
-                    <a role="button" class="btn btn-sm btn-outline-danger ds-remove filed" data-id="#document_id"
-                      data-name="fileName" @click="removeItem(index)">
-                      X
-                    </a>
-                  </div>
-                </div>
+              <div class="col-auto">
+                <a role="button" class="btn btn-sm btn-outline-danger ds-remove filed" data-id="#document_id"
+                  data-name="fileName" @click="removeItem(index)">
+                  X
+                </a>
               </div>
             </div>
-
-            <div class="mt-1 py-1">
-              <button type="submit" class="btn btn-sm btn-primary d-block ms-auto" :class="{ disabled: !isSelected }">
-                Proceed
-              </button>
-            </div>
           </div>
+        </div>
+
+        <div class="card mb-2 p-2">
+          <button type="submit" class="btn btn-sm btn-primary d-block ms-auto" :class="{ disabled: !isSelected }">
+            Proceed
+          </button>
         </div>
       </Form>
     </div>
@@ -92,6 +98,7 @@ const { fileUploads } = useActions({
   getUserPrints: "print/getUserPrints",
 });
 
+const initialUpload = ref(false);
 const isSubmitted = ref(false);
 const isSelected = ref(false);
 const dropzoneFile = ref("");
@@ -116,15 +123,17 @@ const preparedFile = (files) => {
 };
 
 const drop = (e) => {
+  initialUpload.value = true;
   let dropFiles = (dropzoneFile.value = e.dataTransfer.files);
-  title.value = dropzoneFile.value[0].name.split('.').slice(0, -1).join('.');
+  title.value = dropzoneFile.value[0].name.split(".").slice(0, -1).join(".");
   preparedFile(dropFiles);
   isSelected.value = true;
 };
 
-const selectedFile = (e) => {
+const selectedFile = (e, init) => {
+  initialUpload.value = init;
   let dropFiles = (dropzoneFile.value = e.target.files);
-  title.value = dropFiles[0].name.split('.').slice(0, -1).join('.');
+  title.value = dropFiles[0].name.split(".").slice(0, -1).join(".");
   preparedFile(dropFiles);
   isSelected.value = true;
 };
@@ -134,12 +143,12 @@ const removeItem = (index) => {
   dataFile.value.splice(index, 1);
   if (previewFile.value.length == 0) {
     title.value = "";
-    isSelected.value = false;
+    initialUpload.value = isSelected.value = false;
   }
 };
 
 const onProceed = (params) => {
-  isSubmitted.value = true
+  isSubmitted.value = true;
   const uploadFile = {
     files: toRaw(dataFile.value),
     title: params.title,
@@ -148,7 +157,9 @@ const onProceed = (params) => {
   fileUploads(uploadFile);
   dataFile.value = [];
   previewFile.value = [];
-  setTimeout(() => { isSubmitted.value = false }, 10000);
+  setTimeout(() => {
+    isSubmitted.value = false;
+  }, 10000);
 };
 
 const isLoading = ref(true);

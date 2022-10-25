@@ -2,6 +2,7 @@ import Api from "./Api";
 
 const END_POINT = "documents";
 const DOCUMENT_DELETE = "document-multiple-delete";
+const DOCUMENT_RESTORE = "document-multiple-restore";
 const DOCUMENT_COMPLETE = "document-complete";
 const DOCUMENT_RECEIVED = "documents-received";
 const DOCUMENT_TEMPORAL_DELETED = "documents-temporal-deleted";
@@ -48,6 +49,10 @@ export default {
 
   deleteDocument(data) {
     return Api.post(DOCUMENT_DELETE, data);
+  },
+
+  restoreDocument(data) {
+    return Api.post(DOCUMENT_RESTORE, data);
   },
 
   storeParticipant(data) {

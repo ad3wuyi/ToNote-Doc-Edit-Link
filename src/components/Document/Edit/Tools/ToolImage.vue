@@ -143,7 +143,7 @@ const savePrint = (params) => {
     tool_class: "main-element photo-style",
   };
 
-  editToolWithAsset({ id: props.tool.id, payload: formData });
+  editToolWithAsset({ id: props.tool.id, payload: formData, hasAsset: true });
 };
 
 const emit = defineEmits(["remove"]);

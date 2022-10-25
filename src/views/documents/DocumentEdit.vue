@@ -66,10 +66,18 @@
       </li>
       <!-- other buttons  -->
       <li class="nav-item border-0">
-        <button class="btn btn-sm btn-primary mx-1" @click="doneModal = true">
+        <template v-if="userDocument.is_the_owner_of_document === true">
+          <button class="btn btn-sm btn-primary me-1" @click="doneModal = true">
+            Finish
+          </button>
+        </template>
+        <template v-else>
           Submit
+        </template>
+        
+        <button class="btn btn-sm btn-primary" @click="emailModal = true">
+          Share
         </button>
-        <button class="btn btn-sm btn-primary" @click="emailModal = true">Share</button>
       </li>
     </ul>
   </div>
