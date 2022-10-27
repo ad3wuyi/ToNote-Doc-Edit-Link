@@ -171,6 +171,25 @@ const routes = [
   },
 
   {
+    path: "/notification",
+    name: 'Error',
+    component: () => import("@/components/DocNotFound.vue"),
+    meta: {
+      title: "Error 404 | ToNote",
+      metaTags: [
+        {
+          name: "description",
+          content: "The document not found page of ToNote.",
+        },
+        {
+          property: "og:description",
+          content: "The document not found page of ToNote.",
+        },
+      ],
+    },
+  },
+
+  {
     path: "/:catchAll(.*)",
     component: () => import("@/components/NotFound.vue"),
     meta: {

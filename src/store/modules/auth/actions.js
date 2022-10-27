@@ -49,6 +49,8 @@ export const userVerifyOTP = ({ commit }, formData) => {
           hasError = error.response.data?.errors?.root
         }
 
+        router.push({ name: 'Error' })
+
         toast.error(hasError, {
           timeout: 5000,
           position: "top-right",
