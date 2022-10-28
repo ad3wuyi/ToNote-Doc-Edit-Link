@@ -1,5 +1,6 @@
 export default {
   documents: [],
+  statistics: {},
   documentsByStatus: [],
   document: [],
   doneEditing: null,
@@ -7,4 +8,5 @@ export default {
   resourceToolWithAsset: [],
   isOpenModal: false,
   message: null,
+  cancel: false,
 };

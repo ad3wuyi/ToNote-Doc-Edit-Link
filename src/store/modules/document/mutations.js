@@ -2,12 +2,20 @@ export const SET_DOCUMENTS = (state, docs) => {
   state.documents = docs;
 };
 
+export const SET_DOCUMENT_STATISTICS = (state, docStats) => {
+  state.statistics = docStats;
+};
+
 export const SET_DOCUMENTS_BY_STATUS = (state, docs) => {
   state.documentsByStatus = docs;
 };
 
 export const SET_DOCUMENT = (state, doc) => {
   state.document = doc;
+};
+
+export const SET_CANCEL = (state, cancel) => {
+  state.cancel = cancel;
 };
 
 export const SET_DOCUMENT_DONE = (state, done) => {

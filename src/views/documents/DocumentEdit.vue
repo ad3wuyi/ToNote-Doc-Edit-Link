@@ -71,13 +71,9 @@
             Finish
           </button>
         </template>
-        <template v-else>
-          Submit
-        </template>
-        
-        <button class="btn btn-sm btn-primary" @click="emailModal = true">
-          Share
-        </button>
+        <template v-else> Submit </template>
+
+        <button class="btn btn-sm btn-primary" @click="emailModal = true">Share</button>
       </li>
     </ul>
   </div>
@@ -136,6 +132,13 @@
             <button class="btn btn-sm btn-outline-primary waves-effect" @click="exportPDF">
               Download
             </button></a>
+        </li>
+        <li class="nav-item" v-if="canCancel && userDocument.is_the_owner_of_document === true">
+          <a class="nav-link nav-link-style">
+            <button class="btn btn-sm btn-outline-primary waves-effect" @click="cancel">
+              Cancel
+            </button>
+          </a>
         </li>
         <li class="nav-item" v-show="hasRole">
           <a class="nav-link nav-link-style">
@@ -444,7 +447,7 @@ import StampCreate from "@/components/Notary/Stamp/StampCreate.vue";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, onUnmounted } from "vue";
 
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
 import { useRouter } from "vue-router";
@@ -457,20 +460,36 @@ import $ from "jquery";
 const toast = useToast();
 const route = useRouter();
 
-const { token, profile, teams, userDocument, isOpenModal, OTPFlag } = useGetters({
+const {
+  token,
+  profile,
+  teams,
+  userDocument,
+  isOpenModal,
+  canCancel,
+  OTPFlag,
+} = useGetters({
   token: "auth/token",
   profile: "auth/profile",
   teams: "team/teams",
   userDocument: "document/userDocument",
   isOpenModal: "document/isOpenModal",
+  canCancel: "document/canCancel",
   OTPFlag: "auth/OTPFlag",
 });
 
-const { removeNotification, getUserDocument, getTools, getUserPrints } = useActions({
+const {
+  removeNotification,
+  getUserDocument,
+  getTools,
+  removeRecentUpload,
+  getUserPrints,
+} = useActions({
   doneEditing: "document/doneEditing",
   removeNotification: "document/removeNotification",
   getUserDocument: "document/getUserDocument",
   getTools: "document/getTools",
+  removeRecentUpload: "document/removeRecentUpload",
   getUserPrints: "print/getUserPrints",
 });
 
@@ -637,6 +656,10 @@ onMounted(() => {
       window.Tawk_API.hideWidget();
     }
   }, 2000);
+});
+
+onUnmounted(() => {
+  removeRecentUpload();
 });
 </script>
 

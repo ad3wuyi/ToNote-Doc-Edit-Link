@@ -16,6 +16,13 @@ export const getUserDocuments = ({ commit }, token) => {
     });
 };
 
+export const getStatistics = ({ commit }, token) => {
+  Document.documentStatistics(token)
+    .then((response) => {
+      commit("SET_DOCUMENT_STATISTICS", response.data);
+    })
+};
+
 export const getUserDocumentByStatus = ({ commit }, formData) => {
   Document.allDocumentByStatus(formData)
     .then((response) => {
@@ -59,6 +66,7 @@ export const fileUploads = ({ commit }, formData) => {
   Document.storeFileUpload(formData)
     .then((response) => {
       commit("SET_DOCUMENT", response.data.data);
+      commit("SET_CANCEL", true);
       router.push({ name: "document.prepare" });
     })
     .catch((error) => {
@@ -69,20 +77,46 @@ export const fileUploads = ({ commit }, formData) => {
     });
 };
 
+export const removeRecentUpload = ({ commit }) => {
+  commit("SET_CANCEL", false);
+};
+
 export const removeDocument = ({ commit }, formData) => {
   Document.deleteDocument(formData)
-    .then(() => {
+    .then((response) => {
+      const token = store.getters["auth/token"];
       const status = router.currentRoute.value.query.status;
-      const capitalizedStatus = status.charAt(0).toUpperCase() + status.slice(1);
 
-      if (!['Received', 'Deleted'].includes(capitalizedStatus)) {
-        Document.allDocumentByStatus(capitalizedStatus)
+      if (status != undefined) {
+        const capitalizedStatus = status.charAt(0).toUpperCase() + status.slice(1);
+
+        Document.documentStatistics(token)
           .then((response) => {
-            commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+            commit("SET_DOCUMENT_STATISTICS", response.data);
           })
+
+        if (!['Received', 'Deleted'].includes(capitalizedStatus)) {
+          Document.allDocumentByStatus(capitalizedStatus)
+            .then((response) => {
+              commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+            })
+        } else {
+          if (capitalizedStatus == 'Received') {
+            Document.allReceivedDocuments(token)
+              .then((response) => {
+                commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+              })
+          }
+          if (capitalizedStatus == 'Deleted') {
+            Document.allDeletedDocuments(token)
+              .then((response) => {
+                commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+              })
+          }
+        }
       }
 
-      toast.success("Document deleted successfully", {
+      toast.success(`${response.data.data.message}`, {
         timeout: 5000,
         position: "top-right",
       });
@@ -102,6 +136,11 @@ export const retrieveDocument = ({ commit }, formData) => {
       Document.allDeletedDocuments(token)
         .then((response) => {
           commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+        }).then(() => {
+          Document.documentStatistics(token)
+            .then((response) => {
+              commit("SET_DOCUMENT_STATISTICS", response.data);
+            })
         })
 
       toast.success(`${response.data.data.message}`, {
@@ -228,7 +267,6 @@ export const resourceTools = ({ commit }, formData) => {
     })
     .catch((error) => {
       console.log(error.response);
-      // return window.location.reload();
     });
 };
 

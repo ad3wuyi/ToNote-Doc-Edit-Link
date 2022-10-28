@@ -1,5 +1,5 @@
 <template>
-  <div class="app-content content">
+  <div class="app-content content mb-5">
     <div class="content-wrapper container-xxl p-0">
       <div class="content-body">
         <div class="card">
@@ -11,12 +11,7 @@
 
                   <router-link :to="{ name: 'document.upload' }" class="btn btn-sm btn-primary"
                     v-show="dashboard.status != 'Deleted'">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                      class="feather feather-plus">
-                      <line x1="12" y1="5" x2="12" y2="19"></line>
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg> Create New Link
+                    <Icon icon="carbon:add" /> Create New Link
                   </router-link>
                 </div>
 
@@ -25,16 +20,15 @@
                     <div class="col-lg-6 col-md-6 col-sm-12 my-auto custom-sm" v-show="hasMultipleSelection">
                       <template v-if="dashboard.status == 'Deleted'">
                         <button type="button" class="btn btn-sm btn-primary waves-effect waves-float waves-light me-1"
-                          @click="deleteDocument('restore', '')">
+                          @click="deleteDocument('restore')">
                           Restore
                         </button>
-                        <button type="button" class="btn btn-sm btn-outline-danger"
-                          @click="deleteDocument('delete', '')">
+                        <button type="button" class="btn btn-sm btn-outline-danger" @click="deleteDocument('delete')">
                           Permanently Delete
                         </button>
                       </template>
                       <template v-else>
-                        <button type="button" class="btn btn-sm btn-primary" @click="deleteDocument('delete', '')">
+                        <button type="button" class="btn btn-sm btn-primary" @click="deleteDocument('delete')">
                           Delete
                         </button>
                       </template>
@@ -60,69 +54,71 @@
                 </div>
               </div>
 
-              <div v-if="closed" class="text-center">
-                <div class="my-4">
-                  <span class="spinner-border spinner-border-sm"></span> Loading...
-                </div>
-              </div>
-              <div class="my-auto" v-else>
-                <template v-if="dashboard.status != 'Sign'">
-                  <table class="table table-borderless mb-5" role="grid" :id="theId">
-                    <thead>
-                      <tr role="row">
-                        <th rowspan="1" colspan="1" style="width: 0px" aria-label="">
-                          <input type="checkbox" @click="checkAll" v-model="isCheckAll" class="form-check-input"
-                            id="selectAllCheck" />
-                        </th>
-                        <th rowspan="1" colspan="1" style="width: 258px" aria-label="Name">
-                          Name
-                        </th>
-                        <th rowspan="1" colspan="1" style="width: 348px" aria-label="Assigned To">
-                          Record
-                        </th>
-                        <th class="sorting" tabindex="0" rowspan="1" colspan="1" style="width: 227px"
-                          aria-label="Created Date: activate to sort column ascending">
-                          Last updated
-                        </th>
-                        <th rowspan="1" colspan="1" style="width: 115px" aria-label="Actions">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <template v-if="filtered.length > 0">
-                        <tr class="even" v-for="(doc, index) in filtered" :key="index">
-                          <td class="control" tabindex="0">
-                            <input type="checkbox" v-model="docIds" @change="updateCheckAll" :value="doc.id"
-                              class="form-check-input" />
-                          </td>
-                          <td>
-                            <template v-if="dashboard.status == 'Deleted'">
+              <div class="my-auto" v-if="!closed">
+                <table class="table table-borderless mb-5" role="grid" :id="theId">
+                  <thead>
+                    <tr role="row" class="text-center">
+                      <th rowspan="1" colspan="1" style="width: 0px" aria-label="">
+                        <input type="checkbox" @click="checkAll" v-model="isCheckAll" class="form-check-input"
+                          id="selectAllCheck" />
+                      </th>
+                      <th rowspan="1" colspan="1" style="width: 258px" aria-label="Name">
+                        Name
+                      </th>
+                      <th rowspan="1" colspan="1" style="width: 348px" aria-label="Link">
+                        Link
+                      </th>
+                      <th tabindex="0" rowspan="1" colspan="1" style="width: 227px" aria-label="Responses">
+                        <span>Response(s)</span>
+                      </th>
+                      <th rowspan="1" colspan="1" style="width: 115px" aria-label="Actions">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template v-if="filtered.length > 0">
+                      <tr class="even" v-for="(doc, index) in filtered" :key="index">
+                        <td class="control" tabindex="0">
+                          <input type="checkbox" v-model="docIds" @change="updateCheckAll" :value="doc.id"
+                            class="form-check-input" />
+                        </td>
+                        <td>
+                          <template v-if="dashboard.status == 'Deleted'">
+                            <img src="@/assets/doc.png" class="me-1" alt="file-icon" height="15" />
+                            <span class="ml-1">{{ doc.title }}</span>
+                          </template>
+                          <template v-else>
+                            <a role="button" @click="
+                              getDocument({
+                                id: doc.id,
+                                status: dashboard.status,
+                                isView: true,
+                              })
+                            ">
                               <img src="@/assets/doc.png" class="me-1" alt="file-icon" height="15" />
                               <span class="ml-1">{{ doc.title }}</span>
-                            </template>
-                            <template v-else>
-                              <a role="button" @click="
-                                getDocument({
-                                  id: doc.id,
-                                  status: dashboard.status,
-                                  isView: true,
-                                })
-                              ">
-                                <img src="@/assets/doc.png" class="me-1" alt="file-icon" height="15" />
-                                <span class="ml-1">{{ doc.title }}</span>
-                              </a>
-                            </template>
-                          </td>
-                          <td>
-                            <span class="badge rounded-pill badge-light-primary">
-                              {{ doc.participants_count }} Participant(s)
-                            </span>
-                          </td>
+                            </a>
+                          </template>
+                        </td>
+                        <td>
+                          <span class="badge rounded-pill badge-light-dark fw-normal">
+                            https://tonote-doc-link.netlify.app/document/edit/c63ce012-0373-4067-8bc9-2e984b3088a2
+                          </span>
+                        </td>
 
-                          <td>{{ dateTime(doc.updated_at) }}</td>
-
-                          <td>
+                        <td>
+                          <span class="badge rounded-pill badge-light-success fw-normal">
+                            {{ doc.participants_count }} response(s)
+                          </span>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <button type="button" class="btn btn-sm btn-outline-primary waves-effect"
+                              v-clipboard:copy="`https://tonote-doc-link.netlify.app/document/edit/c63ce012-0373-4067-8bc9-2e984b3088a2`"
+                              v-clipboard:success="onCopy" v-clipboard:error="onError">
+                              Copy link
+                            </button>
                             <div class="dropdown">
                               <button type="button"
                                 class="btn btn-sm dropdown-toggle hide-arrow py-0 waves-effect waves-float waves-light"
@@ -166,19 +162,18 @@
                                     </svg>
                                     <span>Edit</span>
                                   </a>
-                                </template>
-                                <template v-else>
-                                  <a class="dropdown-item" href="#" @click="deleteDocument('restore', doc.id)">
+                                  <a class="dropdown-item" role="button" @click="moveToLocker">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
                                       fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                      stroke-linejoin="round" class="feather feather-rotate-ccw me-50">
-                                      <polyline points="1 4 1 10 7 10"></polyline>
-                                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                                      stroke-linejoin="round" class="feather feather-folder me-50">
+                                      <path
+                                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z">
+                                      </path>
                                     </svg>
-                                    <span>Restore</span>
+                                    <span>Move to locker</span>
                                   </a>
                                 </template>
-                                <a class="dropdown-item" href="#" @click="deleteDocument('delete', doc.id)">
+                                <a class="dropdown-item" role="button" @click="deleteDocument">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round" class="feather feather-trash me-50">
@@ -191,25 +186,27 @@
                                 </a>
                               </div>
                             </div>
-                          </td>
-                        </tr>
-                      </template>
-                      <template v-else>
-                        <tr class="even text-center">
-                          <td colspan="5" class="pt-3">
-                            <i>No Items Found in
-                              {{
-                              dashboard.status == "Deleted" ? "Trash" : dashboard.status
-                              }}</i>
-                          </td>
-                        </tr>
-                      </template>
-                    </tbody>
-                  </table>
-                </template>
-                <template v-else>
-                  <DashboardSignLink />
-                </template>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                    <template v-else>
+                      <tr class="even text-center">
+                        <td colspan="5" class="pt-3">
+                          <i>No Items Found in
+                            {{
+                            dashboard.status == "Deleted" ? "Trash" : dashboard.status
+                            }}</i>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+              <div v-else class="text-center">
+                <div class="my-4">
+                  <span class="spinner-border spinner-border-sm"></span> Loading...
+                </div>
               </div>
             </div>
           </div>
@@ -227,7 +224,6 @@
                   </router-link>
                 </div>
 
-                <DashboardViewDocument :docs="theDoc" />
               </div>
             </div>
             <!-- </div> -->
@@ -276,11 +272,9 @@
 </template>
 
 <script setup>
+import { Icon } from "@iconify/vue";
 import ModalComp from "@/components/ModalComp.vue";
-import DashboardViewDocument from "./DashboardViewDocument.vue";
-import DashboardSignLink from "./DashboardSignLink.vue";
-
-import moment from "moment";
+// import moment from "moment";
 
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-bs5";
@@ -343,23 +337,19 @@ watch(
       theDoc.value = newUserDoc;
     }
 
-    closed.value = true;
     if (newDocStatus != oldDocStatus) {
       closed.value = true;
+      filtered.value = newDocStatus
       setTimeout(() => {
         closed.value = false;
-      }, 300);
-      filtered.value = newDocStatus;
+      }, 1000);
     }
-    setTimeout(() => {
-      closed.value = false;
-    }, 1000);
 
     if (newStatus != oldStatus) {
       isCheckAll.value = hasMultipleSelection.value = isHidden.value = false;
       docIds.value = [];
 
-      if (!["Received", "Deleted"].includes(newStatus)) {
+      if (!['Received', 'Deleted'].includes(newStatus)) {
         return getUserDocumentByStatus(newStatus);
       }
       if (newStatus == "Received") {
@@ -411,10 +401,7 @@ const updateCheckAll = () => {
 };
 
 const action = ref("");
-const deleteDocument = (params, id) => {
-  if (id != "") {
-    docIds.value = [id];
-  }
+const deleteDocument = (params) => {
   if (docIds.value.length == 0) {
     return toast.error("Select a file to delete", {
       timeout: 5000,
@@ -447,9 +434,20 @@ const proceedToDelete = () => {
   }, 1000);
 };
 
-const dateTime = (value) => {
-  return moment(value).format("Do MMM YYYY, hh:mm A");
-};
+const message = 'Copied to clipboard!'
+const onCopy = () => {
+  return toast.default(message, {
+    timeout: 5000,
+    position: "top-right",
+  });
+}
+const onError = (e) => {
+  alert('Failed to copy texts', e)
+}
+
+// const dateTime = (value) => {
+//   return moment(value).format("Do MMM YYYY, HH:mm A");
+// };
 
 const theId = ref("");
 onUpdated(() => {
@@ -470,17 +468,17 @@ onUpdated(() => {
         });
       }
     }
-  }, 100);
+  }, 600);
 });
 
 onMounted(() => {
-  // getUserDocuments(token.value);
+  getUserDocuments(token.value);
   getUserPrints(token.value);
-  // getReceivedDocuments(token.value);
-  getUserDocumentByStatus(dashboard.value.status);
-  // setTimeout(() => {
-  //   getDeletedDocuments(token.value);
-  // }, 500);
+  getReceivedDocuments(token.value);
+  getDeletedDocuments(token.value);
+  setTimeout(() => {
+    getUserDocumentByStatus(dashboard.value.status);
+  }, 500);
 });
 </script>
 

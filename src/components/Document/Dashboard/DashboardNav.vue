@@ -60,8 +60,8 @@
                   <polyline points="22 4 12 14.01 9 11.01"></polyline>
                 </svg>
                 <span class="menu-item text-truncate">Completed</span>
-                <span class="badge badge-light-warning rounded-pill ms-auto me-1">
-                  {{ count?.Completed ?? 0 }}</span>
+                <span class="badge badge-light-success rounded-pill ms-auto me-1">
+                  {{ count?.completed ?? 0 }}</span>
               </a>
             </li>
 
@@ -75,7 +75,7 @@
                 </svg>
                 <span class="menu-item text-truncate">Received</span>
                 <span class="badge badge-light-warning rounded-pill ms-auto me-1">
-                  {{ count?.Received ?? 0 }}</span>
+                  {{ count?.received ?? 0 }}</span>
               </a>
             </li>
 
@@ -89,7 +89,7 @@
                 </svg>
                 <span class="menu-item text-truncate">Sent</span>
                 <span class="badge badge-light-warning rounded-pill ms-auto me-1">
-                  {{ count?.Sent ?? 0 }}</span>
+                  {{ count?.sent ?? 0 }}</span>
               </a>
             </li>
 
@@ -103,8 +103,8 @@
                   <line x1="9" y1="14" x2="15" y2="14"></line>
                 </svg>
                 <span class="menu-item text-truncate">Draft</span>
-                <span class="badge badge-light-warning rounded-pill ms-auto me-1">
-                  {{ count?.New ?? 0 }}</span>
+                <span class="badge badge-light-info rounded-pill ms-auto me-1">
+                  {{ count?.draft ?? 0 }}</span>
               </a>
             </li>
 
@@ -117,13 +117,13 @@
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                 </svg>
                 <span class="menu-item text-truncate">Deleted Files</span>
-                <span class="badge badge-light-warning rounded-pill ms-auto me-1">
-                  {{ count?.Deleted ?? 0 }}</span>
+                <span class="badge badge-light-danger rounded-pill ms-auto me-1">
+                  {{ count?.deleted ?? 0 }}</span>
               </a>
             </li>
 
-            <li>
-              <router-link :to="{ name: 'document.upload' }" class="d-flex align-items-center">
+            <li :class="{ active: isPage == 'Sign' }">
+              <a class="d-flex align-items-center" role="button" @click="page('Sign')">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                   class="feather feather-link">
@@ -131,9 +131,10 @@
                   <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                 </svg>
                 <span class="menu-item text-truncate">Sign link</span>
-                <span class="badge badge-light-dark rounded-pill ms-auto me-1">
-                  {{ count?.Deleted ?? 0 }}</span>
-              </router-link>
+                <p title="Coming Soon" class="coming-soon badge rounded-pill badge-light-warning">
+                  Coming Soon
+                </p>
+              </a>
             </li>
           </ul>
         </li>
@@ -184,13 +185,16 @@ import { useGetters, useActions } from "vuex-composition-helpers/dist";
 import { useRouter } from "vue-router";
 const route = useRouter();
 
-const { token, teams, documents } = useGetters({
+const { token, teams, statistics } = useGetters({
   token: "auth/token",
   teams: "team/teams",
-  documents: "document/documents",
+  statistics: "document/statistics",
 });
 
-const { getTeams } = useActions({ getTeams: "team/getTeams" });
+const { getTeams, getStatistics } = useActions({
+  getTeams: "team/getTeams",
+  getStatistics: "document/getStatistics",
+});
 
 defineProps({ open: Boolean });
 
@@ -206,11 +210,10 @@ const upgradeUserAccount = ref("");
 const uri = ref("");
 
 watch(
-  () => documents.value,
+  () => statistics.value,
   (newDoc) => {
-    count.value = newDoc.stats;
-  },
-  { deep: true }
+    count.value = newDoc;
+  }
 );
 
 const page = (params) => {
@@ -232,6 +235,7 @@ onMounted(() => {
   page(uri.value);
 
   getTeams(token.value);
+  getStatistics(token.value);
 
   upgradeUserAccount.value =
     process.env.NODE_ENV != "development"
@@ -255,6 +259,14 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.coming-soon {
+  display: inline-block;
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
 .main-menu .navbar-header .navbar-brand .brand-logo img {
   max-width: 100%;
   width: auto;

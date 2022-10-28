@@ -1,6 +1,7 @@
 import Api from "./Api";
 
 const END_POINT = "documents";
+const DOCUMENT_STATISTICS = "document-statistics";
 const DOCUMENT_DELETE = "document-multiple-delete";
 const DOCUMENT_RESTORE = "document-multiple-restore";
 const DOCUMENT_COMPLETE = "document-complete";
@@ -17,6 +18,10 @@ const DOCUMENT_RESOURCE_TOOLS = "document-resource-tools";
 export default {
   allDocuments(token) {
     return Api.get(`${END_POINT}`, token);
+  },
+
+  documentStatistics(token) {
+    return Api.get(`${DOCUMENT_STATISTICS}`, token);
   },
 
   allDocumentByStatus(status) {
