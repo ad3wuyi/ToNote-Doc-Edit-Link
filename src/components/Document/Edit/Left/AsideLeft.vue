@@ -27,10 +27,6 @@
                     </button>
                   </div>
                 </div>
-
-                <div class="list-group-item border-bottom">
-                  Tool Management
-                </div>
               </template>
               <template v-else>
                 <div class="list-group-item border-bottom">
@@ -40,6 +36,9 @@
                   </p>
                 </div>
               </template>
+              <div class="list-group-item border-bottom">
+                Tool Management
+              </div>
               <div v-show="!hasRole" class="text-center mt-5">
                 <span class="spinner-border spinner-border-sm"></span>
                 Loading...
