@@ -143,8 +143,12 @@
         <li class="nav-item" v-show="hasRole">
           <a class="nav-link nav-link-style">
             <button class="btn btn-sm btn-primary waves-effect" @click="done">
-              Submit
-            </button></a>
+              <template v-if="userDocument.is_the_owner_of_document === true">
+                Finish
+              </template>
+              <template v-else> Submit </template>
+            </button>
+          </a>
         </li>
         <li class="nav-item d-none d-sm-block" v-if="userDocument.is_the_owner_of_document === true">
           <a class="nav-link nav-link-style">
