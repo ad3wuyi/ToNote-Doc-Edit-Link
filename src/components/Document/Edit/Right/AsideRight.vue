@@ -27,7 +27,7 @@
                         data-bs-placement="top" :title="init.user.first_name + ' ' + init.user.last_name"
                         class="avatar pull-up" :data-bs-original-title="init.user.first_name" :data-id="init.id"
                         :key="index">
-                        <div class="avatar-content">
+                        <div class="avatar-content text-uppercase">
                           {{
                           getFirstLetters(init.user.first_name + " " + init.user.last_name)
                           }}
