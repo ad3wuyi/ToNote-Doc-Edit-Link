@@ -73,7 +73,7 @@
         </template>
         <template v-else> Submit </template>
 
-        <button class="btn btn-sm btn-primary" @click="emailModal = true">Share</button>
+        <button class="btn btn-sm btn-primary" @click="createModal = true">Share</button>
       </li>
     </ul>
   </div>
@@ -152,9 +152,9 @@
         </li>
         <li class="nav-item d-none d-sm-block" v-if="userDocument.is_the_owner_of_document === true">
           <a class="nav-link nav-link-style">
-            <button class="btn btn-sm btn-primary waves-effect waves-float waves-light" @click="emailModal = true"
+            <button class="btn btn-sm btn-primary waves-effect waves-float waves-light" @click="createModal = true"
               style="margin-right: 5px">
-              Share document
+              Create
             </button>
           </a>
         </li>
@@ -172,14 +172,25 @@
     <AsideBottom :chunkFileId="pageId" :isOpen="addParticipantModal" @close="addParticipantModal = false" />
   </div>
 
-  <ModalComp :show="emailModal" :footer="false" @close="emailModal = false">
+  <ModalComp :show="createModal" :size="'modal-md'" :closeBtn="false">
     <template #header>
-      <h5 class="modal-title">Invite participant</h5>
+      <h5 class="modal-title">Created Link</h5>
     </template>
 
     <template #body>
-      <p class="text-center">The following people will be invited to this document</p>
-      <MailToParticipant @close="emailModal = false" @formSubmitted="sharedDocument" :isLoading="loading" />
+      <p class="text-center">Kindly find the generated link below</p>
+      <p class="text-center" style="font-size:10px">
+        <code class="text-center">https://tonote-doc-link.netlify.app/document/edit/{{userDocument.id}}</code>
+      </p>
+      <button type="button" class="btn btn-sm btn-outline-dark waves-effect d-block mx-auto" v-clipboard:copy="
+        `https://tonote-doc-link.netlify.app/document/edit/${userDocument.id}`
+      " v-clipboard:success="onCopy" v-clipboard:error="onError">
+        Copy link
+      </button>
+    </template>
+
+    <template #footer>
+      <button class="btn btn-sm btn-primary" @click="createModal=false">Finish</button>
     </template>
   </ModalComp>
 
@@ -430,7 +441,7 @@ import MainContent from "@/components/Document/Edit/Main/MainContent.vue";
 
 import AsideBottom from "@/components/Document/Edit/Mobile/AsideBottom.vue";
 
-import MailToParticipant from "@/components/Document/Edit/MailToParticipant.vue";
+// // import MailToParticipant from "@/components/Document/Edit/MailToParticipant.vue";
 
 import LeftTabWrapper from "@/components/Tab/TabLeftNav/LeftTabWrapper.vue";
 import LeftTabList from "@/components/Tab/TabLeftNav/LeftTabList.vue";
@@ -505,7 +516,7 @@ const isOpen = ref(false);
 const pageId = ref("");
 const doneModal = ref(false);
 // const doneDataUrl = ref("");
-const emailModal = ref(false);
+const createModal = ref(false);
 const affixModal = ref(false);
 const updateSignatureModal = ref(false);
 const sealModal = ref(false);
@@ -539,6 +550,17 @@ watch(
     }
   }
 );
+
+const message = "Copied to clipboard!";
+const onCopy = () => {
+  return toast.default(message, {
+    timeout: 5000,
+    position: "top-right",
+  });
+};
+const onError = (e) => {
+  alert("Failed to copy texts", e);
+};
 
 const open = (params) => {
   isOpen.value = params;
@@ -609,17 +631,17 @@ const done = () => {
 //   doneEditing(dataObj);
 // };
 
-const sharedDocument = () => {
-  // exportPDF("done");
+// const sharedDocument = () => {
+//   // exportPDF("done");
 
-  loading.value = true;
+//   loading.value = true;
 
-  setTimeout(() => {
-    // isDoneEdit();
-    loading.value = false;
-    emailModal.value = false;
-  }, 3000);
-};
+//   setTimeout(() => {
+//     // isDoneEdit();
+//     loading.value = false;
+//     createModal.value = false;
+//   }, 3000);
+// };
 
 const confirmEdit = () => {
   if (!userDocument.value.is_the_owner_of_document) {

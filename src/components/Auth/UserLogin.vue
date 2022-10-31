@@ -6,9 +6,6 @@
     <div v-if="isLoading" class="grid">
       <PreLoader />
     </div>
-    <div v-else>
-      <LoginUsers />
-    </div>
   </div>
 </template>
 

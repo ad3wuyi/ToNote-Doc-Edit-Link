@@ -70,7 +70,7 @@
 
         <div class="card mb-2 p-2">
           <button type="submit" class="btn btn-sm btn-primary d-block ms-auto" :class="{ disabled: !isSelected }">
-            Proceed
+            Prepare
           </button>
         </div>
       </Form>
