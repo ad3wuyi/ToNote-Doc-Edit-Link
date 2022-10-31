@@ -131,9 +131,6 @@
                   <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                 </svg>
                 <span class="menu-item text-truncate">Sign link</span>
-                <p title="Coming Soon" class="coming-soon badge rounded-pill badge-light-warning">
-                  Coming Soon
-                </p>
               </a>
             </li>
           </ul>
@@ -259,14 +256,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.coming-soon {
-  display: inline-block;
-  padding: 2px 5px;
-  border-radius: 5px;
-  font-size: 10px;
-  font-weight: 700;
-}
-
 .main-menu .navbar-header .navbar-brand .brand-logo img {
   max-width: 100%;
   width: auto;
