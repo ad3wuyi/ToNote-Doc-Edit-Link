@@ -5,7 +5,7 @@
     <div class="navbar-header d-lg-block d-none">
       <ul class="nav navbar-nav">
         <li class="nav-item">
-          <router-link :to="{name:'Document'}" class="navbar-brand me-0">
+          <router-link :to="{ name: 'Document' }" class="navbar-brand me-0">
             <img src="@/assets/logo-dark.png" alt="ToNote" height="26" />
           </router-link>
         </li>
@@ -30,7 +30,7 @@
       </div>
 
       <div class="d-lg-none d-md-block text-center">
-        <router-link :to="{name:'Document'}" class="navbar-brand me-0">
+        <router-link :to="{ name: 'Document' }" class="navbar-brand me-0">
           <img src="@/assets/logo-dark.png" alt="ToNote" height="20" />
         </router-link>
       </div>

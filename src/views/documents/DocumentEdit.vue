@@ -180,7 +180,7 @@
     <template #body>
       <p class="text-center">Kindly find the generated link below</p>
       <p class="text-center" style="font-size:10px">
-        <code class="text-center">https://tonote-doc-link.netlify.app/document/edit/{{userDocument.id}}</code>
+        <code class="text-center">https://tonote-doc-link.netlify.app/document/edit/{{ userDocument.id }}</code>
       </p>
       <button type="button" class="btn btn-sm btn-outline-dark waves-effect d-block mx-auto" v-clipboard:copy="
         `https://tonote-doc-link.netlify.app/document/edit/${userDocument.id}`
@@ -190,7 +190,7 @@
     </template>
 
     <template #footer>
-      <button class="btn btn-sm btn-primary" @click="createModal=false">Finish</button>
+      <button class="btn btn-sm btn-primary" @click="createModal = false">Finish</button>
     </template>
   </ModalComp>
 
