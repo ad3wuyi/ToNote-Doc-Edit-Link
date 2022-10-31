@@ -48,8 +48,10 @@ onMounted(() => {
 
   if (environment.value == 'development') return
 
-  if (token.value != undefined)
-    setAuthentication({ token: token.value, status: status.value, documentId: documentId.value });
+  if (token.value == undefined)
+    return (window.location.href = process.env.VUE_APP_URL_WEBSITE);
+
+  setAuthentication({ token: token.value, status: status.value, documentId: documentId.value });
 });
 </script>
 
