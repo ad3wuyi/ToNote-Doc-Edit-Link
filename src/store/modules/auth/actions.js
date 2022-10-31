@@ -8,7 +8,11 @@ export const logoutUser = ({ commit }, formData) => {
     .then(() => {
       window.localStorage.removeItem('vuex');
 
-      router.push({ name: 'Login' });
+      if (process.env.NODE_ENV == 'development') {
+        router.push({ name: "Login" });
+      } else {
+        window.location.href = process.env.VUE_APP_URL_WEBSITE;
+      }
     })
     .catch((error) => {
       if (error.response.status === 401 || error.response.status == 422) {
