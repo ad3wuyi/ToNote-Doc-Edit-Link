@@ -8,7 +8,7 @@
     </div>
 
     <div class="grid-4">
-      <div class="btn-group my-1" role="group" aria-label="Basic radio toggle button group">
+      <div class="btn-group" role="group" style="margin:10px 0;">
         <input type="radio" class="btn-check" name="signature" id="btnradiogenerate" autocomplete="off" />
         <label class="btn btn-sm btn-primary waves-effect" for="btnradiogenerate" @click="save">Generate</label>
         <input type="radio" class="btn-check" name="signature" id="btnradioclear" autocomplete="off" ref="generate" />
@@ -20,22 +20,21 @@
           <template v-if="sign.category == 'Draw'">
             <div class="grid-draw">
               <img :src="sign.file" class="img-thumbnail" style="width: 155px" alt="Signature" />
-              <template v-if="imgBase64.length > 0">
-                <cropper ref="cropped" :src="imgBase64" />
-                <div class="text-center">
-                  <button class="btn btn-sm btn-primary" @click="cropImage">Crop</button>
-                </div>
-                <template v-if="prevImg != ''">
-                  <img :src="prevImg" class="img-thumbnail d-block mx-auto" alt="preview" />
-                </template>
-                <template v-else>
-                  <img src="@/assets/empty.png" class="img-thumbnail d-block mx-auto" width="150" alt="preview" />
-                </template>
-                <!-- <img :src="imgBase64" class="img-thumbnail" style="width:155px" alt="Signature" /> -->
-              </template>
             </div>
           </template>
         </div>
+        <template v-if="imgBase64.length > 0">
+          <cropper ref="cropped" :src="imgBase64" />
+          <div class="text-center">
+            <button class="btn btn-sm btn-primary my-1" @click="cropImage">Crop</button>
+          </div>
+          <template v-if="prevImg != ''">
+            <img :src="prevImg" class="img-thumbnail d-block mx-auto" alt="preview" />
+          </template>
+          <template v-else>
+            <img src="@/assets/empty.png" class="img-thumbnail d-block mx-auto" width="150" alt="preview" />
+          </template>
+        </template>
       </template>
       <template v-else>
         <template v-if="imgBase64.length > 0">
@@ -252,7 +251,7 @@ const cropped = ref("");
 const prevImg = ref("");
 
 const cropImage = () => {
-  const result = cropped.value[0].getResult();
+  const result = cropped.value.getResult();
   prevImg.value = result.canvas.toDataURL();
   generate.value.checked = true;
 
@@ -361,6 +360,7 @@ canvas {
   display: grid;
   gap: 10px;
   grid-template-columns: 1fr;
+  margin-bottom: 1rem;
 }
 
 @media screen and (max-width: 991.5px) {
