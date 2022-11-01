@@ -107,11 +107,7 @@
         </div>
         <div class="col-12">
           <div class="my-2">
-            <div class="d-flex justify-content-start align-items-center">
-              <label class="form-label me-1" for="message-column">Message</label>
-              <span title="Coming Soon" class="coming-soon form-label text-warning">
-                Coming Soon</span>
-            </div>
+            <label class="form-label me-1" for="message-column">Message</label>
             <textarea name="message" v-model="message" class="form-control" id="message-column" rows="4"
               placeholder="Type your message here"></textarea>
           </div>
@@ -209,12 +205,5 @@ const inviteParticipant = () => {
 </script>
 
 <style scoped>
-.coming-soon {
-  display: inline-block;
-  padding: 1px 4px;
-  border-radius: 5px;
-  font-size: 8px;
-  font-weight: bolder;
-  border: 1px solid #ff9f439c !important;
-}
+
 </style>
