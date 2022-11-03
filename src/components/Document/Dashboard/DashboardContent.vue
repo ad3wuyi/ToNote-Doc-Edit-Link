@@ -245,10 +245,8 @@
                   <button class="btn btn-sm btn-secondary me-1" @click="isHidden = !isHidden">
                     &larr; Back
                   </button>
-
-                  <router-link :to="{ name: 'document.edit', params: { document_id: editId } }"
-                    class="btn btn-sm btn-primary">Edit
-                  </router-link>
+                  <a :href="redirectToESign + '?qt=' + token + '&di=' + editId + '&ed=1'"
+                    class="btn btn-sm btn-primary">Edit</a>
                 </div>
 
                 <DashboardViewDocument :docs="theDoc" />
