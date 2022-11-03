@@ -132,7 +132,7 @@
                 </svg>
                 <span class="menu-item text-truncate">Sign link</span>
                 <span class="badge badge-light-success rounded-pill ms-auto me-1">
-                  New</span>
+                  {{ links?.length ?? 0 }}</span>
               </a>
             </li>
           </ul>
@@ -184,15 +184,17 @@ import { useGetters, useActions } from "vuex-composition-helpers/dist";
 import { useRouter } from "vue-router";
 const route = useRouter();
 
-const { token, teams, statistics } = useGetters({
+const { token, teams, statistics, links } = useGetters({
   token: "auth/token",
   teams: "team/teams",
   statistics: "document/statistics",
+  links: "signLink/links",
 });
 
-const { getTeams, getStatistics } = useActions({
+const { getTeams, getStatistics, getLinks } = useActions({
   getTeams: "team/getTeams",
   getStatistics: "document/getStatistics",
+  getLinks: "signLink/getLinks",
 });
 
 defineProps({ open: Boolean });
@@ -216,7 +218,7 @@ watch(
 );
 
 const page = (params) => {
-  isPage.value = params != "" ? params : "New";
+  isPage.value = params != "" ? params : "sign";
   dashboard.value.setStatus(isPage.value);
   route.push({ name: "Document", query: { status: isPage.value.toLowerCase() } });
 };
@@ -231,8 +233,9 @@ const remainingEnvelops = (str, arr) => {
 onMounted(() => {
   redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
   uri.value = capitalizeFirstLetter(route.currentRoute.value.query.status);
-  page(uri.value);
+  page(uri.value ? uri.value : 'Sign');
 
+  getLinks()
   getTeams(token.value);
   getStatistics(token.value);
 

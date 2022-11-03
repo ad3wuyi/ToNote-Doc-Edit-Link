@@ -13,6 +13,16 @@ const DocumentDashboard = () =>
     /* webpackChunkName: "document" */ "@/views/documents/DocumentDashboard.vue"
   );
 
+const DocumentView = () =>
+  import(
+    /* webpackChunkName: "show-link" */ "@/views/documents/DocumentView.vue"
+  );
+
+const DocumentAuditTrail = () =>
+  import(
+    /* webpackChunkName: "audit-trail" */ "@/views/documents/DocumentAuditTrail.vue"
+  );
+
 const DocumentUpload = () =>
   import(
     /* webpackChunkName: "upload-document" */ "@/views/documents/DocumentUpload.vue"
@@ -77,7 +87,7 @@ const routes = [
     name: "Document",
     component: DocumentDashboard,
     meta: {
-      title: "User | Document - ToNote",
+      title: "Sign Link | Document - ToNote",
       metaTags: [
         {
           name: "description",
@@ -126,6 +136,42 @@ const routes = [
             {
               property: "og:description",
               content: "The document edit page of ToNote.",
+            },
+          ],
+        },
+      },
+      {
+        path: "show/:document_id",
+        name: "document.show",
+        component: DocumentView,
+        meta: {
+          title: "View | ToNote",
+          metaTags: [
+            {
+              name: "description",
+              content: "The view link page of ToNote.",
+            },
+            {
+              property: "og:description",
+              content: "The view link page of ToNote.",
+            },
+          ],
+        },
+      },
+      {
+        path: "audit/:document_id",
+        name: "document.audit",
+        component: DocumentAuditTrail,
+        meta: {
+          title: "Audit Trail | ToNote",
+          metaTags: [
+            {
+              name: "description",
+              content: "The audit trail page of ToNote.",
+            },
+            {
+              property: "og:description",
+              content: "The audit trail page of ToNote.",
             },
           ],
         },

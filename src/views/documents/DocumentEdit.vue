@@ -37,7 +37,7 @@
           </button>
           <div class="dropdown-menu dropdown-menu-end" data-popper-placement="bottom-start">
             <!-- <div class="dropdown-divider"></div> -->
-            <template v-if="userDocument.is_the_owner_of_document === true">
+            <template v-if="link.is_the_owner_of_document === true">
               <a class="dropdown-item btn d-flex align-items-center" role="button" @click="addParticipantModal = true">
                 <Icon icon="akar-icons:plus" class="me-1" />
                 Add participants
@@ -66,7 +66,7 @@
       </li>
       <!-- other buttons  -->
       <li class="nav-item border-0">
-        <template v-if="userDocument.is_the_owner_of_document === true">
+        <template v-if="link.is_the_owner_of_document === true">
           <button class="btn btn-sm btn-primary me-1" @click="doneModal = true">
             Finish
           </button>
@@ -133,7 +133,7 @@
               Download
             </button></a>
         </li>
-        <li class="nav-item" v-if="canCancel && userDocument.is_the_owner_of_document === true">
+        <li class="nav-item" v-if="canCancel && link.is_the_owner_of_document === true">
           <a class="nav-link nav-link-style">
             <button class="btn btn-sm btn-outline-primary waves-effect" @click="cancel">
               Cancel
@@ -143,14 +143,14 @@
         <li class="nav-item" v-show="hasRole">
           <a class="nav-link nav-link-style">
             <button class="btn btn-sm btn-primary waves-effect" @click="done">
-              <template v-if="userDocument.is_the_owner_of_document === true">
+              <template v-if="link.is_the_owner_of_document === true">
                 Finish
               </template>
               <template v-else> Submit </template>
             </button>
           </a>
         </li>
-        <li class="nav-item d-none d-sm-block" v-if="userDocument.is_the_owner_of_document === true">
+        <li class="nav-item d-none d-sm-block" v-if="link.is_the_owner_of_document === true">
           <a class="nav-link nav-link-style">
             <button class="btn btn-sm btn-primary waves-effect waves-float waves-light" @click="createModal = true"
               style="margin-right: 5px">
@@ -180,10 +180,10 @@
     <template #body>
       <p class="text-center">Kindly find the generated link below</p>
       <p class="text-center" style="font-size:10px">
-        <code class="text-center">https://tonote-doc-link.netlify.app/document/edit/{{ userDocument.id }}</code>
+        <code class="text-center">https://tonote-doc-link.netlify.app/document/edit/{{ link.id }}</code>
       </p>
       <button type="button" class="btn btn-sm btn-outline-dark waves-effect d-block mx-auto" v-clipboard:copy="
-        `https://tonote-doc-link.netlify.app/document/edit/${userDocument.id}`
+        `https://tonote-doc-link.netlify.app/document/edit/${link.id}`
       " v-clipboard:success="onCopy" v-clipboard:error="onError">
         Copy link
       </button>
@@ -389,6 +389,27 @@
     </template>
   </ModalComp>
 
+  <ModalComp :show="cancelModal" :size="'modal-sm'" @close="cancelModal = false">
+    <template #header>
+      <h4 class="modal-title text-danger mb-0">
+        <Icon icon="eva:alert-triangle-outline" style="margin-bottom: 3px" />
+        Alert
+      </h4>
+    </template>
+
+    <template #body>
+      <h3 class="text-center">Are you sure?</h3>
+      <p class="text-center"><i>Any changes will not be saved!</i></p>
+    </template>
+
+    <template #footer>
+      <button class="btn btn-sm btn-primary" @click="deletePermanently">
+        <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+        Proceed
+      </button>
+    </template>
+  </ModalComp>
+
   <ModalComp :show="doneModal" :size="'modal-sm'" @close="doneModal = false">
     <template #header>
       <h4 class="modal-title text-danger mb-0">
@@ -479,32 +500,34 @@ const {
   token,
   profile,
   teams,
-  userDocument,
+  link,
   isOpenModal,
   canCancel,
   OTPFlag,
 } = useGetters({
   token: "auth/token",
   profile: "auth/profile",
-  teams: "team/teams",
-  userDocument: "document/userDocument",
-  isOpenModal: "document/isOpenModal",
-  canCancel: "document/canCancel",
   OTPFlag: "auth/OTPFlag",
+  teams: "team/teams",
+  link: "signLink/link",
+  canCancel: "signLink/canCancel",
+  isOpenModal: "document/isOpenModal",
 });
 
 const {
   removeNotification,
-  getUserDocument,
+  getLink,
   getTools,
-  removeRecentUpload,
+  removeCancel,
+  removeDocument,
   getUserPrints,
 } = useActions({
   doneEditing: "document/doneEditing",
   removeNotification: "document/removeNotification",
-  getUserDocument: "document/getUserDocument",
+  getLink: "signLink/getLink",
+  removeCancel: "signLink/removeCancel",
+  removeDocument: "signLink/removeDocument",
   getTools: "document/getTools",
-  removeRecentUpload: "document/removeRecentUpload",
   getUserPrints: "print/getUserPrints",
 });
 
@@ -515,6 +538,7 @@ const openNotificationModal = ref(isOpenModal.value);
 const isOpen = ref(false);
 const pageId = ref("");
 const doneModal = ref(false);
+const cancelModal = ref(false);
 // const doneDataUrl = ref("");
 const createModal = ref(false);
 const affixModal = ref(false);
@@ -566,6 +590,15 @@ const open = (params) => {
   isOpen.value = params;
 };
 
+const cancel = () => {
+  cancelModal.value = true;
+};
+
+const deletePermanently = () => {
+  removeDocument({ documents: [{ document_id: uri.value, permanent_delete: true }] });
+  route.push({ name: "Dashboard" });
+};
+
 const getDocId = (params) => {
   pageId.value = params;
 };
@@ -614,12 +647,12 @@ const exportPDF = () => {
 
     // if (params == "done") { return doneDataUrl.value = canvas.toDataURL() }
 
-    doc.save(userDocument.value.title + ".pdf");
+    doc.save(link.value.title + ".pdf");
   });
 };
 
 const done = () => {
-  // if (!userDocument.value.is_the_owner_of_document) { exportPDF("done") }
+  // if (!link.value.is_the_owner_of_document) { exportPDF("done") }
   doneModal.value = true;
 };
 
@@ -644,7 +677,7 @@ const done = () => {
 // };
 
 const confirmEdit = () => {
-  if (!userDocument.value.is_the_owner_of_document) {
+  if (!link.value.is_the_owner_of_document) {
     // isDoneEdit();
     window.location.href =
       redirectToUserDashboard.value + "/redirecting?qt=" + token.value;
@@ -658,7 +691,7 @@ const confirmEdit = () => {
 onMounted(() => {
   redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
   uri.value = route.currentRoute.value.params.document_id;
-  getUserDocument(uri.value);
+  getLink(uri.value);
   getTools(uri.value);
 
   if (token.value == null) return;
@@ -685,7 +718,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  removeRecentUpload();
+  removeCancel();
 });
 </script>
 

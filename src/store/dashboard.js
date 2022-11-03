@@ -2,7 +2,7 @@ import { ref } from "vue";
 
 export const dashboard = ref({
   token: null,
-  status: 'New',
+  status: 'Sign',
   isOpened: false,
 
   setToken(value) { this.token = value },

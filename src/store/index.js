@@ -14,6 +14,7 @@ import company from "@/store/modules/company";
 import team from "@/store/modules/team";
 import document from "@/store/modules/document";
 import print from "@/store/modules/print";
+import signLink from "@/store/modules/signLink";
 import tool from "@/store/modules/tool";
 
 const modules = {
@@ -22,6 +23,7 @@ const modules = {
   team,
   document,
   print,
+  signLink,
   tool,
 };
 

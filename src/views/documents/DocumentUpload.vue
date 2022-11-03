@@ -4,19 +4,19 @@
   </div>
 
   <section class="custom-width" v-else>
-    <div class="mb-2">
-      <h4 class="text-dark">ToNote Link</h4>
-      <ul>
-        <li>Lorem ipsum dolor sit amet consectetur adipisicing elit.</li>
-        <li>Lorem ipsum dolor sit amet consectetur.</li>
-        <li>Lorem ipsum dolor sit.</li>
-      </ul>
-    </div>
-
     <div class="grid" v-show="isSubmitted">
       <PreLoader />
     </div>
     <div v-show="!isSubmitted">
+      <div class="mb-2">
+        <h4 class="text-dark">ToNote Link</h4>
+        <ul>
+          <li>Lorem ipsum dolor sit amet consectetur adipisicing elit.</li>
+          <li>Lorem ipsum dolor sit amet consectetur.</li>
+          <li>Lorem ipsum dolor sit.</li>
+        </ul>
+      </div>
+
       <Form @submit="onProceed" :validation-schema="schema" v-slot="{ errors }">
         <div class="card">
           <div class="card-body">
@@ -94,8 +94,7 @@ import { useActions } from "vuex-composition-helpers/dist";
 
 const { fileUploads } = useActions({
   setAuthForDocumentUpload: "auth/setAuthForDocumentUpload",
-  fileUploads: "document/fileUploads",
-  getUserPrints: "print/getUserPrints",
+  fileUploads: "signLink/fileUploads",
 });
 
 const initialUpload = ref(false);

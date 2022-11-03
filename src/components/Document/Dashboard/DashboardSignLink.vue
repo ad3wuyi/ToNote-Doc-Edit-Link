@@ -1,7 +1,7 @@
 <template>
   <table class="table table-borderless mb-5" role="grid" :id="theSignId">
     <thead>
-      <tr role="row" class="text-center">
+      <tr role="row">
         <th rowspan="1" colspan="1" style="width: 0px" aria-label="">
           <input type="checkbox" @click="checkAll" v-model="isCheckAll" class="form-check-input" />
         </th>
@@ -14,33 +14,52 @@
       </tr>
     </thead>
     <tbody>
-      <tr class="even" v-for="(doc, index) in 20" :key="index">
+      <tr class="even" v-for="(doc, index) in links" :key="index">
         <td class="control" tabindex="0">
           <input type="checkbox" v-model="docIds" @change="updateCheckAll" :value="index" class="form-check-input" />
         </td>
-        <td>file name</td>
         <td>
-          <span class="badge rounded-pill badge-light-dark fw-normal">
-            https://tonote-doc-link.netlify.app/document/edit/c63ce012-0373-4067-8bc9-2e984b3088a2
+          <a role="button" class="text-truncate" style="width: 200px" @click="
+            getDocument({
+              id: doc.id,
+              status: dashboard.status,
+              isView: true,
+            })
+          ">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="feather feather-file-text">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            {{ doc.title }}
+          </a>
+        </td>
+        <td>
+          <span class="badge rounded-pill badge-light-dark fw-normal" style="font-size:10px">
+            {{ linkUrl + "/document/edit/" + doc.id }}
           </span>
         </td>
-
         <td>
-          <spa role="button" class="badge rounded-pill badge-light-success fw-normal" @click="editModal = true">
-            12 response(s)
+          <span role="button" class="badge rounded-pill badge-light-success fw-normal" @click="editModal = true">
+            {{ doc.participants_count }}
+            response(s)
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
               class="feather feather-edit">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
-          </spa>
+          </span>
         </td>
         <td>
           <div class="d-flex align-items-center">
-            <button type="button" class="btn btn-sm btn-outline-primary waves-effect" v-clipboard:copy="
-              `https://tonote-doc-link.netlify.app/document/edit/c63ce012-0373-4067-8bc9-2e984b3088a2`
-            " v-clipboard:success="onCopy" v-clipboard:error="onError">
+            <button type="button" class="btn btn-sm btn-outline-primary waves-effect"
+              v-clipboard:copy="linkUrl + '/document/edit/' + doc.id" v-clipboard:success="onCopy"
+              v-clipboard:error="onError">
               Copy link
             </button>
             <div class="dropdown">
@@ -154,13 +173,16 @@
 import ModalComp from "@/components/ModalComp.vue";
 import { dashboard } from "@/store/dashboard";
 import { onMounted, ref, watch } from "vue";
+import { useActions, useGetters } from "vuex-composition-helpers/dist";
+
+import { useToast } from "vue-toast-notification";
+import { useRouter } from "vue-router";
 
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-bs5";
 import $ from "jquery";
 
-import { useToast } from "vue-toast-notification";
-
+const route = useRouter();
 const toast = useToast();
 
 const editModal = ref(false);
@@ -168,6 +190,21 @@ const isHidden = ref(false);
 const hasMultipleSelection = ref(false);
 const isCheckAll = ref(false);
 const docIds = ref([]);
+
+const { links } = useGetters({
+  links: "signLink/links",
+  link: "signLink/link",
+  receivedDocuments: "signLink/ReceivedDocuments",
+});
+
+const { getLinks } = useActions({
+  getLinks: "signLink/getLinks",
+  getLink: "signLink/getLink",
+  removeLink: "signLink/removeLink",
+  retrieveLink: "signLink/retrieveLink",
+  getLinkByStatus: "signLink/getLinkByStatus",
+  getDeletedLinks: "signLink/getDeletedLinks",
+});
 
 watch(
   () => [dashboard.value.status],
@@ -178,6 +215,23 @@ watch(
     }
   }
 );
+
+// const editId = ref("");
+const getDocument = (params) => {
+  // getLink(params.id);
+
+  if (params.isView && params.status == "Sign") {
+    return route.push({ name: "document.show", params: { document_id: params.id } });
+  }
+
+  if (params.isEdit === true) {
+    return route.push({ name: "document.edit", params: { document_id: params.id } });
+  }
+
+  // isLoading.value = isHidden.value = true;
+  // editId.value = params.id;
+  // setTimeout(() => (isLoading.value = false), 2000);
+};
 
 const checkAll = () => {
   isCheckAll.value = !isCheckAll.value;
@@ -212,7 +266,14 @@ const onError = (e) => {
 };
 
 const theSignId = ref("");
+const linkUrl = ref("");
 onMounted(() => {
+  linkUrl.value =
+    process.env.NODE_ENV === "development"
+      ? process.env.VUE_APP_URL_AUTH_LOCAL
+      : process.env.VUE_APP_URL_SIGN_LINK;
+
+  getLinks();
   theSignId.value = dashboard.value.status;
   setTimeout(() => {
     if ($.fn.dataTable.isDataTable("#" + theSignId.value)) {

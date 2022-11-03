@@ -38,8 +38,7 @@
 
               <br class="d-none" />
 
-              <p>Title: {{ userDocument.title }}</p>
-              <!-- <p class="mt-2">Title: {{ userDocument.title }}</p> -->
+              <p>Title: {{ link.title }}</p>
               <div class="target">
                 <div id="mainWrapper" class="mx-auto shadow" style="width: 820px; height: auto">
                   <template v-if="theTools?.length != 0 && documentHeight">
@@ -49,13 +48,13 @@
                         <template v-if="tool.tool_name == 'Photo'">
                           <ToolImage @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: userDocument.is_the_owner_of_document,
+                            isOwner: link.is_the_owner_of_document,
                           }" />
                         </template>
                         <template v-else>
                           <ToolDefault @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: userDocument.is_the_owner_of_document,
+                            isOwner: link.is_the_owner_of_document,
                           }" />
                         </template>
                       </template>
@@ -63,26 +62,26 @@
                         <template v-if="tool.tool_name == 'Textarea'">
                           <ToolTextArea @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: userDocument.is_the_owner_of_document,
+                            isOwner: link.is_the_owner_of_document,
                           }" />
                         </template>
                         <template v-else-if="tool.tool_name == 'Photo'">
                           <ToolImage @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: userDocument.is_the_owner_of_document,
+                            isOwner: link.is_the_owner_of_document,
                           }" />
                         </template>
                         <template v-else>
                           <ToolWithCommonAsset @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: userDocument.is_the_owner_of_document,
+                            isOwner: link.is_the_owner_of_document,
                           }" :print="tool" />
                         </template>
                       </template>
                     </div>
                   </template>
 
-                  <div v-for="(doc, index) in userDocument.documentUploads" :key="index" class="position-relative">
+                  <div v-for="(doc, index) in link.documentUploads" :key="index" class="position-relative">
                     <RenderPage :file="doc.file_url" @click="$emit('docId', doc.id)" @documentHeight="getHeight" />
                   </div>
                 </div>
@@ -116,11 +115,11 @@ import RenderPage from "./RenderPage.vue";
 import { ref, onMounted, watch } from "vue";
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
 
-const { profile, userDocument, workingTools, toolWithAsset } = useGetters({
+const { profile, link, workingTools, toolWithAsset } = useGetters({
   profile: "auth/profile",
   workingTools: "document/workingTools",
   toolWithAsset: "document/toolWithAsset",
-  userDocument: "document/userDocument",
+  link: "signLink/link",
 });
 
 const { removeTool } = useActions({
