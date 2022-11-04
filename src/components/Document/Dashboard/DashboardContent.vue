@@ -95,8 +95,7 @@
                     <thead>
                       <tr role="row">
                         <th rowspan="1" colspan="1" style="width: 0px" aria-label="">
-                          <input type="checkbox" @click="checkAll" v-model="isCheckAll" class="form-check-input"
-                            id="selectAllCheck" />
+                          <input type="checkbox" @click="checkAll" v-model="isCheckAll" class="form-check-input" />
                         </th>
                         <th rowspan="1" colspan="1" style="width: 258px" aria-label="Name">
                           Name
@@ -232,7 +231,7 @@
                   </table>
                 </template>
                 <template v-else>
-                  <DashboardSignLink />
+                  <DashboardSignLink @showDeleteButton="showButton" />
                 </template>
               </div>
             </div>
@@ -392,6 +391,10 @@ watch(
     }
   }
 );
+
+const showButton = (params) => {
+  hasMultipleSelection.value = params
+}
 
 const editId = ref("");
 const getDocument = (params) => {

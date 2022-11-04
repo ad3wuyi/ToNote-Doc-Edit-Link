@@ -105,7 +105,7 @@ export const fileUploads = ({ commit }, formData) => {
     .then((response) => {
       commit("SET_LINK", response.data.data);
       commit("SET_CANCEL", true);
-      router.push({ name: "document.prepare" });
+      router.push({ name: "SignLink.prepare" });
     })
     .catch((error) => {
       toast.error(`${error.response.data.data.error}`, {
@@ -131,7 +131,35 @@ export const editLink = ({ commit }, formData) => {
 export const removeLink = ({ commit }, formData) => {
   SignLink.deleteLink(formData)
     .then((response) => {
+      console.log(response.data.data)
       commit("SET_LINKS", response.data.data);
+    })
+    .catch((error) => {
+      toast.error(`${error.message}`, {
+        timeout: 5000,
+        position: "top-right",
+      });
+    });
+};
+
+export const retrieveLink = ({ commit }, formData) => {
+  SignLink.restoreDocument(formData)
+    .then((response) => {
+      const token = store.getters["auth/token"];
+      SignLink.allDeletedDocuments(token)
+        .then((response) => {
+          commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+        }).then(() => {
+          SignLink.documentStatistics(token)
+            .then((response) => {
+              commit("SET_DOCUMENT_STATISTICS", response.data);
+            })
+        })
+
+      toast.success(`${response.data.data.message}`, {
+        timeout: 5000,
+        position: "top-right",
+      });
     })
     .catch((error) => {
       toast.error(`${error.message}`, {

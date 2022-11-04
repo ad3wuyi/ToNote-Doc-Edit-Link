@@ -16,7 +16,7 @@
     <tbody>
       <tr class="even" v-for="(doc, index) in links" :key="index">
         <td class="control" tabindex="0">
-          <input type="checkbox" v-model="docIds" @change="updateCheckAll" :value="index" class="form-check-input" />
+          <input type="checkbox" v-model="docIds" @change="updateCheckAll" :value="doc.id" class="form-check-input" />
         </td>
         <td>
           <a role="button" class="text-truncate" style="width: 200px" @click="
@@ -167,12 +167,33 @@
       </button>
     </template> -->
   </ModalComp>
+
+  <ModalComp :show="isDeleteOrRestore" :size="'modal-sm'" @close="isDeleteOrRestore = false">
+    <template #header>
+      <h4 class="modal-title text-danger">Alert</h4>
+    </template>
+
+    <template #body>
+      <h3 class="text-center">Are you sure?</h3>
+      <template v-if="dashboard.status == 'Deleted' && action != 'restore'">
+        <p class="text-center"><i>You won't be able to undo this!</i></p>
+      </template>
+    </template>
+
+    <template #footer>
+      <button type="button" class="btn btn-sm btn-primary d-block ms-auto" :class="{ disabled: loading }"
+        @click="proceedToDelete">
+        <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+        <span>Proceed</span>
+      </button>
+    </template>
+  </ModalComp>
 </template>
 
 <script setup>
 import ModalComp from "@/components/ModalComp.vue";
 import { dashboard } from "@/store/dashboard";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, defineEmits } from "vue";
 import { useActions, useGetters } from "vuex-composition-helpers/dist";
 
 import { useToast } from "vue-toast-notification";
@@ -182,6 +203,8 @@ import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-bs5";
 import $ from "jquery";
 
+const emit = defineEmits(['close'])
+
 const route = useRouter();
 const toast = useToast();
 
@@ -189,6 +212,8 @@ const editModal = ref(false);
 const isHidden = ref(false);
 const hasMultipleSelection = ref(false);
 const isCheckAll = ref(false);
+const isDeleteOrRestore = ref(false);
+const loading = ref(false);
 const docIds = ref([]);
 
 const { links } = useGetters({
@@ -197,12 +222,11 @@ const { links } = useGetters({
   receivedDocuments: "signLink/ReceivedDocuments",
 });
 
-const { getLinks } = useActions({
+const { getLinks, removeLink, retrieveLink } = useActions({
   getLinks: "signLink/getLinks",
   getLink: "signLink/getLink",
   removeLink: "signLink/removeLink",
   retrieveLink: "signLink/retrieveLink",
-  getLinkByStatus: "signLink/getLinkByStatus",
   getDeletedLinks: "signLink/getDeletedLinks",
 });
 
@@ -237,22 +261,73 @@ const checkAll = () => {
   isCheckAll.value = !isCheckAll.value;
   docIds.value = [];
   if (isCheckAll.value) {
-    for (let i = 0; i < 20; i++) {
-      docIds.value.push(i);
+    for (const key in links.value) {
+      docIds.value.push(links.value[key].id);
     }
   }
-
+  console.log(docIds.value)
   hasMultipleSelection.value = docIds.value.length > 0 ? true : false;
+  emit('showDeleteButton', hasMultipleSelection.value)
 };
 
 const updateCheckAll = () => {
   hasMultipleSelection.value = docIds.value.length - 1 >= 0 ? true : false;
-  if (docIds.value.length == 20) {
+  emit('showDeleteButton', hasMultipleSelection.value)
+  if (docIds.value.length == links.value.length) {
     isCheckAll.value = true;
   } else {
     isCheckAll.value = false;
   }
 };
+
+const action = ref("");
+const linkId = ref("");
+const deleteDocument = (params, id) => {
+  if (id == '') {
+    return toast.error("Select a file to delete", {
+      timeout: 5000,
+      position: "top-right",
+    });
+  }
+  linkId.value = id;
+
+  // if (id != "") {
+  //   docIds.value = [id];
+  // }
+  // if (docIds.value.length == 0) {
+  //   console.log(docIds)
+  //   return toast.error("Select a file to delete", {
+  //     timeout: 5000,
+  //     position: "top-right",
+  //   });
+  // }
+
+  action.value = params;
+  isDeleteOrRestore.value = true;
+};
+
+// const docObj = ref([])
+const proceedToDelete = () => {
+  loading.value = true;
+  // docObj.value = [];
+  // const isPermanent = route.currentRoute.value.query.status == "deleted" ? true : false;
+  // for (const key in docIds.value) {
+  //   docObj.value.push({ document_id: docIds.value[key], permanent_delete: isPermanent });
+  // }
+
+  action.value == "delete"
+    ? removeLink(linkId.value)
+    : retrieveLink(linkId.value);
+
+  docIds.value = [];
+
+  hasMultipleSelection.value = isCheckAll.value = false;
+  isDeleteOrRestore.value = loading.value = false;
+  setTimeout(() => {
+    getLinks();
+  }, 1000);
+};
+
 
 const message = "Copied to clipboard!";
 const onCopy = () => {
