@@ -5,7 +5,7 @@
         <div class="email-app-menu">
           <div class="sidebar-menu-list sidebar-nav sticky shadow" style="width: 260px">
             <div class="list-group list-group-messages">
-              <template v-if="userDocument.is_the_owner_of_document === true">
+              <template v-if="isTheOwner === true">
                 <div class="list-group-item border-bottom">
                   <span class="align-middle"> Edit Tools</span>
                 </div>
@@ -42,7 +42,7 @@
                 <div class="list-group-item border-bottom">
                   <label class="form-label">Good day to you!</label>
                   <p class="text-capitalize">
-                    {{ profile.first_name }} {{ profile.last_name }}.
+                    {{ profile?.first_name }} {{ profile?.last_name }}.
                   </p>
                 </div>
               </template>
@@ -96,7 +96,7 @@
 import ModalComp from "@/components/ModalComp.vue";
 import AddSigner from "@/components/Document/Edit/Left/AddSigner.vue";
 
-import { ref, onMounted, defineProps, watch, onUpdated, computed } from "vue";
+import { ref, onMounted, defineProps, watch } from "vue";
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
 
 import "jquery/dist/jquery.min";
@@ -104,18 +104,13 @@ import $ from "jquery";
 
 import ToolKits from "@/components/Document/Edit/Tools/ToolKits.vue";
 
-const { profile, userDocument, workingTools } = useGetters({
+const { profile, link } = useGetters({
   profile: "auth/profile",
-  userDocument: "document/userDocument",
-  workingTools: "document/workingTools",
+  link: "signLink/link",
 });
 
 const { resourceTools } = useActions({
-  resourceTools: "document/resourceTools",
-});
-
-workingTools.value = computed(() => {
-  return workingTools.value;
+  resourceTools: "signLink/resourceTools",
 });
 
 /* ------- // *** Props from views\documents\DocumentEdit.vue (PARENT) ------ */
@@ -228,11 +223,9 @@ function removeMouseMoveListener() {
   $(document).unbind("mousemove");
 }
 
-onUpdated(() => {
-  console.log('Updated')
-});
-
+const isTheOwner = ref('')
 onMounted(() => {
+  isTheOwner.value = link.value?.is_the_owner_of_document
   setTimeout(() => {
     hasRole.value = true;
   }, 1000);

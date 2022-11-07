@@ -1,6 +1,6 @@
 <template>
   <div class="card rounded-0 mb-0 p-1 d-lg-none d-sm-block d-md-block custom-position">
-    <ul class="nav d-flex justify-content-between align-items-center" v-show="hasRole">
+    <ul class="nav d-flex justify-content-between align-items-center">
       <!-- signature tool  -->
       <li class="nav-item d-none">
         <div class="btn-group">
@@ -55,17 +55,15 @@
 
             <a @click="affixModal = true" class="dropdown-item" role="button" id="viewSignature">My Signature</a>
 
-            <template v-if="plan == 'Business'">
-              <a class="dropdown-item" role="button" @click="sealModal = true">My Seal</a>
-              <a class="dropdown-item" role="button" @click="stampModal = true">My Stamp</a>
-            </template>
+            <!-- <a class="dropdown-item" role="button" @click="sealModal = true">My Seal</a>
+              <a class="dropdown-item" role="button" @click="stampModal = true">My Stamp</a> -->
           </div>
         </div>
       </li>
       <!-- other buttons  -->
       <li class="nav-item border-0">
         <button class="btn btn-sm btn-primary me-1" @click="doneModal = true">
-          Finish
+          Submit
         </button>
 
         <button class="btn btn-sm btn-primary" @click="createModal = true">Share</button>
@@ -87,7 +85,7 @@
               </svg></a>
           </li>
         </ul>
-        <ul class="nav navbar-nav bookmark-icons" v-show="hasRole">
+        <ul class="nav navbar-nav bookmark-icons">
           <li class="nav-item d-none d-sm-block">
             <div class="btn-group">
               <button type="button" class="btn btn-primary btn-sm waves-effect waves-float waves-light">
@@ -108,13 +106,6 @@
               </button>
               <div class="dropdown-menu dropdown-menu-end" data-popper-placement="bottom-start">
                 <a @click="affixModal = true" class="dropdown-item" href="#" id="viewSignature">My Signature</a>
-                <div class="d-none">
-                  <template v-if="plan == 'Business'">
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#" @click="sealModal = true">My Seal</a>
-                    <a class="dropdown-item" href="#" @click="stampModal = true">My Stamp</a>
-                  </template>
-                </div>
               </div>
             </div>
           </li>
@@ -128,25 +119,10 @@
               Download
             </button></a>
         </li>
-        <li class="nav-item" v-if="canCancel">
-          <a class="nav-link nav-link-style">
-            <button class="btn btn-sm btn-outline-primary waves-effect" @click="cancel">
-              Cancel
-            </button>
-          </a>
-        </li>
-        <li class="nav-item" v-show="hasRole">
+        <li class="nav-item">
           <a class="nav-link nav-link-style">
             <button class="btn btn-sm btn-primary waves-effect" @click="done">
-              Finish
-            </button>
-          </a>
-        </li>
-        <li class="nav-item d-none d-sm-block">
-          <a class="nav-link nav-link-style">
-            <button class="btn btn-sm btn-primary waves-effect waves-float waves-light" @click="createModal = true"
-              style="margin-right: 5px">
-              Create
+              Submit
             </button>
           </a>
         </li>
@@ -380,27 +356,6 @@
     </template>
   </ModalComp>
 
-  <ModalComp :show="cancelModal" :size="'modal-sm'" @close="cancelModal = false">
-    <template #header>
-      <h4 class="modal-title text-danger mb-0">
-        <Icon icon="eva:alert-triangle-outline" style="margin-bottom: 3px" />
-        Alert
-      </h4>
-    </template>
-
-    <template #body>
-      <h3 class="text-center">Are you sure?</h3>
-      <p class="text-center"><i>Any changes will not be saved!</i></p>
-    </template>
-
-    <template #footer>
-      <button class="btn btn-sm btn-primary" @click="deletePermanently">
-        <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-        Proceed
-      </button>
-    </template>
-  </ModalComp>
-
   <ModalComp :show="doneModal" :size="'modal-sm'" @close="doneModal = false">
     <template #header>
       <h4 class="modal-title text-danger mb-0">
@@ -430,7 +385,7 @@
     </template>
 
     <template #body>
-      <p>Hi {{ profile.first_name }},</p>
+      <p>Hi {{ profile?.first_name }},</p>
       <p>Welcome to ToNote.</p>
       <p>
         For the most secure e-signature, simply create a password and you can proceed to
@@ -474,7 +429,7 @@ import StampCreate from "@/components/Notary/Stamp/StampCreate.vue";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
-import { ref, onMounted, watch, onUnmounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
 import { useRouter } from "vue-router";
@@ -487,30 +442,22 @@ import $ from "jquery";
 const toast = useToast();
 const route = useRouter();
 
-const { token, profile, teams, link, isOpenModal, canCancel, OTPFlag } = useGetters({
+const { token, profile, link, isOpenModal, OTPFlag } = useGetters({
   token: "auth/token",
   profile: "auth/profile",
   OTPFlag: "auth/OTPFlag",
-  teams: "team/teams",
   link: "signLink/link",
-  canCancel: "signLink/canCancel",
   isOpenModal: "signLink/isOpenModal",
 });
 
 const {
   removeNotification,
-  getLink,
-  getTools,
-  removeCancel,
-  removeDocument,
+  getPublicLink,
   getUserPrints,
 } = useActions({
   doneEditing: "signLink/doneEditing",
   removeNotification: "signLink/removeNotification",
-  getLink: "signLink/getLink",
-  removeCancel: "signLink/removeCancel",
-  removeDocument: "signLink/removeDocument",
-  getTools: "signLink/getTools",
+  getPublicLink: "signLink/getPublicLink",
   getUserPrints: "print/getUserPrints",
 });
 
@@ -521,7 +468,6 @@ const openNotificationModal = ref(isOpenModal.value);
 const isOpen = ref(false);
 const pageId = ref("");
 const doneModal = ref(false);
-const cancelModal = ref(false);
 // const doneDataUrl = ref("");
 const createModal = ref(false);
 const affixModal = ref(false);
@@ -531,7 +477,6 @@ const createSealModal = ref(false);
 const createStampModal = ref(false);
 const stampModal = ref(false);
 const loading = ref(false);
-const plan = ref(null);
 const hasRole = ref(false);
 const uri = ref("");
 
@@ -571,15 +516,6 @@ const onError = (e) => {
 
 const open = (params) => {
   isOpen.value = params;
-};
-
-const cancel = () => {
-  cancelModal.value = true;
-};
-
-const deletePermanently = () => {
-  removeDocument({ documents: [{ document_id: uri.value, permanent_delete: true }] });
-  route.push({ name: "Dashboard" });
 };
 
 const getDocId = (params) => {
@@ -673,24 +609,18 @@ const linkUrl = ref("");
 onMounted(() => {
   redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
   uri.value = route.currentRoute.value.params.document_id;
-  getLink(uri.value)
+  getPublicLink(uri.value)
 
   linkUrl.value =
     process.env.NODE_ENV === "development"
       ? process.env.VUE_APP_URL_AUTH_LOCAL
       : process.env.VUE_APP_URL_SIGN_LINK;
 
-  getTools(uri.value);
-
   if (token.value == null) return;
   if (token.value != "" || token.value != null) {
     hasRole.value = true;
     dashboard.value.setToken(token.value);
     getUserPrints(token.value);
-
-    if (teams.value.length > 0) {
-      plan.value = teams.value[0].subscription.plan.name;
-    }
   }
 
   setTimeout(() => {
@@ -700,9 +630,8 @@ onMounted(() => {
   }, 2000);
 });
 
-onUnmounted(() => {
-  removeCancel();
-});
+// onUnmounted(() => {
+// });
 </script>
 
 <style scoped>

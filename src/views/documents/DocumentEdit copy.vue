@@ -37,10 +37,12 @@
           </button>
           <div class="dropdown-menu dropdown-menu-end" data-popper-placement="bottom-start">
             <!-- <div class="dropdown-divider"></div> -->
-            <a class="dropdown-item btn d-flex align-items-center" role="button" @click="addParticipantModal = true">
-              <Icon icon="akar-icons:plus" class="me-1" />
-              Add participants
-            </a>
+            <template v-if="isTheOwner === true">
+              <a class="dropdown-item btn d-flex align-items-center" role="button" @click="addParticipantModal = true">
+                <Icon icon="akar-icons:plus" class="me-1" />
+                Add participants
+              </a>
+            </template>
 
             <a class="dropdown-item btn d-flex align-items-center" role="button" @click="editSignerModal = true">
               <Icon icon="ep:view" class="me-1" />
@@ -64,9 +66,12 @@
       </li>
       <!-- other buttons  -->
       <li class="nav-item border-0">
-        <button class="btn btn-sm btn-primary me-1" @click="doneModal = true">
-          Finish
-        </button>
+        <template v-if="isTheOwner === true">
+          <button class="btn btn-sm btn-primary me-1" @click="doneModal = true">
+            Finish
+          </button>
+        </template>
+        <template v-else> Submit </template>
 
         <button class="btn btn-sm btn-primary" @click="createModal = true">Share</button>
       </li>
@@ -128,7 +133,7 @@
               Download
             </button></a>
         </li>
-        <li class="nav-item" v-if="canCancel">
+        <li class="nav-item" v-if="canCancel && isTheOwner === true">
           <a class="nav-link nav-link-style">
             <button class="btn btn-sm btn-outline-primary waves-effect" @click="cancel">
               Cancel
@@ -138,11 +143,12 @@
         <li class="nav-item" v-show="hasRole">
           <a class="nav-link nav-link-style">
             <button class="btn btn-sm btn-primary waves-effect" @click="done">
-              Finish
+              <template v-if="isTheOwner === true"> Finish </template>
+              <template v-else> Submit </template>
             </button>
           </a>
         </li>
-        <li class="nav-item d-none d-sm-block">
+        <li class="nav-item d-none d-sm-block" v-if="isTheOwner === true">
           <a class="nav-link nav-link-style">
             <button class="btn btn-sm btn-primary waves-effect waves-float waves-light" @click="createModal = true"
               style="margin-right: 5px">
@@ -172,10 +178,11 @@
     <template #body>
       <p class="text-center">Kindly find the generated link below</p>
       <p class="text-center" style="font-size: 10px">
-        <code class="text-center">{{ linkUrl + '/link/' + uri }}</code>
+        <code class="text-center">https://tonote-doc-link.netlify.app/document/edit/{{ link.id }}</code>
       </p>
       <button type="button" class="btn btn-sm btn-outline-dark waves-effect d-block mx-auto"
-        v-clipboard:copy="linkUrl + '/link/' + uri" v-clipboard:success="onCopy" v-clipboard:error="onError">
+        v-clipboard:copy="`https://tonote-doc-link.netlify.app/document/edit/${link.id}`" v-clipboard:success="onCopy"
+        v-clipboard:error="onError">
         Copy link
       </button>
     </template>
@@ -500,6 +507,7 @@ const { token, profile, teams, link, isOpenModal, canCancel, OTPFlag } = useGett
 const {
   removeNotification,
   getLink,
+  getPublicLink,
   getTools,
   removeCancel,
   removeDocument,
@@ -508,6 +516,7 @@ const {
   doneEditing: "signLink/doneEditing",
   removeNotification: "signLink/removeNotification",
   getLink: "signLink/getLink",
+  getPublicLink: "signLink/getPublicLink",
   removeCancel: "signLink/removeCancel",
   removeDocument: "signLink/removeDocument",
   getTools: "signLink/getTools",
@@ -635,7 +644,7 @@ const exportPDF = () => {
 };
 
 const done = () => {
-  // exportPDF("done")
+  // if (!isTheOwner.value) { exportPDF("done") }
   doneModal.value = true;
 };
 
@@ -660,25 +669,26 @@ const done = () => {
 // };
 
 const confirmEdit = () => {
-  // isDoneEdit();
-  window.location.href =
-    redirectToUserDashboard.value + "/redirecting?qt=" + token.value;
+  if (!isTheOwner.value) {
+    // isDoneEdit();
+    window.location.href =
+      redirectToUserDashboard.value + "/redirecting?qt=" + token.value;
+  }
 
   doneModal.value = false;
   toast.success("Document edited successfully", { timeout: 5000, position: "top-right" });
   window.location.href = redirectToUserDashboard.value + "/redirecting?qt=" + token.value;
 };
 
-const linkUrl = ref("");
+const isTheOwner = ref('')
 onMounted(() => {
   redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
   uri.value = route.currentRoute.value.params.document_id;
-  getLink(uri.value)
+  isTheOwner.value = link.value?.is_the_owner_of_document
 
-  linkUrl.value =
-    process.env.NODE_ENV === "development"
-      ? process.env.VUE_APP_URL_AUTH_LOCAL
-      : process.env.VUE_APP_URL_SIGN_LINK;
+  console.log("From Edit Mounted: ", isTheOwner.value);
+
+  isTheOwner.value === true ? getLink(uri.value) : getPublicLink(uri.value);
 
   getTools(uri.value);
 

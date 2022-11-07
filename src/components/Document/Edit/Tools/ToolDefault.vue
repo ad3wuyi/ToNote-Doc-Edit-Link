@@ -1,9 +1,10 @@
 <template>
   <Vue3DraggableResizable :key="tool.id" :initH="30" :initW="Number(tool.tool_width)" :x="Number(tool.tool_pos_left)"
-    :y="Number(tool.tool_pos_top)" v-model:x="x" v-model:y="y" :parent="true" :resizable="false"
+    :y="Number(tool.tool_pos_top)" v-model:x="x" v-model:y="y" :parent="true"
+    :draggable="profile.id == tool.user_id || link.is_the_owner_of_document == true" :resizable="false"
     @drag-end="onDragEnd($event, tool)" class="image-area" :handles="['tl', 'tr', 'bl', 'br']"
-    :data-can-drag-tool="tool.can_drag_tool" :class="tool.tool_class" :id="tool.tool_id"
-    :data-doc="tool.document_upload_id" :data-name="tool.tool_name" :data-user="tool.user_id"
+    :data-can-drag-tool="tool.can_drag_tool" :data-can-delete-tool="tool.can_delete_tool" :class="tool.tool_class"
+    :id="tool.tool_id" :data-doc="tool.document_upload_id" :data-name="tool.tool_name" :data-user="tool.user_id"
     :data-print-id="tool?.append_print?.id" :data-id="tool.id" :data-class="tool.tool_class">
 
     <div class="bg-fill w-100 h-100 d-flex justify-content-center align-items-center" @click.prevent="
@@ -42,7 +43,6 @@
           </svg></span>
       </span>
     </template>
-    <!-- <ParticipantName :userId="tool.user_id" /> -->
   </Vue3DraggableResizable>
 
   <Teleport to="body">
@@ -100,20 +100,21 @@ import SealAppend from "@/components/Notary/Seal/SealAppend.vue";
 import StampAppend from "@/components/Notary/Stamp/StampAppend.vue";
 import SignaturePrintFull from "@/components/Signature/SignaturePrintFull.vue";
 import SignaturePrintInitial from "@/components/Signature/SignaturePrintInitial.vue";
-// // import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
 
 import { ref, defineProps, defineEmits } from "vue";
 import { useActions, useGetters } from "vuex-composition-helpers/dist";
 
 const props = defineProps({ tool: Object, owner: Object });
 
-const { print } = useGetters({
+const { profile, link, print } = useGetters({
+  profile: "auth/profile",
   print: "print/print",
+  link: "signLink/link",
 });
 
 const { editTools, editToolWithAsset, getUserPrint } = useActions({
-  editTools: "document/editTools",
-  editToolWithAsset: "document/editToolWithAsset",
+  editTools: "signLink/editTools",
+  editToolWithAsset: "signLink/editToolWithAsset",
   getUserPrint: "print/getUserPrint",
 });
 

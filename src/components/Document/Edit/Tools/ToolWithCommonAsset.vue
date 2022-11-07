@@ -1,9 +1,9 @@
 <template>
   <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_height)" :initW="Number(tool.tool_width)" :minW="70"
     :minH="30" :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)" :parent="true" v-model:x="x" v-model:y="y"
-    v-model:h="h" v-model:w="w" :draggable="profile.id == tool.user_id || userDocument.is_the_owner_of_document == true"
-    :resizable="profile.id == tool.user_id || userDocument.is_the_owner_of_document == true"
-    @drag-end="onDragEnd($event, tool)" @resize-end="onResizeEnd(tool, w, h)" class="image-area"
+    v-model:h="h" v-model:w="w" :draggable="profile.id == tool.user_id || link.is_the_owner_of_document == true"
+    :resizable="profile.id == tool.user_id || link.is_the_owner_of_document == true" @drag-end="onDragEnd($event, tool)"
+    @resize-end="onResizeEnd(tool, w, h)" class="image-area"
     :lockAspectRatio="['Seal', 'Stamp'].includes(tool.tool_name) ? true : false" :handles="['tl', 'tr', 'bl', 'br']"
     class-name-active="active-class" class-name-dragging="dragging-class" class-name-handle="handle-class"
     class-name-resizing="resizing-class" @dblclick="
@@ -54,9 +54,9 @@
 import { defineProps, defineEmits, ref } from "vue";
 
 import { useActions, useGetters } from "vuex-composition-helpers/dist";
-import { useToast } from "vue-toast-notification";
+// import { useToast } from "vue-toast-notification";
 
-const toast = useToast();
+// const toast = useToast();
 const props = defineProps({ tool: Object, owner: Object });
 
 let x = ref(Number(props.tool.tool_pos_left));
@@ -64,39 +64,16 @@ let y = ref(Number(props.tool.tool_pos_top));
 let w = ref(Number(props.tool.tool_width));
 let h = ref(Number(props.tool.tool_height));
 
-const { profile, userDocument } = useGetters({
+const { profile, link } = useGetters({
   profile: "auth/profile",
-  userDocument: "document/userDocument",
+  link: "signLink/link",
 });
 
-const { editTools } = useActions({ editTools: "document/editTools" });
+const { editTools } = useActions({ editTools: "signLink/editTools" });
 
 const emit = defineEmits(["remove"]);
 const remove = (params) => {
   emit("remove", params);
-};
-
-const getUserId = (params) => {
-  if (params.user != profile.value.id) {
-    if (params.toolName == 'Signature' || params.toolName == 'Initial') {
-      return toast.error("Sorry, you are not permitted to sign here", {
-        timeout: 5000,
-        position: "top-right",
-      });
-    }
-    if (params.toolName == 'Seal') {
-      return toast.error("Sorry, you cannot upload this seal", {
-        timeout: 5000,
-        position: "top-right",
-      });
-    }
-    if (params.toolName == 'Stamp') {
-      return toast.error("Sorry, you cannot upload this stamp", {
-        timeout: 5000,
-        position: "top-right",
-      });
-    }
-  }
 };
 
 const onDragEnd = (e, tool) => {

@@ -13,3 +13,24 @@ export const SET_CANCEL = (state, cancel) => {
 export const SET_LINK_NOTIFICATION = (state, isSaved) => {
   state.isLinkSaved = isSaved;
 };
+
+export const SET_LINK_DONE = (state, done) => {
+  state.doneEditing = done;
+};
+
+export const SET_NOTIFICATION = (state, modal) => {
+  state.isOpenModal = modal;
+};
+
+export const SET_TOOLS = (state, tool) => {
+  state.resourceTools = tool;
+};
+
+export const SET_TOOL_WITH_ASSET = (state, tool) => {
+  state.resourceToolWithAsset = tool;
+};
+
+export const SET_EDIT_TOOL = (state, edit) => {
+  const index = state.resourceTools.findIndex((tool) => tool.id === edit.id)
+  if (index !== -1) { state.resourceTools.splice(index, 1, edit) }
+};

@@ -1,7 +1,7 @@
 import axios from "axios";
 import NProgress from "nprogress";
 import store from "@/store";
-import router from "@/router/router";
+// import router from "@/router/router";
 
 let theBaseUrl = ''
 if (process.env.NODE_ENV == 'development') {
@@ -75,18 +75,20 @@ Api.interceptors.response.use(
   (error) => {
     progressStop();
 
-    const FORBIDDEN = 403;
-    const { status } = error.response;
-    if (status === FORBIDDEN) {
-      router.push({ name: "Login" });
-    }
+    // const FORBIDDEN = 403;
+    // const { status } = error.response;
+    // if (status === FORBIDDEN) {
+    //   router.push({ name: "Login" });
+    // }
     // const UNAUTHORIZED = 401;
     // const { status } = error.response;
     // if (status === UNAUTHORIZED) {
     //   router.push({ name: "Login" });
     // }
 
-    console.log(error.response.statusText);
+    if (process.env.NODE_ENV == 'development') {
+      console.log(error.response.statusText);
+    }
 
     return Promise.reject(error);
   }

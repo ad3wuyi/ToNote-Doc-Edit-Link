@@ -46,7 +46,7 @@
                     </div>
                     <span>
                       Don't have an account?
-                      <router-link :to="{name:'Register'}">Create an account!</router-link>
+                      <router-link :to="{ name: 'Sign' }">Create an account!</router-link>
                     </span>
 
                   </Form>

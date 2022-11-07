@@ -4,7 +4,7 @@
       <div class="email-app-sidebar">
         <div class="email-app-menu">
           <div class="sidebar-menu-list sidebar-nav sticky shadow" style="width: 260px;">
-            <template v-if="userDocument.is_the_owner_of_document === true">
+            <template v-if="isTheOwner === true">
               <div class="list-group list-group-messages">
                 <div class="list-group-item list-group-item-action border-bottom">
                   Tool Management
@@ -18,29 +18,26 @@
                   </div>
                 </div>
 
-                <template v-if="userDocument.is_the_owner_of_document === true">
-                  <div class="list-group-item list-group-item-action border-bottom">
-                    <p>Signers ({{ userDocument.participants_count }})</p>
+                <div class="list-group-item list-group-item-action border-bottom">
+                  <p>Signers ({{ link?.participants_count }})</p>
 
-                    <div class="avatar-group">
-                      <div v-for="(init, index) in userDocument.participants" data-popup="tooltip-custom"
-                        data-bs-placement="top" :title="init.user.first_name + ' ' + init.user.last_name"
-                        class="avatar pull-up" :data-bs-original-title="init.user.first_name" :data-id="init.id"
-                        :key="index">
-                        <div class="avatar-content text-uppercase">
-                          {{
-                          getFirstLetters(init.user.first_name + " " + init.user.last_name)
-                          }}
-                        </div>
+                  <div class="avatar-group">
+                    <div v-for="(init, index) in link?.participants" data-popup="tooltip-custom" data-bs-placement="top"
+                      :title="init.user.first_name + ' ' + init.user.last_name" class="avatar pull-up"
+                      :data-bs-original-title="init.user.first_name" :data-id="init.id" :key="index">
+                      <div class="avatar-content text-uppercase">
+                        {{
+                            getFirstLetters(init.user.first_name + " " + init.user.last_name)
+                        }}
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div role="button" class="list-group-item list-group-item-action border-bottom"
-                    @click="editSignerModal = true">
-                    <span class="isHover">View all signers <span>&rightarrow;</span></span>
-                  </div>
-                </template>
+                <div role="button" class="list-group-item list-group-item-action border-bottom"
+                  @click="editSignerModal = true">
+                  <span class="isHover">View all signers <span>&rightarrow;</span></span>
+                </div>
               </div>
             </template>
             <template v-else>
@@ -54,7 +51,7 @@
 
   <ModalComp :show="editSignerModal" :footer="false" @close="closeSignerModal">
     <template #header>
-      <template v-if="userDocument.is_the_owner_of_document === true">
+      <template v-if="isTheOwner === true">
         <h5 class="modal-title">Edit participants</h5>
       </template>
       <template v-else>
@@ -69,36 +66,36 @@
           <div class="col-md-3 col-12">
             <div class="mb-1">
               <label class="form-label" for="first-name">First Name</label>
-              <input :readonly="!userDocument.is_the_owner_of_document" type="text" name="first_name"
-                v-model="participant.user.first_name" class="form-control form-control-sm" />
+              <input :readonly="!isTheOwner" type="text" name="first_name" v-model="participant.user.first_name"
+                class="form-control form-control-sm" />
             </div>
           </div>
           <div class="col-md-3 col-12">
             <div class="mb-1">
               <label class="form-label" for="last-name-column">Last Name</label>
-              <input :readonly="!userDocument.is_the_owner_of_document" type="text" name="last_name"
-                v-model="participant.user.last_name" class="form-control form-control-sm" />
+              <input :readonly="!isTheOwner" type="text" name="last_name" v-model="participant.user.last_name"
+                class="form-control form-control-sm" />
             </div>
           </div>
           <!-- <div class="col-md-3 col-12">
           <div class="mb-1">
             <label class="form-label" for="phone-column">Phone</label>
-            <input :readonly="!userDocument.is_the_owner_of_document" type="phone" name="phone"
+            <input :readonly="!isTheOwner" type="phone" name="phone"
                 v-model="participant.user.phone" class="form-control form-control-sm" />
           </div>
         </div> -->
           <div class="col-md-3 col-12">
             <div class="mb-1">
               <label class="form-label" for="email-id-column">Email</label>
-              <input :readonly="!userDocument.is_the_owner_of_document" type="email" name="email"
-                v-model="participant.user.email" class="form-control form-control-sm" />
+              <input :readonly="!isTheOwner" type="email" name="email" v-model="participant.user.email"
+                class="form-control form-control-sm" />
             </div>
           </div>
           <div class="col-md-3 col-12">
             <div class="mb-1">
               <label class="form-label" for="role-column">Role</label>
-              <select name="role" :disabled="!userDocument.is_the_owner_of_document" v-model="participant.role"
-                class="form-select form-control-sm" required>
+              <select name="role" :disabled="!isTheOwner" v-model="participant.role" class="form-select form-control-sm"
+                required>
                 <option value="">select role</option>
                 <option :selected="participant.role == 'Signer' ? true : false">
                   Signer
@@ -110,7 +107,7 @@
             </div>
           </div>
 
-          <template v-if="userDocument.is_the_owner_of_document === true">
+          <template v-if="isTheOwner === true">
             <div class="col-md-12">
               <small role="button" style="font-size: small" class="text-danger" @click="remove(participant.id)">
                 Remove
@@ -122,7 +119,7 @@
 
         <div class="row">
           <div class="col-12">
-            <button v-if="userDocument.is_the_owner_of_document === true" type="submit"
+            <button v-if="isTheOwner === true" type="submit"
               class="btn btn-sm btn-primary waves-effect waves-float waves-light d-block ms-auto">
               Update
             </button>
@@ -164,10 +161,10 @@ import ModalComp from "@/components/ModalComp.vue";
 import { computed, onMounted, ref, defineEmits, defineProps, watch } from "vue";
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
 
-const { userDocument, profile, workingTools } = useGetters({
+const { link, profile, workingTools } = useGetters({
   profile: "auth/profile",
-  userDocument: "document/userDocument",
-  workingTools: "document/workingTools",
+  link: "signLink/link",
+  workingTools: "signLink/workingTools",
 });
 
 const { removeParticipant, editParticipant } = useActions({
@@ -183,7 +180,7 @@ const props = defineProps({ isOpen: Boolean });
 const emit = defineEmits(['close'])
 
 watch(
-  () => [userDocument.value.participants, props.isOpen],
+  () => [link.value?.participants, props.isOpen],
   ([newUserDoc, newOpen]) => {
     participants.value = newUserDoc
     if (newOpen) { editSignerModal.value = newOpen }
@@ -199,7 +196,7 @@ const nameInitials = ref("");
 const initialObj = ref([]);
 const participants = ref(null);
 
-participants.value = userDocument.value.participants;
+participants.value = link.value?.participants;
 
 const closeSignerModal = () => {
   editSignerModal.value = false
@@ -219,7 +216,7 @@ const onEditParticipant = () => {
   let formObj = [];
   participants.value.map((obj) => {
     formObj.push({
-      document_id: userDocument.value.id,
+      document_id: link?.value.id,
       document_participant_id: obj.id,
       first_name: obj.user.first_name,
       last_name: obj.user.last_name,
@@ -244,7 +241,9 @@ const deleteParticipant = () => {
   removeParticipantModal.value = false;
 };
 
+const isTheOwner = ref('')
 onMounted(() => {
+  isTheOwner.value = link.value?.is_the_owner_of_document
   initialObj.value = [];
   if (participants.value == undefined) return;
   participants.value.map((params) => {
@@ -258,10 +257,10 @@ onMounted(() => {
   });
 
   if (
-    userDocument.value.participants != undefined ||
-    userDocument.value.participants.length > 0
+    link?.value.participants != undefined ||
+    link?.value.participants.length > 0
   ) {
-    userDocument.value.participants.map((participant) => {
+    link?.value.participants.map((participant) => {
       if (participant.user.id === profile.value.id)
         return (isOwner.value = participant.ownerDocument);
     });

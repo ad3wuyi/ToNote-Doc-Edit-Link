@@ -40,7 +40,7 @@
         </td>
         <td>
           <span class="badge rounded-pill badge-light-dark fw-normal" style="font-size:10px">
-            {{ linkUrl + "/document/edit/" + doc.id }}
+            {{ linkUrl + "/link/" + doc.id }}
           </span>
         </td>
         <td>
@@ -58,8 +58,7 @@
         <td>
           <div class="d-flex align-items-center">
             <button type="button" class="btn btn-sm btn-outline-primary waves-effect"
-              v-clipboard:copy="linkUrl + '/document/edit/' + doc.id" v-clipboard:success="onCopy"
-              v-clipboard:error="onError">
+              v-clipboard:copy="linkUrl + '/link/' + doc.id" v-clipboard:success="onCopy" v-clipboard:error="onError">
               Copy link
             </button>
             <div class="dropdown">
@@ -167,27 +166,6 @@
       </button>
     </template> -->
   </ModalComp>
-
-  <ModalComp :show="isDeleteOrRestore" :size="'modal-sm'" @close="isDeleteOrRestore = false">
-    <template #header>
-      <h4 class="modal-title text-danger">Alert</h4>
-    </template>
-
-    <template #body>
-      <h3 class="text-center">Are you sure?</h3>
-      <template v-if="dashboard.status == 'Deleted' && action != 'restore'">
-        <p class="text-center"><i>You won't be able to undo this!</i></p>
-      </template>
-    </template>
-
-    <template #footer>
-      <button type="button" class="btn btn-sm btn-primary d-block ms-auto" :class="{ disabled: loading }"
-        @click="proceedToDelete">
-        <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-        <span>Proceed</span>
-      </button>
-    </template>
-  </ModalComp>
 </template>
 
 <script setup>
@@ -213,7 +191,6 @@ const isHidden = ref(false);
 const hasMultipleSelection = ref(false);
 const isCheckAll = ref(false);
 const isDeleteOrRestore = ref(false);
-const loading = ref(false);
 const docIds = ref([]);
 
 const { links } = useGetters({
@@ -222,11 +199,9 @@ const { links } = useGetters({
   receivedDocuments: "signLink/ReceivedDocuments",
 });
 
-const { getLinks, removeLink, retrieveLink } = useActions({
+const { getLinks } = useActions({
   getLinks: "signLink/getLinks",
   getLink: "signLink/getLink",
-  removeLink: "signLink/removeLink",
-  retrieveLink: "signLink/retrieveLink",
   getDeletedLinks: "signLink/getDeletedLinks",
 });
 
@@ -265,67 +240,26 @@ const checkAll = () => {
       docIds.value.push(links.value[key].id);
     }
   }
-  console.log(docIds.value)
   hasMultipleSelection.value = docIds.value.length > 0 ? true : false;
-  emit('showDeleteButton', hasMultipleSelection.value)
+  emit('showDeleteButton', { show: hasMultipleSelection.value, signLinkDocIds: docIds.value })
 };
 
 const updateCheckAll = () => {
   hasMultipleSelection.value = docIds.value.length - 1 >= 0 ? true : false;
-  emit('showDeleteButton', hasMultipleSelection.value)
-  if (docIds.value.length == links.value.length) {
-    isCheckAll.value = true;
-  } else {
-    isCheckAll.value = false;
-  }
+  emit('showDeleteButton', { show: hasMultipleSelection.value, signLinkDocIds: docIds.value })
+
+  isCheckAll.value = (docIds.value.length == links.value.length) ? true : false
+
 };
 
 const action = ref("");
-const linkId = ref("");
 const deleteDocument = (params, id) => {
-  if (id == '') {
-    return toast.error("Select a file to delete", {
-      timeout: 5000,
-      position: "top-right",
-    });
+  if (id != "") {
+    emit('showDeleteButton', { showModal: true, signLinkDocIds: [id] })
   }
-  linkId.value = id;
-
-  // if (id != "") {
-  //   docIds.value = [id];
-  // }
-  // if (docIds.value.length == 0) {
-  //   console.log(docIds)
-  //   return toast.error("Select a file to delete", {
-  //     timeout: 5000,
-  //     position: "top-right",
-  //   });
-  // }
 
   action.value = params;
   isDeleteOrRestore.value = true;
-};
-
-// const docObj = ref([])
-const proceedToDelete = () => {
-  loading.value = true;
-  // docObj.value = [];
-  // const isPermanent = route.currentRoute.value.query.status == "deleted" ? true : false;
-  // for (const key in docIds.value) {
-  //   docObj.value.push({ document_id: docIds.value[key], permanent_delete: isPermanent });
-  // }
-
-  action.value == "delete"
-    ? removeLink(linkId.value)
-    : retrieveLink(linkId.value);
-
-  docIds.value = [];
-
-  hasMultipleSelection.value = isCheckAll.value = false;
-  isDeleteOrRestore.value = loading.value = false;
-  setTimeout(() => {
-    getLinks();
-  }, 1000);
 };
 
 

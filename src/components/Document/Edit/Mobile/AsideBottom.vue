@@ -9,7 +9,7 @@
               <div class="list-group-item border-bottom">
                 <label class="form-label">Good day to you!</label>
                 <p class="mb-0">
-                  {{ profile.first_name }} {{ profile.last_name }}.
+                  {{ profile?.first_name }} {{ profile?.last_name }}.
                 </p>
               </div>
 

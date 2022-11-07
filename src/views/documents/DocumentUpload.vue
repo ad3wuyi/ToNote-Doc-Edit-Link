@@ -3,20 +3,25 @@
     <PreLoader />
   </div>
 
-  <section class="custom-width" v-else>
+  <section class="container-fluid" v-else>
+    <div class="email-header-left d-flex align-items-center mb-2 fw-bold" style="font-size: 1rem">
+      <router-link :to="{ name: 'Document' }" role="button" @click="$router.go(-1)" class="back">
+        <span class="go-back me-1 float-start">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="feather feather-chevron-left font-medium-4">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </span>
+        <span class="email-subject mb-0 float-start">Back</span>
+      </router-link>
+      <span>Sign a Document</span>
+    </div>
+
     <div class="grid" v-show="isSubmitted">
       <PreLoader />
     </div>
     <div v-show="!isSubmitted">
-      <div class="mb-2">
-        <h4 class="text-dark">ToNote Link</h4>
-        <ul>
-          <li>Lorem ipsum dolor sit amet consectetur adipisicing elit.</li>
-          <li>Lorem ipsum dolor sit amet consectetur.</li>
-          <li>Lorem ipsum dolor sit.</li>
-        </ul>
-      </div>
-
       <Form @submit="onProceed" :validation-schema="schema" v-slot="{ errors }">
         <div class="card">
           <div class="card-body">
@@ -70,7 +75,7 @@
 
         <div class="card mb-2 p-2">
           <button type="submit" class="btn btn-sm btn-primary d-block ms-auto" :class="{ disabled: !isSelected }">
-            Prepare
+            Proceed
           </button>
         </div>
       </Form>
@@ -82,19 +87,20 @@
 import PreLoader from "@/components/PreLoader.vue";
 import DropZone from "@/components/DropZone.vue";
 import { Form, Field } from "vee-validate";
-// import { dashboard } from "@/store/dashboard";
+import { dashboard } from "@/store/dashboard";
 
 import { ref, toRaw, onMounted } from "vue";
 
-// import { useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
-import { useActions } from "vuex-composition-helpers/dist";
+import { useActions, useGetters } from "vuex-composition-helpers/dist";
 
-// const { token } = useGetters({ token: "auth/token" });
+const { token } = useGetters({ token: "auth/token" });
 
-const { fileUploads } = useActions({
+const { setAuthForDocumentUpload, fileUploads, getUserPrints } = useActions({
   setAuthForDocumentUpload: "auth/setAuthForDocumentUpload",
   fileUploads: "signLink/fileUploads",
+  getUserPrints: "print/getUserPrints",
 });
 
 const initialUpload = ref(false);
@@ -161,33 +167,35 @@ const onProceed = (params) => {
   }, 10000);
 };
 
+const route = useRouter();
+const uri = ref("");
 const isLoading = ref(true);
-// const route = useRouter();
-// const uri = ref("");
-// const hasToken = ref("");
+const hasToken = ref("");
 
 onMounted(() => {
-  // uri.value = route.currentRoute.value.query;
-  // hasToken.value =
-  //   uri.value.qt != undefined || uri.value.qt != null ? uri.value.qt : token.value;
+  uri.value = route.currentRoute.value.query;
+  hasToken.value =
+    uri.value.qt != undefined || uri.value.qt != null ? uri.value.qt : token.value;
 
-  // if (hasToken.value == undefined || hasToken.value == "" || hasToken.value == null) {
-  //   return route.push({ name: 'Register' })
-  // }
+  if (hasToken.value == undefined || hasToken.value == "" || hasToken.value == null) {
+    return (window.location.href = process.env.VUE_APP_URL_AUTH_LIVE);
+  }
 
-  // dashboard.value.setToken(hasToken.value)
+  dashboard.value.setToken(hasToken.value);
 
-  // getUserPrints(hasToken.value);
+  getUserPrints(hasToken.value);
 
-  // setAuthForDocumentUpload(hasToken.value);
+  setAuthForDocumentUpload(hasToken.value);
   isLoading.value = false;
 });
 </script>
 
 <style scoped>
-.custom-width {
-  width: 75%;
-  margin: 0 auto;
+.back {
+  display: inline-block;
+  width: 100px;
+  border-right: 2px solid #ccc;
+  margin-right: 1.5rem;
 }
 
 .grid {
@@ -197,18 +205,7 @@ onMounted(() => {
 }
 
 .avatar-sm {
-  height: 2rem;
-  width: 2rem;
-}
-
-@media screen and (max-width: 991.5px) {
-  .custom-width {
-    width: 100%;
-  }
-
-  .avatar-sm {
-    height: 1.5rem;
-    width: 1.5rem;
-  }
+  height: 3rem;
+  width: 3rem;
 }
 </style>

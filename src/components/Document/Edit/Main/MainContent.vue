@@ -38,23 +38,29 @@
 
               <br class="d-none" />
 
-              <p>Title: {{ link.title }}</p>
+              <p>Title: {{ theDoc.title }}</p>
               <div class="target">
                 <div id="mainWrapper" class="mx-auto shadow" style="width: 820px; height: auto">
                   <template v-if="theTools?.length != 0 && documentHeight">
                     <div v-for="(tool, index) in theTools" :key="index" class="parent"
                       :style="{ height: documentHeight + 'px' }">
                       <template v-if="tool.append_print == null">
-                        <template v-if="tool.tool_name == 'Photo'">
+                        <template v-if="tool.tool_name == 'Textarea'">
+                          <ToolTextArea @remove="remove" :tool="tool" :owner="{
+                            user: profile,
+                            isOwner: theDoc.is_the_owner_of_document,
+                          }" />
+                        </template>
+                        <template v-else-if="tool.tool_name == 'Photo'">
                           <ToolImage @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: link.is_the_owner_of_document,
+                            isOwner: theDoc.is_the_owner_of_document,
                           }" />
                         </template>
                         <template v-else>
                           <ToolDefault @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: link.is_the_owner_of_document,
+                            isOwner: theDoc.is_the_owner_of_document,
                           }" />
                         </template>
                       </template>
@@ -62,26 +68,26 @@
                         <template v-if="tool.tool_name == 'Textarea'">
                           <ToolTextArea @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: link.is_the_owner_of_document,
+                            isOwner: theDoc.is_the_owner_of_document,
                           }" />
                         </template>
                         <template v-else-if="tool.tool_name == 'Photo'">
                           <ToolImage @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: link.is_the_owner_of_document,
+                            isOwner: theDoc.is_the_owner_of_document,
                           }" />
                         </template>
                         <template v-else>
                           <ToolWithCommonAsset @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: link.is_the_owner_of_document,
+                            isOwner: theDoc.is_the_owner_of_document,
                           }" :print="tool" />
                         </template>
                       </template>
                     </div>
                   </template>
 
-                  <div v-for="(doc, index) in link.documentUploads" :key="index" class="position-relative">
+                  <div v-for="(doc, index) in theDoc.documentUploads" :key="index" class="position-relative">
                     <RenderPage :file="doc.file_url" @click="$emit('docId', doc.id)" @documentHeight="getHeight" />
                   </div>
                 </div>
@@ -117,30 +123,36 @@ import { useGetters, useActions } from "vuex-composition-helpers/dist";
 
 const { profile, link, workingTools, toolWithAsset } = useGetters({
   profile: "auth/profile",
-  workingTools: "document/workingTools",
-  toolWithAsset: "document/toolWithAsset",
+  workingTools: "signLink/workingTools",
+  toolWithAsset: "signLink/toolWithAsset",
   link: "signLink/link",
 });
 
 const { removeTool } = useActions({
-  removeTool: "document/removeTool",
+  removeTool: "signLink/removeTool",
 });
 
 const openSide = ref(false);
+const theDoc = ref('');
 const theTools = ref([]);
 const documentHeight = ref(0);
 
 watch(
-  () => [workingTools.value, toolWithAsset.value],
-  ([newTool, newToolWithAsset], [oldTool, oldToolWithAsset]) => {
+  () => [link.value, workingTools.value, toolWithAsset.value],
+  ([newDoc, newTool, newToolWithAsset], [oldDoc, oldTool, oldToolWithAsset]) => {
+    if (oldDoc != newDoc) {
+      theDoc.value = newDoc;
+    }
+
     if (oldTool?.length != newTool?.length) {
       let check = JSON.parse(localStorage.getItem("vuex"));
-      theTools.value = check.document.resourceTools;
+      theTools.value = check.signLink.resourceTools;
     }
 
     if (newToolWithAsset != oldToolWithAsset) {
       let check = JSON.parse(localStorage.getItem("vuex"));
-      theTools.value = check.document.resourceTools;
+      theTools.value = check.signLink.resourceTools;
+      console.log(theTools.value);
     }
   },
   { deep: true }

@@ -58,7 +58,7 @@
             <button type="submit" class="btn btn-primary mb-1 w-100" tabindex="4">
               Create
             </button>
-            <span>Already have an account? <router-link :to="{name:'Login'}">Login in instead.</router-link></span>
+            <span>Already have an account? <router-link :to="{ name: 'Login' }">Login in instead.</router-link></span>
           </form>
         </div>
       </div>
@@ -101,7 +101,7 @@ const createUser = () => {
     password: password.value,
   }
 
-  createUserAccount(userInfo);
+  createUserAccount({ payload: userInfo, di: documentId.value });
 };
 
 onMounted(() => {
@@ -113,6 +113,8 @@ onMounted(() => {
   email.value = uri.value.e;
   documentId.value = uri.value.di;
   flag.value = uri.value.f;
+
+  console.log("ID: ", documentId.value)
 });
 </script>
 

@@ -25,6 +25,16 @@ export const getLink = ({ commit }, formData) => {
     });
 };
 
+export const getPublicLink = ({ commit }, formData) => {
+  SignLink.showPublic(formData)
+    .then((response) => {
+      commit("SET_LINK", response.data.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const createLink = ({ commit }, formData) => {
   commit("SET_LINK_NOTIFICATION", false);
   SignLink.store(formData)
@@ -63,25 +73,25 @@ export const removeDocument = ({ commit }, formData) => {
 
         SignLink.documentStatistics(token)
           .then((response) => {
-            commit("SET_DOCUMENT_STATISTICS", response.data);
+            commit("SET_LINK_STATISTICS", response.data);
           })
 
         if (!['Received', 'Deleted'].includes(capitalizedStatus)) {
           SignLink.allDocumentByStatus(capitalizedStatus)
             .then((response) => {
-              commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+              commit("SET_LINKS_BY_STATUS", response.data.data)
             })
         } else {
           if (capitalizedStatus == 'Received') {
             SignLink.allReceivedDocuments(token)
               .then((response) => {
-                commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+                commit("SET_LINKS_BY_STATUS", response.data.data)
               })
           }
           if (capitalizedStatus == 'Deleted') {
             SignLink.allDeletedDocuments(token)
               .then((response) => {
-                commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+                commit("SET_LINKS_BY_STATUS", response.data.data)
               })
           }
         }
@@ -105,7 +115,7 @@ export const fileUploads = ({ commit }, formData) => {
     .then((response) => {
       commit("SET_LINK", response.data.data);
       commit("SET_CANCEL", true);
-      router.push({ name: "SignLink.prepare" });
+      router.push({ name: "document.prepare" });
     })
     .catch((error) => {
       toast.error(`${error.response.data.data.error}`, {
@@ -131,7 +141,6 @@ export const editLink = ({ commit }, formData) => {
 export const removeLink = ({ commit }, formData) => {
   SignLink.deleteLink(formData)
     .then((response) => {
-      console.log(response.data.data)
       commit("SET_LINKS", response.data.data);
     })
     .catch((error) => {
@@ -148,11 +157,11 @@ export const retrieveLink = ({ commit }, formData) => {
       const token = store.getters["auth/token"];
       SignLink.allDeletedDocuments(token)
         .then((response) => {
-          commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
+          commit("SET_LINKS_BY_STATUS", response.data.data)
         }).then(() => {
           SignLink.documentStatistics(token)
             .then((response) => {
-              commit("SET_DOCUMENT_STATISTICS", response.data);
+              commit("SET_LINK_STATISTICS", response.data);
             })
         })
 
@@ -160,6 +169,105 @@ export const retrieveLink = ({ commit }, formData) => {
         timeout: 5000,
         position: "top-right",
       });
+    })
+    .catch((error) => {
+      toast.error(`${error.message}`, {
+        timeout: 5000,
+        position: "top-right",
+      });
+    });
+};
+
+export const getTools = ({ commit }, formData) => {
+  SignLink.allTools(formData)
+    .then((response) => {
+      commit("SET_TOOLS", response.data.data);
+    });
+};
+
+export const resourceTools = ({ commit }, formData) => {
+  SignLink.storeTools(formData)
+    .then((response) => {
+      commit("SET_TOOLS", response.data.data);
+
+      // SignLink.allTools(router.currentRoute.value.params.document_id).then((response) => {
+      //   commit("SET_TOOLS", response.data.data);
+      // });
+    })
+    .catch((error) => {
+      console.log(error.response);
+    });
+};
+
+export const editTools = ({ commit }, formData) => {
+  let check = JSON.parse(localStorage.getItem("vuex"));
+  let parsedData = check.signLink.resourceTools;
+
+  const index = parsedData.findIndex((tool) => tool.id === formData.id)
+  if (index !== -1) { parsedData.splice(index, 1, formData.toLocal) }
+
+  commit("SET_TOOLS", parsedData)
+
+  SignLink.updateTool(formData.id, formData.payload)
+    .then((response) => {
+      let data = response.data.data
+      commit("SET_EDIT_TOOL", data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const editToolWithAsset = ({ commit }, formData) => {
+  SignLink.updateTool(formData.id, formData.payload)
+    .then((response) => {
+      let data = response.data.data
+      commit("SET_EDIT_TOOL", data);
+
+      let check = JSON.parse(localStorage.getItem("vuex"));
+      let parsedData = check.signLink.resourceTools;
+      const index = parsedData.findIndex((tool) => tool.id === data.id)
+
+      if (index !== -1) { parsedData.splice(index, 1, data) }
+
+      formData.hasAsset ? commit("SET_TOOL_WITH_ASSET", parsedData) : commit("SET_TOOLS", parsedData)
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export const removeTool = ({ commit }, formData) => {
+  let check = JSON.parse(localStorage.getItem("vuex"));
+  let parsedData = check.signLink.resourceTools;
+
+  const index = parsedData.findIndex((tool) => tool.id === formData)
+
+  if (index !== -1) { parsedData.splice(index, 1) }
+  commit("SET_TOOLS", parsedData)
+  commit("SET_TOOL_WITH_ASSET", parsedData)
+
+  SignLink.deleteTool(formData)
+};
+
+export const doneEditing = ({ commit }, formData) => {
+  SignLink.participantDone(formData)
+    .then((response) => { commit("SET_LINK_DONE", response.data.data); })
+    .catch((error) => {
+      toast.error(`${error.message}`, {
+        timeout: 5000,
+        position: "top-right",
+      });
+    });
+};
+
+export const removeNotification = ({ commit }, closeModal) => { commit("SET_NOTIFICATION", closeModal); };
+
+export const invitationMail = ({ commit }, formData) => {
+  SignLink.mailToParticipant({ participants: formData, subject: formData.subject, message: formData.message })
+    .then((response) => {
+      commit("SET_LINK", response.data.data);
+      commit("SET_NOTIFICATION", true);
     })
     .catch((error) => {
       toast.error(`${error.message}`, {

@@ -1,5 +1,5 @@
 <template>
-  <nav style="height: 70px"
+  <nav v-if="dashboard.token != null" style="height: 70px"
     class="header-navbar navbar-expand-lg navbar navbar-fixed align-items-center navbar-shadow navbar-brand-center"
     data-nav="brand-center">
     <div class="navbar-header d-lg-block d-none">
@@ -125,9 +125,11 @@
       </ul>
     </div>
   </nav>
+  <SignHeader v-else />
 </template>
 
 <script setup>
+import SignHeader from "./SignHeader.vue";
 import { dashboard } from "@/store/dashboard";
 import { ref, computed, onMounted, watch, onUpdated } from "vue";
 

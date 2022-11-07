@@ -59,7 +59,7 @@
                       </template>
                       <template v-else>
                         <button type="button" class="btn btn-sm btn-primary" @click="deleteDocument('delete', '')">
-                          Delete
+                          Deleted
                         </button>
                       </template>
                     </div>
@@ -393,7 +393,9 @@ watch(
 );
 
 const showButton = (params) => {
-  hasMultipleSelection.value = params
+  hasMultipleSelection.value = params.show
+  docIds.value = params.signLinkDocIds
+  isDeleteOrRestore.value = params?.showModal
 }
 
 const editId = ref("");
@@ -428,11 +430,7 @@ const checkAll = () => {
 
 const updateCheckAll = () => {
   hasMultipleSelection.value = docIds.value.length - 1 >= 0 ? true : false;
-  if (docIds.value.length == documentsByStatus.value.length) {
-    isCheckAll.value = true;
-  } else {
-    isCheckAll.value = false;
-  }
+  isCheckAll.value = (docIds.value.length == documentsByStatus.value.length) ? true : false
 };
 
 const action = ref("");

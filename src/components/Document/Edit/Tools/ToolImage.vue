@@ -2,7 +2,7 @@
   <template v-if="tool.append_print == null">
     <Vue3DraggableResizable :key="tool.id" :initH="100" :initW="100" :x="Number(tool.tool_pos_left)"
       :y="Number(tool.tool_pos_top)" v-model:x="x" v-model:y="y" v-model:h="h" v-model:w="w" :parent="true"
-      :draggable="profile.id == tool.user_id || userDocument.is_the_owner_of_document == true" :resizable="false"
+      :draggable="profile.id == tool.user_id || link.is_the_owner_of_document == true" :resizable="false"
       @drag-end="onDragEnd($event, tool)" class="image-area" :handles="['tl', 'tr', 'bl', 'br']"
       :data-can-drag-tool="tool.can_drag_tool" :data-can-delete-tool="tool.can_delete_tool" :class="tool.tool_class"
       :id="tool.tool_id" :data-doc="tool.document_upload_id" :data-name="tool.tool_name" :data-user="tool.user_id"
@@ -52,8 +52,8 @@
     <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_width)" :initW="Number(tool.tool_width)" :minW="100"
       :minH="100" :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)" :parent="true" v-model:x="x"
       v-model:y="y" v-model:h="h" v-model:w="w"
-      :draggable="profile.id == tool.user_id || userDocument.is_the_owner_of_document == true" :resizable="
-      profile.id == tool.user_id || userDocument.is_the_owner_of_document == true" @drag-end="onDragEnd($event, tool)"
+      :draggable="profile.id == tool.user_id || link.is_the_owner_of_document == true" :resizable="
+      profile.id == tool.user_id || link.is_the_owner_of_document == true" @drag-end="onDragEnd($event, tool)"
       @resize-end="onResizeEnd(tool, w, h)" class="image-area" :lockAspectRatio="false"
       :handles="['tl', 'tr', 'bl', 'br']" class-name-active="active-class" class-name-dragging="dragging-class"
       class-name-handle="handle-class" class-name-resizing="resizing-class" @dblclick="getUserId({
@@ -115,19 +115,19 @@ import PassportPhotograph from "@/components/Passport/PassportPhotograph.vue";
 import { ref, defineProps, defineEmits } from "vue";
 
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
-import { useToast } from "vue-toast-notification";
+// import { useToast } from "vue-toast-notification";
 
-const toast = useToast();
+// const toast = useToast();
 const props = defineProps({ tool: Object, owner: Object });
 
-const { profile, userDocument } = useGetters({
+const { profile, link } = useGetters({
   profile: "auth/profile",
-  userDocument: "document/userDocument",
+  link: "signLink/link",
 });
 
 const { editTools, editToolWithAsset } = useActions({
-  editToolWithAsset: "document/editToolWithAsset",
-  editTools: "document/editTools",
+  editToolWithAsset: "signLink/editToolWithAsset",
+  editTools: "signLink/editTools",
 });
 
 const x = ref(Number(props.tool.tool_pos_left));
@@ -151,12 +151,6 @@ const remove = (params) => { emit("remove", params) };
 
 const uploadImage = ref(false);
 const getUserId = (params) => {
-  if (params.user != profile.value.id)
-    return toast.error("Sorry, you cannot upload this image", {
-      timeout: 5000,
-      position: "top-right",
-    });
-
   if (params.toolName == "Photo") uploadImage.value = true;
 };
 

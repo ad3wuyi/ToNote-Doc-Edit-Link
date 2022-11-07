@@ -5,6 +5,11 @@ import store from "@/store";
 const UserAuth = () =>
   import(/* webpackChunkName: "auth-login" */ "@/views/UserAuth.vue");
 
+const userVerification = () =>
+  import(
+    /* webpackChunkName: "auth-verify" */ "@/components/Auth/UserVerify.vue"
+  );
+
 const DocumentIndex = () =>
   import(/* webpackChunkName: "user" */ "@/views/DocumentIndex.vue");
 
@@ -38,6 +43,11 @@ const DocumentEdit = () =>
     /* webpackChunkName: "edit-document" */ "@/views/documents/DocumentEdit.vue"
   );
 
+const SignLink = () =>
+  import(
+    /* webpackChunkName: "sign-link" */ "@/views/documents/DocumentSignLink.vue"
+  );
+
 const UserRegistration = () =>
   import(
     /* webpackChunkName: "auth-register" */ "@/components/Auth/UserRegistration.vue"
@@ -64,8 +74,8 @@ const routes = [
   },
 
   {
-    path: "/register",
-    name: "Register",
+    path: "/sign",
+    name: "Sign",
     component: UserRegistration,
     meta: {
       title: "Create Link | ToNote",
@@ -77,6 +87,25 @@ const routes = [
         {
           property: "og:description",
           content: "The easy link registration page of ToNote.",
+        },
+      ],
+    },
+  },
+
+  {
+    path: "/verify",
+    name: "Verify",
+    component: userVerification,
+    meta: {
+      title: "Verification | ToNote",
+      metaTags: [
+        {
+          name: "description",
+          content: "The verification page of ToNote.",
+        },
+        {
+          property: "og:description",
+          content: "The verification page of ToNote.",
         },
       ],
     },
@@ -127,7 +156,7 @@ const routes = [
         component: DocumentEdit,
         meta: {
           title: "Edit Document | ToNote",
-          requiresAuth: true,
+          // requiresAuth: true,
           metaTags: [
             {
               name: "description",
@@ -136,6 +165,24 @@ const routes = [
             {
               property: "og:description",
               content: "The document edit page of ToNote.",
+            },
+          ],
+        },
+      },
+      {
+        path: "/link/:document_id",
+        name: "Link",
+        component: SignLink,
+        meta: {
+          title: "Sign Document | ToNote",
+          metaTags: [
+            {
+              name: "description",
+              content: "The sign link page of ToNote.",
+            },
+            {
+              property: "og:description",
+              content: "The sign link page of ToNote.",
             },
           ],
         },
@@ -278,7 +325,7 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     const hasToken = store.getters["auth/token"];
     if (!hasToken) {
-      next({ name: 'Login' })
+      next({ name: 'Sign', query: { di: to.params.document_id } })
     } else {
       next()
     }
