@@ -6,6 +6,7 @@ const SIGN_LINK_TOOLS = "signlink-annotation-tools";
 const SIGN_LINK_PUBLIC = "signlink-public-sign";
 
 const DOCUMENT_DELETE = "document-multiple-delete";
+const SIGN_LINK_DONE = "document-participants-done";
 
 export default {
   all(token) {
@@ -57,7 +58,7 @@ export default {
   },
 
   participantDone(data) {
-    return Api.post(SIGN_LINK_TOOL, data);
+    return Api.post(SIGN_LINK_DONE, data);
   },
 };
 

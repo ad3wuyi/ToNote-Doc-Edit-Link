@@ -504,6 +504,7 @@ const {
   removeCancel,
   removeDocument,
   getUserPrints,
+  doneEditing,
 } = useActions({
   doneEditing: "signLink/doneEditing",
   removeNotification: "signLink/removeNotification",
@@ -522,7 +523,7 @@ const isOpen = ref(false);
 const pageId = ref("");
 const doneModal = ref(false);
 const cancelModal = ref(false);
-// const doneDataUrl = ref("");
+const doneDataUrl = ref("");
 const createModal = ref(false);
 const affixModal = ref(false);
 const updateSignatureModal = ref(false);
@@ -606,7 +607,7 @@ const updateStamp = () => {
   createStampModal.value = true;
 };
 
-const exportPDF = () => {
+const exportPDF = (params) => {
   const data = document.getElementById("mainWrapper");
   html2canvas(data).then((canvas) => {
     const imgWidth = 208;
@@ -628,7 +629,21 @@ const exportPDF = () => {
       heightLeft -= pageHeight;
     }
 
-    // if (params == "done") { return doneDataUrl.value = canvas.toDataURL() }
+    if (params == "done") {
+      doneDataUrl.value = canvas.toDataURL();
+      doneModal.value = false;
+
+      if (doneDataUrl.value != '') {
+        isDoneEdit();
+      }
+
+      toast.success("Document edited successfully", {
+        timeout: 5000,
+        position: "top-right",
+      });
+
+      return
+    }
 
     doc.save(link.value.title + ".pdf");
   });
@@ -639,13 +654,15 @@ const done = () => {
   doneModal.value = true;
 };
 
-// const isDoneEdit = () => {
-//   let dataObj = {
-//     document_id: uri.value,
-//     files: [doneDataUrl.value],
-//   };
-//   doneEditing(dataObj);
-// };
+const isDoneEdit = () => {
+  let dataObj = {
+    document_id: uri.value,
+    files: [doneDataUrl.value],
+  };
+  doneEditing(dataObj);
+
+  window.location.href = redirectToUserDashboard.value + "/redirecting?qt=" + token.value;
+};
 
 // const sharedDocument = () => {
 //   // exportPDF("done");

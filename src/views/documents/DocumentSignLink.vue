@@ -369,9 +369,10 @@
     </template>
 
     <template #footer>
-      <button class="btn btn-sm btn-primary" @click="confirmEdit">
+      <button class="btn btn-sm btn-primary" @click="confirmEdit" :disabled="loading">
         <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-        Confirm
+        <template v-if="!loading">Confirm</template>
+        <template v-else> Processing...</template>
       </button>
     </template>
   </ModalComp>
@@ -408,7 +409,7 @@ import MainContent from "@/components/Document/Edit/Main/MainContent.vue";
 
 import AsideBottom from "@/components/Document/Edit/Mobile/AsideBottom.vue";
 
-// // import MailToParticipant from "@/components/Document/Edit/MailToParticipant.vue";
+// import MailToParticipant from "@/components/Document/Edit/MailToParticipant.vue";
 
 import LeftTabWrapper from "@/components/Tab/TabLeftNav/LeftTabWrapper.vue";
 import LeftTabList from "@/components/Tab/TabLeftNav/LeftTabList.vue";
@@ -454,6 +455,7 @@ const {
   removeNotification,
   getPublicLink,
   getUserPrints,
+  doneEditing,
 } = useActions({
   doneEditing: "signLink/doneEditing",
   removeNotification: "signLink/removeNotification",
@@ -461,14 +463,14 @@ const {
   getUserPrints: "print/getUserPrints",
 });
 
-const redirectToUserDashboard = ref("");
+const redirectToWebsite = ref("");
 const addParticipantModal = ref(false);
 const editSignerModal = ref(false);
 const openNotificationModal = ref(isOpenModal.value);
 const isOpen = ref(false);
 const pageId = ref("");
 const doneModal = ref(false);
-// const doneDataUrl = ref("");
+const doneDataUrl = ref("");
 const createModal = ref(false);
 const affixModal = ref(false);
 const updateSignatureModal = ref(false);
@@ -524,7 +526,7 @@ const getDocId = (params) => {
 
 const closeNotification = () => {
   removeNotification(false);
-  window.location.href = redirectToUserDashboard.value + "/redirecting?qt=" + token.value;
+  window.location.href = redirectToWebsite.value;
 };
 
 const updateModal = () => {
@@ -542,7 +544,7 @@ const updateStamp = () => {
   createStampModal.value = true;
 };
 
-const exportPDF = () => {
+const exportPDF = (params) => {
   const data = document.getElementById("mainWrapper");
   html2canvas(data).then((canvas) => {
     const imgWidth = 208;
@@ -564,7 +566,21 @@ const exportPDF = () => {
       heightLeft -= pageHeight;
     }
 
-    // if (params == "done") { return doneDataUrl.value = canvas.toDataURL() }
+    if (params == "done") {
+      doneDataUrl.value = canvas.toDataURL();
+      doneModal.value = false;
+
+      if (doneDataUrl.value != '') {
+        isDoneEdit();
+      }
+
+      toast.success("Document edited successfully", {
+        timeout: 5000,
+        position: "top-right",
+      });
+
+      return
+    }
 
     doc.save(link.value.title + ".pdf");
   });
@@ -575,13 +591,15 @@ const done = () => {
   doneModal.value = true;
 };
 
-// const isDoneEdit = () => {
-//   let dataObj = {
-//     document_id: uri.value,
-//     files: [doneDataUrl.value],
-//   };
-//   doneEditing(dataObj);
-// };
+const isDoneEdit = () => {
+  let dataObj = {
+    document_id: uri.value,
+    files: [doneDataUrl.value],
+  };
+  doneEditing(dataObj);
+
+  window.location.href = redirectToWebsite.value;
+};
 
 // const sharedDocument = () => {
 //   // exportPDF("done");
@@ -596,18 +614,13 @@ const done = () => {
 // };
 
 const confirmEdit = () => {
-  // isDoneEdit();
-  window.location.href =
-    redirectToUserDashboard.value + "/redirecting?qt=" + token.value;
-
-  doneModal.value = false;
-  toast.success("Document edited successfully", { timeout: 5000, position: "top-right" });
-  window.location.href = redirectToUserDashboard.value + "/redirecting?qt=" + token.value;
+  loading.value = true;
+  exportPDF("done");
 };
 
 const linkUrl = ref("");
 onMounted(() => {
-  redirectToUserDashboard.value = process.env.VUE_APP_URL_AUTH_LIVE;
+  redirectToWebsite.value = process.env.VUE_APP_URL_WEBSITE;
   uri.value = route.currentRoute.value.params.document_id;
   getPublicLink(uri.value)
 
