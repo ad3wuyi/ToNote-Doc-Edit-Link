@@ -181,7 +181,7 @@
     </template>
 
     <template #footer>
-      <button class="btn btn-sm btn-primary" @click="createModal = false">Finish</button>
+      <button class="btn btn-sm btn-secondary" @click="createModal = false">Close</button>
     </template>
   </ModalComp>
 
@@ -580,7 +580,7 @@ const cancel = () => {
 
 const deletePermanently = () => {
   removeDocument({ documents: [{ document_id: uri.value, permanent_delete: true }] });
-  route.push({ name: "Dashboard" });
+  route.push({ name: "Document" });
 };
 
 const getDocId = (params) => {

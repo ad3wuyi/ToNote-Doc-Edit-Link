@@ -48,19 +48,16 @@
                         <template v-if="tool.tool_name == 'Textarea'">
                           <ToolTextArea @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: theDoc.is_the_owner_of_document,
                           }" />
                         </template>
                         <template v-else-if="tool.tool_name == 'Photo'">
                           <ToolImage @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: theDoc.is_the_owner_of_document,
                           }" />
                         </template>
                         <template v-else>
                           <ToolDefault @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: theDoc.is_the_owner_of_document,
                           }" />
                         </template>
                       </template>
@@ -68,19 +65,16 @@
                         <template v-if="tool.tool_name == 'Textarea'">
                           <ToolTextArea @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: theDoc.is_the_owner_of_document,
                           }" />
                         </template>
                         <template v-else-if="tool.tool_name == 'Photo'">
                           <ToolImage @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: theDoc.is_the_owner_of_document,
                           }" />
                         </template>
                         <template v-else>
                           <ToolWithCommonAsset @remove="remove" :tool="tool" :owner="{
                             user: profile,
-                            isOwner: theDoc.is_the_owner_of_document,
                           }" :print="tool" />
                         </template>
                       </template>

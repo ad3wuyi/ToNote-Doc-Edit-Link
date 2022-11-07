@@ -2,10 +2,10 @@
   <template v-if="tool.append_print == null">
     <Vue3DraggableResizable :key="tool.id" :initH="100" :initW="100" :x="Number(tool.tool_pos_left)"
       :y="Number(tool.tool_pos_top)" v-model:x="x" v-model:y="y" v-model:h="h" v-model:w="w" :parent="true"
-      :draggable="profile.id == tool.user_id || link.is_the_owner_of_document == true" :resizable="false"
-      @drag-end="onDragEnd($event, tool)" class="image-area" :handles="['tl', 'tr', 'bl', 'br']"
-      :data-can-drag-tool="tool.can_drag_tool" :data-can-delete-tool="tool.can_delete_tool" :class="tool.tool_class"
-      :id="tool.tool_id" :data-doc="tool.document_upload_id" :data-name="tool.tool_name" :data-user="tool.user_id"
+      :draggable="profile?.id" :resizable="false" @drag-end="onDragEnd($event, tool)" class="image-area"
+      :handles="['tl', 'tr', 'bl', 'br']" :data-can-drag-tool="tool.can_drag_tool"
+      :data-can-delete-tool="tool.can_delete_tool" :class="tool.tool_class" :id="tool.tool_id"
+      :data-doc="tool.document_upload_id" :data-name="tool.tool_name" :data-user="tool.user_id"
       :data-print-id="tool?.append_print?.id" :data-id="tool.id" :data-class="tool.tool_class"
       class-name-active="active-class" class-name-dragging="dragging-class" class-name-handle="handle-class">
 
@@ -19,31 +19,29 @@
       ">
         <img src="@/assets/noimage.png" class="img-fluid" id="imagePreview" alt="Preview" />
       </div>
-      <template v-if="owner.user.id == tool.user_id || owner.isOwner == true">
-        <span title="Drag" class="drag-me">
-          <span class="btn btn-xs btn-secondary rounded-0 movement">
-            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
-              stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-              <polyline points="5 9 2 12 5 15"></polyline>
-              <polyline points="9 5 12 2 15 5"></polyline>
-              <polyline points="15 19 12 22 9 19"></polyline>
-              <polyline points="19 9 22 12 19 15"></polyline>
-              <line x1="2" y1="12" x2="22" y2="12"></line>
-              <line x1="12" y1="2" x2="12" y2="22"></line>
-            </svg>
-          </span>
-
-          <span title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
-            @click="remove({ id: tool.id, can_delete: tool.can_delete_tool })" :data-id="tool.id">
-            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
-              stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              <line x1="10" y1="11" x2="10" y2="17"></line>
-              <line x1="14" y1="11" x2="14" y2="17"></line>
-            </svg></span>
+      <span title="Drag" class="drag-me">
+        <span class="btn btn-xs btn-secondary rounded-0 movement">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
+            stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
+            <polyline points="5 9 2 12 5 15"></polyline>
+            <polyline points="9 5 12 2 15 5"></polyline>
+            <polyline points="15 19 12 22 9 19"></polyline>
+            <polyline points="19 9 22 12 19 15"></polyline>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <line x1="12" y1="2" x2="12" y2="22"></line>
+          </svg>
         </span>
-      </template>
+
+        <span title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
+          @click="remove({ id: tool.id, can_delete: tool.can_delete_tool })" :data-id="tool.id">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
+            stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg></span>
+      </span>
       <!-- <ParticipantName :userId="tool.user_id" /> -->
     </Vue3DraggableResizable>
   </template>
@@ -51,12 +49,11 @@
   <template v-else>
     <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_width)" :initW="Number(tool.tool_width)" :minW="100"
       :minH="100" :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)" :parent="true" v-model:x="x"
-      v-model:y="y" v-model:h="h" v-model:w="w"
-      :draggable="profile.id == tool.user_id || link.is_the_owner_of_document == true" :resizable="
-      profile.id == tool.user_id || link.is_the_owner_of_document == true" @drag-end="onDragEnd($event, tool)"
-      @resize-end="onResizeEnd(tool, w, h)" class="image-area" :lockAspectRatio="false"
-      :handles="['tl', 'tr', 'bl', 'br']" class-name-active="active-class" class-name-dragging="dragging-class"
-      class-name-handle="handle-class" class-name-resizing="resizing-class" @dblclick="getUserId({
+      v-model:y="y" v-model:h="h" v-model:w="w" :draggable="profile?.id" :resizable="
+      profile?.id" @drag-end="onDragEnd($event, tool)" @resize-end="onResizeEnd(tool, w, h)" class="image-area"
+      :lockAspectRatio="false" :handles="['tl', 'tr', 'bl', 'br']" class-name-active="active-class"
+      class-name-dragging="dragging-class" class-name-handle="handle-class" class-name-resizing="resizing-class"
+      @dblclick="getUserId({
         user: tool.user_id,
         toolName: tool.tool_name,
         docUpId: tool.document_upload_id,
@@ -120,9 +117,8 @@ import { useGetters, useActions } from "vuex-composition-helpers/dist";
 // const toast = useToast();
 const props = defineProps({ tool: Object, owner: Object });
 
-const { profile, link } = useGetters({
+const { profile } = useGetters({
   profile: "auth/profile",
-  link: "signLink/link",
 });
 
 const { editTools, editToolWithAsset } = useActions({
