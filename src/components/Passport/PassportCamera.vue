@@ -46,21 +46,20 @@
       </span>
     </button>
 
-    <template v-if="prints.Photograph">
+    <template v-if="prints.length > 0">
       <div class="grid grid__3 mt-2">
-        <label v-for="(photo, index) in prints.Photograph" :key="index" class="form-check-label border custom-width"
-          :for="photo.created_at">
-          <div @click="getPrintId({ category: 'Upload', print_id: photo.id })">
-            <template v-if="photo.user_id">
-              <div class="position-relative">
-                <input type="radio" name="photo" v-model="selected" class="form-check-input tool_name pass"
-                  :id="photo.created_at" :value="photo.id" />
+        <label v-for="(print, index) in prints" :key="index" class="form-check-label border custom-width"
+          :for="print.created_at">
+          <div v-if="print.type === 'Photograph'" @click="
+            getPrintId({ file: print.file, category: print.category, type: print.type })
+          ">
+            <input type="radio" :name="print.category" v-model="selected" class="form-check-input tool_name"
+              :id="print.category" :value="print.category" />
+            <img :src="print.file" class="img-fluid" :alt="print.category" />
 
-                <img :src="photo.file" class="img-fluid" :alt="photo.id" />
-                <a role="button" @click="deletePassport(photo.id)"
-                  class="text-danger btn-close d-block text-end delete"></a>
-              </div>
-            </template>
+            <span @click="deletePrint(index)"
+              class="btn-outline-danger position-absolute top-0 start-100 translate-middle"
+              style="padding:1px 4px">&cross;</span>
           </div>
         </label>
       </div>
@@ -164,10 +163,9 @@ const affixSnap = () => {
   setTimeout(() => { isLoading.value = false }, 1000);
 };
 
-const deletePassport = (params) => {
-  isDelete.value = true;
-  printId.value = params;
-};
+const deletePrint = (params) => {
+  removePrint(params)
+}
 
 const proceedToDelete = () => {
   isDisabled.value = spinner.value = true;

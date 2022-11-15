@@ -35,6 +35,16 @@ export const getPublicLink = ({ commit }, formData) => {
     });
 };
 
+export const getPublicState = ({ commit }, formData) => {
+  SignLink.showPublicState(formData)
+    .then((response) => {
+      commit("SET_LINK", response.data.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
 export const createLink = ({ commit }, formData) => {
   commit("SET_LINK_NOTIFICATION", false);
   SignLink.store(formData)
@@ -218,22 +228,58 @@ export const editTools = ({ commit }, formData) => {
     });
 };
 
+export const editPublicTools = ({ commit }, formData) => {
+  let check = JSON.parse(localStorage.getItem("vuex"));
+  let parsedData = check.signLink.link.signlink_tools;
+
+  const index = parsedData.findIndex((tool) => tool.id === formData.id)
+  if (index !== -1) { parsedData.splice(index, 1, formData.payload) }
+
+  commit("SET_TOOLS", parsedData)
+  console.log({ parsedData });
+
+  SignLink.updatePublicTool(formData.id, formData.payload)
+    .then(() => {
+      commit("SET_EDIT_TOOL", formData.payload);
+    })
+};
+
 export const editToolWithAsset = ({ commit }, formData) => {
-  SignLink.updateTool(formData.id, formData.payload)
-    .then((response) => {
-      let data = response.data.data
-      commit("SET_EDIT_TOOL", data);
+  SignLink.updatePublicTool(formData.id, formData.payload)
+    .then(() => {
+      commit("SET_EDIT_TOOL", formData.payload);
 
       let check = JSON.parse(localStorage.getItem("vuex"));
-      let parsedData = check.signLink.resourceTools;
-      const index = parsedData.findIndex((tool) => tool.id === data.id)
+      let parsedData = check.signLink.link.signlink_tools;
+      const index = parsedData.findIndex((tool) => tool.id === formData.id)
 
-      if (index !== -1) { parsedData.splice(index, 1, data) }
+      if (index !== -1) { parsedData.splice(index, 1, formData.payload) }
+
+      SignLink.showPublicState(formData.payload.document_id)
+        .then((response) => {
+          commit("SET_LINK", response.data.data);
+        })
+
+      console.log({ parsedData });
 
       formData.hasAsset ? commit("SET_TOOL_WITH_ASSET", parsedData) : commit("SET_TOOLS", parsedData)
     })
     .catch((error) => {
       console.log(error);
+    });
+};
+
+export const publicSignCompleted = ({ commit }, formData) => {
+  SignLink.linkCompleted(formData.id, formData.payload)
+    .then((response) => {
+      commit("SET_PRINTS", []);
+      commit("SET_LINK_COMPLETED", []);
+      console.log(response.data.data)
+
+      toast.success(`${response.data.data.message}`, {
+        timeout: 5000,
+        position: "top-right",
+      });
     });
 };
 
@@ -252,7 +298,14 @@ export const removeTool = ({ commit }, formData) => {
 
 export const doneEditing = ({ commit }, formData) => {
   SignLink.participantDone(formData)
-    .then((response) => { commit("SET_LINK_DONE", response.data.data); })
+    .then((response) => {
+      commit("SET_LINK_DONE", response.data.data);
+
+      toast.success("Document edited successfully", {
+        timeout: 5000,
+        position: "top-right",
+      });
+    })
     .catch((error) => {
       toast.error(`${error.message}`, {
         timeout: 5000,

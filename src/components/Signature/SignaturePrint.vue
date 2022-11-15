@@ -1,19 +1,25 @@
 <template>
-  <div v-show="!prints.Signature">
+  <div v-if="!prints">
     <p class="text-center"><i>Kindly create your signature(s)</i></p>
     <button type="button" @click="createSignatureModal = true" class="btn btn-sm btn-primary d-block ms-auto mt-2">
       <span>Create</span>
     </button>
   </div>
 
-  <div v-show="prints.Signature">
+  <div v-else>
     <div class="grid">
-      <div v-for="(print, index) in prints.Signature" :key="index">
-        <img :src="print.file" class="img-fluid" width="200" :alt="print.id" height="30" />
+      <div v-if="prints.Signature?.category == 'Draw'">
+        <img :src="prints.Signature?.file" class="img-fluid" width="200" :alt="prints.Signature?.category"
+          height="30" />
       </div>
 
-      <div v-for="(print, index) in prints.Initial" :key="index">
-        <img :src="print.file" class="img-fluid" width="200" :alt="print.id" height="30" />
+      <div v-if="prints.Signature?.type == 'Signature' && prints.Signature?.category == 'Type'">
+        <img :src="prints.Signature?.file" class="img-fluid" width="200" :alt="prints.Signature?.category"
+          height="30" />
+      </div>
+
+      <div v-if="prints.Initial?.type == 'Initial' && prints.Initial?.category == 'Type'">
+        <img :src="prints.Initial?.file" class="img-fluid" width="200" :alt="prints.Initial?.category" height="30" />
       </div>
     </div>
   </div>

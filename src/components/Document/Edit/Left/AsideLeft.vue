@@ -7,34 +7,13 @@
             <div class="list-group list-group-messages">
               <template v-if="profile?.id">
                 <div class="list-group-item border-bottom">
-                  <span class="align-middle"> Edit Tools</span>
-                </div>
-
-                <div class="list-group-item border-bottom">
-                  <div class="d-grid col-lg-12 col-md-12 mb-1 mb-lg-0">
-                    <button type="button" class="
-                        btn btn-primary
-                        waves-effect waves-float waves-light
-                        custom
-                      " @click="addParticipantModal = true">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-plus">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                      </svg>
-                      <span> Add participants</span>
-                    </button>
-                  </div>
-                </div>
-                <div class="list-group-item border-bottom">
                   Tool Management
                 </div>
                 <div v-show="!hasRole" class="text-center mt-5">
                   <span class="spinner-border spinner-border-sm"></span>
                   Loading...
                 </div>
-                <div v-if="hasRole">
+                <div class="mt-1" v-if="hasRole">
                   <ToolKits @bindTool="addMouseMoveListener" />
                 </div>
               </template>
@@ -77,22 +56,9 @@
   <div class="tool-box tool-style photoTool" id="photoTool">
     <div class="element">Image<i data-feather="arrow-down-right"></i></div>
   </div>
-
-  <ModalComp :show="addParticipantModal" :footer="false" @close="addParticipantModal = false">
-    <template #header>
-      <h5 class="modal-title">Add participants</h5>
-    </template>
-
-    <template #body>
-      <AddSigner @close="addParticipantModal = false" />
-    </template>
-  </ModalComp>
 </template>
 
 <script setup>
-import ModalComp from "@/components/ModalComp.vue";
-import AddSigner from "@/components/Document/Edit/Left/AddSigner.vue";
-
 import { ref, onMounted, defineProps, watch } from "vue";
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
 
@@ -124,7 +90,6 @@ watch(
   { deep: true }
 );
 
-const addParticipantModal = ref(false);
 const hasRole = ref(false);
 
 const tempStorage = ref(null);
@@ -161,15 +126,14 @@ const addMouseMoveListener = (params) => {
   tempData.value = true;
   let count = 1;
   tempStorage.value = params;
-  let customValue = hasOS.value == "Mac OS" ? 26 : 70;
   $(document).bind("mousemove", function (e) {
     count = count + 1;
     tool_id.value = count;
     $("." + params.toolId).attr("id", count);
     $("." + params.toolId).css({
       display: "block",
-      left: e.pageX - customValue,
-      top: e.pageY - 164,
+      left: e.pageX + 2,
+      top: e.pageY - 1,
     });
   });
 };
@@ -181,8 +145,8 @@ $(document).on("click", "#mainWrapper", function (e) {
 
   let posX = $(this).offset().left;
   let posY = $(this).offset().top;
-  let x = e.pageX - posX;
-  let y = e.pageY - posY;
+  let x = e.pageX - posX + 2;
+  let y = e.pageY - posY - 5;
 
   const toolName = tempStorage.value.tool_name;
   if (toolName == "Sign" || toolName == "Initial") {
@@ -227,6 +191,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.list-group-item:hover {
+  color: #6E6B7B !important;
+}
+
 .email-app-sidebar {
   background: transparent !important;
 }

@@ -3,7 +3,12 @@ import Api from "./Api";
 const SIGN_LINK = "signlink-documents";
 const SIGN_LINK_TOOL = "signlink-annotations";
 const SIGN_LINK_TOOLS = "signlink-annotation-tools";
+
 const SIGN_LINK_PUBLIC = "signlink-public-sign";
+const SIGN_LINK_PUBLIC_STATE = "signlink-public-state";
+const SIGN_LINK_PUBLIC_TOOL = "signlink-public-annotation";
+
+const SIGN_LINK_COMPLETED = "signlink-complete";
 
 const DOCUMENT_DELETE = "document-multiple-delete";
 const SIGN_LINK_DONE = "document-participants-done";
@@ -19,6 +24,18 @@ export default {
 
   showPublic(docId) {
     return Api.get(`${SIGN_LINK_PUBLIC}/${docId}`);
+  },
+
+  showPublicState(newDocInstanceId) {
+    return Api.get(`${SIGN_LINK_PUBLIC_STATE}/${newDocInstanceId}`);
+  },
+
+  updatePublicTool(id, data) {
+    return Api.put(`${SIGN_LINK_PUBLIC_TOOL}/${id}`, data);
+  },
+
+  linkCompleted(id, data) {
+    return Api.put(`${SIGN_LINK_COMPLETED}/${id}`, data);
   },
 
   store(data) {

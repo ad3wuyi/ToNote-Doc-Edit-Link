@@ -1,15 +1,11 @@
 import Print from "@/api/Print";
 import { useToast } from "vue-toast-notification";
+import { prints } from './getters';
 const toast = useToast();
 
-export const getUserPrints = ({ commit }, token) => {
-  Print.all(token)
-    .then((response) => {
-      commit("SET_PRINTS", response.data.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+export const getUserPrints = ({ commit }) => {
+  console.log(prints)
+  commit("SET_PRINTS", []);
 };
 
 export const getUserPrint = ({ commit }, formData) => {
@@ -24,25 +20,13 @@ export const getUserPrint = ({ commit }, formData) => {
 
 export const savePrint = ({ commit }, formData) => {
   commit("SET_PRINT_NOTIFICATION", false);
-  Print.store(formData)
-    .then((response) => {
-      commit("SET_PRINTS", response.data.data);
-      commit("SET_PRINT_NOTIFICATION", true);
+  commit("SET_PRINTS", formData);
+  commit("SET_PRINT_NOTIFICATION", true);
 
-      toast.success("Saved successfully", {
-        timeout: 5000,
-        position: "top-right",
-      });
-    })
-    .catch((error) => {
-      if (error.response.status == 403) {
-        commit("SET_PRINT_NOTIFICATION", true);
-      }
-      toast.error(`${error.response.data.data.error}`, {
-        timeout: 5000,
-        position: "top-right",
-      });
-    });
+  toast.success("Saved successfully", {
+    timeout: 5000,
+    position: "top-right",
+  });
 };
 
 export const editPrint = ({ commit }, formData) => {
@@ -59,14 +43,6 @@ export const editPrint = ({ commit }, formData) => {
 };
 
 export const removePrint = ({ commit }, formData) => {
-  Print.deletePrint(formData)
-    .then((response) => {
-      commit("SET_PRINTS", response.data.data);
-    })
-    .catch((error) => {
-      toast.error(`${error.message}`, {
-        timeout: 5000,
-        position: "top-right",
-      });
-    });
+  console.log({ formData })
+  commit("SET_DELETE", formData);
 };

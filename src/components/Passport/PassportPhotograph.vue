@@ -2,17 +2,22 @@
   <div v-if="appendPass === true">
     <div class="d-flex justify-content-between align-items-center flex-column mt-2" style="height: 35vh">
       <div class="grid grid__3">
-        <label v-for="(photo, index) in prints.Photograph" :key="index" class="form-check-label border" :for="photo.id">
-          <div @click="getPrintId({ category: 'Upload', print_id: photo.id })">
-            <template v-if="photo.user_id">
-              <div class="position-relative">
-                <input type="radio" name="photo" v-model="selected" class="form-check-input tool_name" :id="photo.id"
-                  :value="photo.id" />
-                <img :src="photo.file" class="img-fluid" :alt="photo.id" />
-              </div>
-            </template>
-          </div>
-        </label>
+        <div class="w-100">
+          <label v-for="(print, index) in prints" :key="index" class="form-check-label border position-relative"
+            :for="print.category">
+            <div v-if="print.type === 'Photograph'" @click="
+              getPrintId({ file: print.file, category: print.category, type: print.type })
+            ">
+              <input type="radio" :name="print.category" v-model="selected" class="form-check-input tool_name"
+                :id="print.category" :value="print.category" />
+              <img :src="print.file" class="img-fluid" :alt="print.category" />
+
+              <span @click="deletePrint(index)"
+                class="btn-outline-danger position-absolute top-0 start-100 translate-middle"
+                style="padding:1px 4px">&cross;</span>
+            </div>
+          </label>
+        </div>
       </div>
 
       <div class="modal-footer w-100">
@@ -29,29 +34,36 @@
     <TopTabWrapper>
       <TopTabList title="Select">
         <div class="d-flex justify-content-between align-items-center flex-column" style="min-height: 18rem">
-          <template v-if="prints.Photograph">
+          <template v-if="prints.length > 0">
             <div class="grid grid__3">
-              <label v-for="(photo, index) in prints.Photograph" :key="index" class="form-check-label border"
-                :for="photo.id">
-                <div @click="getPrintId({ category: 'Upload', print_id: photo.id })">
-                  <template v-if="photo.user_id">
-                    <div class="position-relative">
-                      <input type="radio" name="photo" v-model="selected" class="form-check-input tool_name"
-                        :id="photo.id" :value="photo.id" />
-                      <img :src="photo.file" class="img-fluid" :alt="photo.id" />
-                      <a role="button" @click="deletePassport(photo.id)"
-                        class="text-danger btn-close d-block text-end delete"></a>
-                    </div>
-                  </template>
+              <div v-for="(print, index) in prints" :key="index">
+                <label v-if="print.type === 'Photograph'" class="form-check-label border position-relative"
+                  :for="print.category">
+                  <div @click="
+                    getPrintId({ file: print.file, category: print.category, type: print.type })
+                  ">
+                    <input type="radio" :name="print.category" v-model="selected" class="form-check-input tool_name"
+                      :id="print.category" :value="print.category" />
+                    <img :src="print.file" class="img-fluid" :alt="print.category" />
+
+                    <span @click="deletePrint(index)"
+                      class="btn-outline-danger position-absolute top-0 start-100 translate-middle"
+                      style="padding:1px 4px">&cross;</span>
+                  </div>
+                </label>
+                <div v-else>
+                  <p class="grid grid__1 text-center" style="height: 20vh">
+                    <i>kindly upload or take a snapshot of photograph!</i>
+                  </p>
                 </div>
-              </label>
+              </div>
             </div>
           </template>
-          <div v-else>
+          <template v-else>
             <p class="grid grid__1 text-center" style="height: 20vh">
               <i>kindly create a passport photograph!</i>
             </p>
-          </div>
+          </template>
 
           <button type="button" class="btn btn-sm btn-primary d-block ms-auto" :class="{ disabled: !isSelected }"
             @click="affixPassport">
@@ -64,7 +76,7 @@
       <TopTabList title="Upload">
         <template v-if="!isUpload">
           <p>MAX FILE SIZE: 2MB</p>
-          <p class="text-danger">{{fileValidated}}</p>
+          <p class="text-danger">{{ fileValidated }}</p>
           <DropZone @drop.prevent="drop" @change="selectedFile">
             <template #format> PNG, JPEG OR JPG </template>
             <template #input>
@@ -93,7 +105,7 @@
         </button>
       </TopTabList>
 
-      <TopTabList title="Snap">
+      <TopTabList title="Take picture">
         <div class="app">
           <div class="text-center">
             <button type="button" class="btn btn-sm mb-2"
@@ -161,6 +173,7 @@ const isLoading = ref(false);
 const loading = ref(false);
 const isDelete = ref(false);
 const printId = ref("");
+const theFile = ref("");
 const selectedTitle = ref(false);
 const isCameraOpen = ref(false);
 
@@ -229,9 +242,13 @@ const uploadPhotograph = () => {
   }, 1000);
 };
 
+const deletePrint = (params) => {
+  removePrint(params)
+}
+
 const getPrintId = (params) => {
   isSelected.value = true;
-  printId.value = params.print_id;
+  theFile.value = params.file;
 };
 
 const toggleCamera = () => {
@@ -239,7 +256,7 @@ const toggleCamera = () => {
 };
 
 const affixPassport = () => {
-  const uploadPassport = { append_print_id: printId.value };
+  const uploadPassport = { value: theFile.value };
 
   emit("selectedPassport", uploadPassport);
 
@@ -257,12 +274,6 @@ const fromSnap = (params) => {
 
   loading.value = true;
   setTimeout(() => { loading.value = false }, 1000);
-};
-
-const deletePassport = (params) => {
-  isSelected.value = false;
-  isDelete.value = true;
-  printId.value = params;
 };
 
 const proceedToDelete = () => {
@@ -292,7 +303,7 @@ const proceedToDelete = () => {
 }
 
 .grid__3 {
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .grid__1 {
@@ -328,7 +339,7 @@ const proceedToDelete = () => {
 
 @media screen and (max-width: 991.5px) {
   .grid__3 {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
   }
 }
 </style>

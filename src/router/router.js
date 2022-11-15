@@ -48,6 +48,12 @@ const SignLink = () =>
     /* webpackChunkName: "sign-link" */ "@/views/documents/DocumentSignLink.vue"
   );
 
+const NewInstanceOfSignLink = () =>
+  import(
+    /* webpackChunkName: "new-instance-sign-link" */ "@/views/CopySignLink.vue"
+  );
+
+
 const UserRegistration = () =>
   import(
     /* webpackChunkName: "auth-register" */ "@/components/Auth/UserRegistration.vue"
@@ -108,6 +114,15 @@ const routes = [
           content: "The verification page of ToNote.",
         },
       ],
+    },
+  },
+
+  {
+    path: "/to-sign/:document_id",
+    name: "NewSign",
+    component: NewInstanceOfSignLink,
+    meta: {
+      title: "ToNote",
     },
   },
 

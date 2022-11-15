@@ -18,6 +18,10 @@ export const SET_LINK_DONE = (state, done) => {
   state.doneEditing = done;
 };
 
+export const SET_LINK_COMPLETED = (state, done) => {
+  state.doneSigning = done;
+};
+
 export const SET_NOTIFICATION = (state, modal) => {
   state.isOpenModal = modal;
 };

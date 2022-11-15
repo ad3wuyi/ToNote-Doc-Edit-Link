@@ -2,8 +2,10 @@
   <Vue3DraggableResizable :key="tool.id" :initH="30" :initW="Number(tool.tool_width)" :x="Number(tool.tool_pos_left)"
     :y="Number(tool.tool_pos_top)" v-model:x="x" v-model:y="y" :parent="true" :draggable="profile?.id"
     :resizable="false" @drag-end="onDragEnd($event, tool)" class="image-area" :handles="['tl', 'tr', 'bl', 'br']"
-    :class="tool.tool_class" :id="tool.tool_id" :data-doc="tool.document_upload_id" :data-name="tool.tool_name"
-    :data-user="tool.user_id" :data-id="tool.id" :data-class="tool.tool_class">
+    :data-can-drag-tool="tool.can_drag_tool" :data-can-delete-tool="tool.can_delete_tool" :class="tool.tool_class"
+    :id="tool.tool_id" :data-doc="tool.document_upload_id" :data-name="tool.tool_name" :data-user="tool.user_id"
+    :data-print-id="tool?.append_print?.id" :data-id="tool.id" :data-class="tool.tool_class">
+
     <div class="bg-fill w-100 h-100 d-flex justify-content-center align-items-center" @click.prevent="
       getUserId({
         user: tool,
@@ -28,7 +30,7 @@
         </svg>
       </span>
 
-      <span v-if="profile?.id" title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
+      <span title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
         @click="remove({ id: tool.id, can_delete: tool.can_delete_tool })" :data-id="tool.id">
         <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
           stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
@@ -41,53 +43,49 @@
   </Vue3DraggableResizable>
 
   <Teleport to="body">
-    <ModalComp :show="affixModal" :footer="false" @close="affixModal = false">
-      <template #header>
-        <h4 class="modal-title">Create your signature</h4>
-      </template>
-
-      <template #body>
-        <LeftTabWrapper>
-          <LeftTabList title="Draw">
-            <SignaturePad @close="swapModal" />
-          </LeftTabList>
-
-          <LeftTabList title="Select">
-            <SignatureSelectFull @close="swapModal" />
-          </LeftTabList>
-
-          <LeftTabList title="Initial">
-            <SignatureSelectInitial @close="swapModal" />
-          </LeftTabList>
-
-          <LeftTabList title="Upload">
-            <div class="row">
-              <div class="col-md-12 mx-auto position-relative">
-                <SignatureUpload @close="swapModal" />
-              </div>
-            </div>
-          </LeftTabList>
-        </LeftTabWrapper>
-        <div class="row">
-          <div class="col-md-10 ms-auto mt-2">
-            <p class="fw-normal">
-              By clicking create, I agree that all signatures, marks or initials created
-              here are as valid as my hand written signature to the extent allowed by law.
-            </p>
-          </div>
-        </div>
-      </template>
-    </ModalComp>
-  </Teleport>
-
-  <Teleport to="body">
-    <ModalComp :show="signatureListModal" :footer="false" :size="'modal-sm'" @close="signatureListModal = false">
+    <ModalComp :show="affixModal" :footer="false" :size="'modal-lg'" @close="affixModal = false">
       <template #header>
         <h4 class="modal-title">Signature box</h4>
       </template>
 
       <template #body>
-        <SignaturePrintFull @selectedSignature="savePrint" @closeModal="signatureListModal = false" />
+        <SignaturePrintFull @selectedSignature="savePrint" @closeModal="affixModal = false" />
+      </template>
+    </ModalComp>
+  </Teleport>
+
+  <Teleport to="body">
+    <ModalComp :show="initialModal" :footer="false" :size="'modal-md'" @close="initialModal = false">
+      <template #header>
+        <h4 class="modal-title">Initial signature box</h4>
+      </template>
+
+      <template #body>
+        <SignaturePrintInitial @selectedSignature="savePrint" @closeModal="initialModal = false" />
+      </template>
+    </ModalComp>
+  </Teleport>
+
+  <Teleport to="body">
+    <ModalComp :show="sealModal" :footer="false" :size="'modal-md'" @close="sealModal = false">
+      <template #header>
+        <h4 class="modal-title">Seal box</h4>
+      </template>
+
+      <template #body>
+        <SealAppend @selectedSeal="savePrint" />
+      </template>
+    </ModalComp>
+  </Teleport>
+
+  <Teleport to="body">
+    <ModalComp :show="stampModal" :footer="false" :size="'modal-md'" @close="stampModal = false">
+      <template #header>
+        <h4 class="modal-title">Stamp box</h4>
+      </template>
+
+      <template #body>
+        <StampAppend @selectedStamp="savePrint" />
       </template>
     </ModalComp>
   </Teleport>
@@ -95,13 +93,10 @@
 
 <script setup>
 import ModalComp from "@/components/ModalComp.vue";
-import SignaturePad from "@/components/Signature/SignaturePad.vue";
+import SealAppend from "@/components/Notary/Seal/SealAppend.vue";
+import StampAppend from "@/components/Notary/Stamp/StampAppend.vue";
 import SignaturePrintFull from "@/components/Signature/SignatureList.vue";
-import SignatureSelectFull from "@/components/Signature/SignatureSelectFull.vue";
-import SignatureSelectInitial from "@/components/Signature/SignatureSelectInitial.vue";
-import SignatureUpload from "@/components/Signature/SignatureUpload.vue";
-import LeftTabList from "@/components/Tab/TabLeftNav/LeftTabList.vue";
-import LeftTabWrapper from "@/components/Tab/TabLeftNav/LeftTabWrapper.vue";
+import SignaturePrintInitial from "@/components/Signature/SignaturePrintInitial.vue";
 
 import { ref, defineProps, defineEmits } from "vue";
 import { useActions, useGetters } from "vuex-composition-helpers/dist";
@@ -113,9 +108,8 @@ const { profile, print } = useGetters({
   print: "print/print",
 });
 
-const { editTools, editPublicTools, editToolWithAsset, getUserPrint } = useActions({
+const { editTools, editToolWithAsset, getUserPrint } = useActions({
   editTools: "signLink/editTools",
-  editPublicTools: "signLink/editPublicTools",
   editToolWithAsset: "signLink/editToolWithAsset",
   getUserPrint: "print/getUserPrint",
 });
@@ -125,18 +119,12 @@ const y = ref(Number(props.tool.tool_pos_top));
 
 const documentId = ref(null);
 const affixModal = ref(false);
-const signatureListModal = ref(false);
 const sealModal = ref(false);
 const stampModal = ref(false);
 const initialModal = ref(false);
 const toolId = ref(null);
 const imgWidth = ref(null);
 const imgHeight = ref(null);
-
-const swapModal = () => {
-  affixModal.value = false
-  signatureListModal.value = true
-}
 
 const getUserId = (params) => {
   if (params.toolName == "Seal") sealModal.value = true;
@@ -155,7 +143,7 @@ const savePrint = (params) => {
   } else if (params.tool_name == "Stamp") {
     params.tool_width = "260";
     params.tool_height = "100";
-  } else if (params.tool_name == "Signature" && params.category == "Draw") {
+  } else if ((params.tool_name == "Signature" && params.category == "Draw")) {
     params.tool_width = "100";
     params.tool_height = "50";
   } else if (params.tool_name == "Signature" && params.category == "Type") {
@@ -165,39 +153,22 @@ const savePrint = (params) => {
     params.tool_width = "80";
     params.tool_height = "40";
   } else if (params.tool_name == "Signature" && params.category == "Upload") {
-    getUserPrint(params.append_print_id);
+    getUserPrint(params.append_print_id)
 
-    setTimeout(() => {
-      img.src = print.value?.file;
-    }, 1000);
+    setTimeout(() => { img.src = print.value?.file }, 1000);
 
     let img = new Image();
     img.onload = function () {
-      imgWidth.value = img.width;
-      imgHeight.value = img.height;
+      imgWidth.value = img.width
+      imgHeight.value = img.height
       params.tool_width = imgWidth.value.toString();
       params.tool_height = imgHeight.value.toString();
     };
   }
 
-  params.document_id = props.tool?.document_id;
   params.document_upload_id = documentId.value;
 
-  const dataObj = {
-    document_id: props.tool?.document_id,
-    document_upload_id: documentId.value,
-    id: props.tool?.id,
-    signed: false,
-    tool_class: "tool-box main-element",
-    tool_height: params.tool_height,
-    tool_name: params.tool_name,
-    tool_pos_left: x.value.toString(),
-    tool_pos_top: y.value.toString(),
-    tool_width: params.tool_width,
-    value: params.value,
-  }
-
-  editToolWithAsset({ id: toolId.value, payload: dataObj, hasAsset: true, hasProfile: profile?.id });
+  editToolWithAsset({ id: toolId.value, payload: params, hasAsset: true });
 };
 
 const emit = defineEmits(["remove"]);
@@ -217,14 +188,9 @@ const onDragEnd = (e, tool) => {
     document_upload_id: tool.document_upload_id,
     tool_pos_left: e.x.toString(),
     tool_pos_top: e.y.toString(),
-    value: tool?.value,
   };
 
-  if (tool.document_id == undefined) {
-    editTools({ id: tool.id, payload: dragToUpdate, toLocal });
-  } else {
-    editPublicTools({ id: tool.id, payload: dragToUpdate, toLocal });
-  }
+  editTools({ id: tool.id, payload: dragToUpdate, toLocal });
 };
 </script>
 

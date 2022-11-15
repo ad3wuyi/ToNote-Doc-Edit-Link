@@ -2,16 +2,21 @@
   <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_height)" :initW="Number(tool.tool_width)" :minW="70"
     :minH="30" :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)" :parent="true" v-model:x="x" v-model:y="y"
     v-model:h="h" v-model:w="w" :draggable="profile?.id" :resizable="profile?.id" @drag-end="onDragEnd($event, tool)"
-    @resize-end="onResizeEnd(tool, w, h)" class="image-area" :handles="['tl', 'tr', 'bl', 'br']"
+    @resize-end="onResizeEnd(tool, w, h)" class="image-area"
+    :lockAspectRatio="['Seal', 'Stamp'].includes(tool.tool_name) ? true : false" :handles="['tl', 'tr', 'bl', 'br']"
     class-name-active="active-class" class-name-dragging="dragging-class" class-name-handle="handle-class"
     class-name-resizing="resizing-class" @dblclick="
       getUserId({
+        user: tool.user_id,
         toolName: tool.tool_name,
         docUpId: tool.document_upload_id,
         toolId: tool.id,
       })
-    " :data-id="tool.id" :data-doc="tool.document_upload_id" :data-name="tool.tool_name">
-    <img :src="tool.value" class="w-100 h-100" style="object-fit: scale-down" />
+    " :data-can-drag-tool="tool.can_drag_tool" :data-user="tool.user_id" :data-can-delete-tool="tool.can_delete_tool"
+    :data-id="tool.id" :data-doc="tool.document_upload_id" :data-print-id="tool.append_print.id"
+    :data-name="tool.tool_name">
+    <img :src="tool.append_print.file" class="w-100 h-100"
+      :style="[['Draw', 'Upload'].includes(tool.append_print.category) ? 'object-fit: scale-down' : '']" />
 
     <span class="drag-me">
       <span title="Drag" class="btn btn-xs btn-secondary rounded-0 movement">
@@ -26,8 +31,8 @@
         </svg>
       </span>
 
-      <span v-if="profile?.id" title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
-        @click="remove({ id: tool.id })" :data-id="tool.id">
+      <span title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
+        @click="remove({ id: tool.id, can_delete: tool.can_delete_tool })" :data-id="tool.id">
         <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
           stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
           <polyline points="3 6 5 6 21 6"></polyline>
@@ -38,24 +43,10 @@
     </span>
     <!-- <ParticipantName :userId="tool.user_id" /> -->
   </Vue3DraggableResizable>
-
-  <Teleport to="body">
-    <ModalComp :show="affixModal" :footer="false" :size="'modal-sm'" @close="affixModal = false">
-      <template #header>
-        <h4 class="modal-title">Signature boxes...</h4>
-      </template>
-
-      <template #body>
-        <SignatureList @selectedSignature="savePrint" @closeModal="affixModal = false" />
-      </template>
-    </ModalComp>
-  </Teleport>
 </template>
 
 <script setup>
 // // import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
-import ModalComp from "@/components/ModalComp.vue";
-import SignatureList from "@/components/Signature/SignatureList.vue";
 
 import { defineProps, defineEmits, ref } from "vue";
 
@@ -63,7 +54,7 @@ import { useActions, useGetters } from "vuex-composition-helpers/dist";
 // import { useToast } from "vue-toast-notification";
 
 // const toast = useToast();
-const props = defineProps({ tool: Object });
+const props = defineProps({ tool: Object, owner: Object });
 
 let x = ref(Number(props.tool.tool_pos_left));
 let y = ref(Number(props.tool.tool_pos_top));
@@ -74,25 +65,11 @@ const { profile } = useGetters({
   profile: "auth/profile",
 });
 
-const { editTools, editPublicTools } = useActions({
-  editTools: "signLink/editTools",
-  editPublicTools: "signLink/editPublicTools",
-});
+const { editTools } = useActions({ editTools: "signLink/editTools" });
 
 const emit = defineEmits(["remove"]);
 const remove = (params) => {
   emit("remove", params);
-};
-
-const affixModal = ref(false)
-const getUserId = (params) => {
-  // if (params.toolName == "Seal") sealModal.value = true;
-  // if (params.toolName == "Stamp") stampModal.value = true;
-  // if (params.toolName == "Initial") initialModal.value = true;
-  if (params.toolName == "Signature") affixModal.value = true;
-
-  // documentId.value = params.docUpId;
-  // toolId.value = params.toolId;
 };
 
 const onDragEnd = (e, tool) => {
@@ -103,18 +80,13 @@ const onDragEnd = (e, tool) => {
   };
 
   const dragToUpdate = {
-    document_id: tool?.document_id,
+    append_print_id: tool.append_print.id == undefined ? "" : tool.append_print.id,
     document_upload_id: tool.document_upload_id,
     tool_pos_left: e.x.toString(),
     tool_pos_top: e.y.toString(),
-    value: tool?.value,
   };
 
-  if (tool.document_id == undefined) {
-    editTools({ id: tool.id, payload: dragToUpdate, toLocal });
-  } else {
-    editPublicTools({ id: tool.id, payload: dragToUpdate, toLocal });
-  }
+  editTools({ id: tool.id, payload: dragToUpdate, toLocal });
 };
 
 const onResizeEnd = (tool, w, h) => {
@@ -125,18 +97,13 @@ const onResizeEnd = (tool, w, h) => {
   };
 
   const resizeToUpdate = {
-    document_id: tool?.document_id,
+    append_print_id: tool.append_print.id == undefined ? "" : tool.append_print.id,
     document_upload_id: tool.document_upload_id,
     tool_width: w.toString(),
     tool_height: h.toString(),
-    value: tool?.value,
   };
 
-  if (tool.document_id == undefined) {
-    editTools({ id: tool.id, payload: resizeToUpdate, toLocal });
-  } else {
-    editPublicTools({ id: tool.id, payload: resizeToUpdate, toLocal });
-  }
+  editTools({ id: tool.id, payload: resizeToUpdate, toLocal });
 };
 </script>
 

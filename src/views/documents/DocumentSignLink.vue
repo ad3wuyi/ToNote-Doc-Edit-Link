@@ -36,16 +36,6 @@
             </svg>
           </button>
           <div class="dropdown-menu dropdown-menu-end" data-popper-placement="bottom-start">
-            <!-- <div class="dropdown-divider"></div> -->
-            <a class="dropdown-item btn d-flex align-items-center" role="button" @click="addParticipantModal = true">
-              <Icon icon="akar-icons:plus" class="me-1" />
-              Add participants
-            </a>
-
-            <a class="dropdown-item btn d-flex align-items-center" role="button" @click="editSignerModal = true">
-              <Icon icon="ep:view" class="me-1" />
-              Manage signers
-            </a>
             <a class="dropdown-item btn d-flex align-items-center" role="button" @click="exportPDF">
               <Icon icon="bx:download" class="me-1" />
               Download
@@ -62,11 +52,9 @@
       </li>
       <!-- other buttons  -->
       <li class="nav-item border-0">
-        <button class="btn btn-sm btn-primary me-1" @click="doneModal = true">
+        <button class="btn btn-sm btn-primary me-1" @click="createModal = true">
           Submit
         </button>
-
-        <button class="btn btn-sm btn-primary" @click="createModal = true">Share</button>
       </li>
     </ul>
   </div>
@@ -121,7 +109,7 @@
         </li>
         <li class="nav-item">
           <a class="nav-link nav-link-style">
-            <button class="btn btn-sm btn-primary waves-effect" @click="done">
+            <button class="btn btn-sm btn-primary waves-effect" @click="createModal = true">
               Submit
             </button>
           </a>
@@ -130,36 +118,12 @@
     </div>
   </nav>
 
-  <div class="content-area-wrapper container-xxl p-0 mt-5 overflow-x-scroll border-0">
-    <AsideLeft :chunkFileId="pageId" :isOpen="editSignerModal" @close="editSignerModal = false" />
-    <MainContent @docId="getDocId" @open="open" />
-    <AsideRight />
+  <div class="content-area-wrapper container-xxl p-0 mt-5 overflow-x-scroll border-0"
+    style="position: static !important">
+    <SignLinkAsideLeft />
+    <SignLinkMainContent @docId="getDocId" @open="open" />
+    <SignLinkAsideRight />
   </div>
-
-  <div class="fixed-bottom bg-white shadow-lg custom-sm">
-    <AsideBottom :chunkFileId="pageId" :isOpen="addParticipantModal" @close="addParticipantModal = false" />
-  </div>
-
-  <ModalComp :show="createModal" :size="'modal-md'" :closeBtn="false">
-    <template #header>
-      <h5 class="modal-title">Created Link</h5>
-    </template>
-
-    <template #body>
-      <p class="text-center">Kindly find the generated link below</p>
-      <p class="text-center" style="font-size: 10px">
-        <code class="text-center">{{ linkUrl + '/link/' + uri }}</code>
-      </p>
-      <button type="button" class="btn btn-sm btn-outline-dark waves-effect d-block mx-auto"
-        v-clipboard:copy="linkUrl + '/link/' + uri" v-clipboard:success="onCopy" v-clipboard:error="onError">
-        Copy link
-      </button>
-    </template>
-
-    <template #footer>
-      <button class="btn btn-sm btn-primary" @click="createModal = false">Finish</button>
-    </template>
-  </ModalComp>
 
   <ModalComp :show="openNotificationModal" :size="'modal-sm'" :closeBtn="false">
     <template #header>
@@ -275,126 +239,41 @@
     </template>
   </ModalComp>
 
-  <ModalComp :show="sealModal" :footer="false" :size="'modal-md'" @close="sealModal = false">
+  <ModalComp :show="createModal" :size="'modal-md'" :footer="false" @close="createModal = false">
     <template #header>
-      <h4 class="modal-title">My Seal</h4>
+      <h5 class="modal-title">Information</h5>
     </template>
 
     <template #body>
-      <div class="row">
-        <div class="col-md-4 ms-auto">
-          <button @click="updateSeal" class="float-end btn btn-outline-secondary btn-sm waves-effect">
-            <svg width="21" height="21" xmlns="http://www.w3.org/2000/svg" class="ml-auto tool-svg" data-v-01cdeba4="">
-              <g clip-path="url(#a)" data-v-01cdeba4="">
-                <path
-                  d="M17.808 6.033c-.657-.657-.524-1.413-.54-1.516 0-3.099-3.284-3.075-3.288-3.077-.493 0-.957-.192-1.305-.54a3.08 3.08 0 0 0-4.351 0c-.657.657-1.413.523-1.516.54-3.099 0-3.075 3.284-3.077 3.288 0 .493-.192.956-.54 1.305a3.08 3.08 0 0 0 0 4.35c.348.35.54.813.54 1.306.002.004-.135 2.696 2.461 3.225V21l4.307-2.871L14.806 21v-6.086c2.68-.546 2.453-3.203 2.461-3.225 0-.493.192-.957.54-1.305a3.056 3.056 0 0 0 .902-2.176c0-.821-.32-1.594-.901-2.175ZM7.423 15.02c.339.075.65.245.9.496.434.433.974.721 1.561.84v.703L7.423 18.7v-3.679Zm3.691 2.039v-.703a3.055 3.055 0 0 0 1.56-.84c.252-.251.563-.42.902-.496v3.68l-2.462-1.641Zm5.824-7.547a3.056 3.056 0 0 0-.901 2.176c-.002.004.068 2.057-1.846 2.057-.093.016-1.34-.146-2.386.9-.35.35-.813.541-1.306.541-.493 0-.956-.192-1.305-.54-1.043-1.043-2.296-.885-2.386-.901-1.912 0-1.845-2.053-1.846-2.057 0-.822-.32-1.595-.901-2.176-.72-.72-.72-1.89 0-2.61a3.056 3.056 0 0 0 .9-2.175c.002-.004-.068-2.057 1.847-2.057.092-.017 1.339.146 2.386-.901.72-.72 1.89-.72 2.61 0a3.056 3.056 0 0 0 2.176.9c.004.002 2.057-.067 2.057 1.847.016.092-.146 1.339.9 2.386.35.349.541.812.541 1.305 0 .493-.192.957-.54 1.305Z"
-                  data-v-01cdeba4=""></path>
-                <path
-                  d="M10.5 3.69a4.312 4.312 0 0 0-4.308 4.306 4.312 4.312 0 0 0 4.307 4.307 4.312 4.312 0 0 0 4.307-4.307A4.312 4.312 0 0 0 10.5 3.69Zm0 7.383a3.08 3.08 0 0 1-3.077-3.077 3.08 3.08 0 0 1 3.076-3.076 3.08 3.08 0 0 1 3.077 3.076 3.08 3.08 0 0 1-3.077 3.077Z"
-                  data-v-01cdeba4=""></path>
-              </g>
-              <defs data-v-01cdeba4="">
-                <clipPath id="a" data-v-01cdeba4="">
-                  <path fill="#fff" d="M0 0h21v21H0z" data-v-01cdeba4=""></path>
-                </clipPath>
-              </defs>
-            </svg>
-            Manage
+      <p class="text-center">Kindly fill out the form below</p>
+
+      <form @submit.prevent="submittedForm" class="row g-1" novalidate>
+        <div class="col-md-6">
+          <label for="full" class="form-label">Full name</label>
+          <input type="text" class="form-control" id="full" v-model="form.full_name" placeholder="Enter full name" />
+        </div>
+        <div class="col-md-6">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" v-model="form.email" placeholder="Enter email" />
+        </div>
+        <div class="col-12">
+          <div class="form-check">
+            <input class="form-check-input" id="idCheck" type="checkbox" @change="handleCheck($event)"
+              :checked="!isChecked" />
+            <label class="form-check-label" for="idCheck">
+              Agree to terms and conditions
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer pb-0 pe-0">
+          <button type="submit" class="btn btn-sm btn-primary" :disabled="isChecked || loading">
+            <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+            <template v-if="!loading">Submit</template>
+            <template v-else> Processing...</template>
           </button>
         </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <SealList />
-    </template>
-  </ModalComp>
-
-  <ModalComp :show="stampModal" :footer="false" :size="'modal-md'" @close="stampModal = false">
-    <template #header>
-      <h4 class="modal-title">My Stamp</h4>
-    </template>
-
-    <template #body>
-      <div class="row">
-        <div class="col-md-4 ms-auto">
-          <button @click="updateStamp" class="float-end btn btn-outline-secondary btn-sm waves-effect">
-            <svg width="21" height="12" xmlns="http://www.w3.org/2000/svg" class="ml-auto tool-svg" data-v-01cdeba4="">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M21 0H0v12h21V0Zm-.913 1H.913v10h19.174V1Z"
-                data-v-01cdeba4=""></path>
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M17.348 3H3.652v6h13.696V3Zm-.913 1H4.565v4h11.87V4Z"
-                data-v-01cdeba4=""></path>
-            </svg>
-            Manage
-          </button>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <StampList />
-    </template>
-  </ModalComp>
-
-  <ModalComp :show="createStampModal" :footer="false" :size="'modal-md'" @close="createStampModal = false">
-    <template #header>
-      <h4 class="modal-title">Manage a stamp</h4>
-    </template>
-
-    <template #body>
-      <StampCreate @close="createStampModal = false" />
-    </template>
-  </ModalComp>
-
-  <ModalComp :show="createSealModal" :footer="false" :size="'modal-lg'" @close="createSealModal = false">
-    <template #header>
-      <h4 class="modal-title">Manage a seal</h4>
-    </template>
-
-    <template #body>
-      <SealDigitalCreate @close="createSealModal = false" />
-    </template>
-  </ModalComp>
-
-  <ModalComp :show="doneModal" :size="'modal-sm'" @close="doneModal = false">
-    <template #header>
-      <h4 class="modal-title text-danger mb-0">
-        <Icon icon="eva:alert-triangle-outline" style="margin-bottom: 3px" />
-        Alert
-      </h4>
-    </template>
-
-    <template #body>
-      <p class="text-center"><i>Please confirm that you are done editing.</i></p>
-    </template>
-
-    <template #footer>
-      <button class="btn btn-sm btn-primary" @click="confirmEdit" :disabled="loading">
-        <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-        <template v-if="!loading">Confirm</template>
-        <template v-else> Processing...</template>
-      </button>
-    </template>
-  </ModalComp>
-
-  <ModalComp :show="OTPFlag?.guest" :size="'modal-sm'" :footer="false" :closeBtn="false">
-    <template #header>
-      <h4 class="modal-title text-warning mb-0">
-        <Icon icon="icomoon-free:notification" style="margin-bottom: 3px" />
-        Information
-      </h4>
-    </template>
-
-    <template #body>
-      <p>Hi {{ profile?.first_name }},</p>
-      <p>Welcome to ToNote.</p>
-      <p>
-        For the most secure e-signature, simply create a password and you can proceed to
-        sign your document.
-      </p>
-      <p>Thanks!</p>
-
-      <UserResetPassword />
+      </form>
     </template>
   </ModalComp>
 </template>
@@ -402,14 +281,9 @@
 <script setup>
 import { Icon } from "@iconify/vue";
 import ModalComp from "@/components/ModalComp.vue";
-import UserResetPassword from "@/components/Auth/UserResetPassword.vue";
-import AsideLeft from "@/components/Document/Edit/Left/AsideLeft.vue";
-import AsideRight from "@/components/Document/Edit/Right/AsideRight.vue";
-import MainContent from "@/components/Document/Edit/Main/MainContent.vue";
-
-import AsideBottom from "@/components/Document/Edit/Mobile/AsideBottom.vue";
-
-// import MailToParticipant from "@/components/Document/Edit/MailToParticipant.vue";
+import SignLinkAsideLeft from "@/components/Document/Edit/Left/SignLinkAsideLeft.vue";
+import SignLinkAsideRight from "@/components/Document/Edit/Right/SignLinkAsideRight.vue";
+import SignLinkMainContent from "@/components/Document/Edit/Main/SignLinkMainContent.vue";
 
 import LeftTabWrapper from "@/components/Tab/TabLeftNav/LeftTabWrapper.vue";
 import LeftTabList from "@/components/Tab/TabLeftNav/LeftTabList.vue";
@@ -420,12 +294,6 @@ import SignaturePad from "@/components/Signature/SignaturePad.vue";
 import SignatureSelectFull from "@/components/Signature/SignatureSelectFull.vue";
 import SignatureUpload from "@/components/Signature/SignatureUpload.vue";
 import SignatureSelectInitial from "@/components/Signature/SignatureSelectInitial.vue";
-
-import SealDigitalCreate from "@/components/Notary/Seal/SealDigitalCreate.vue";
-import SealList from "@/components/Notary/Seal/SealList.vue";
-
-import StampList from "@/components/Notary/Stamp/StampList.vue";
-import StampCreate from "@/components/Notary/Stamp/StampCreate.vue";
 
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -443,41 +311,34 @@ import $ from "jquery";
 const toast = useToast();
 const route = useRouter();
 
-const { token, profile, link, isOpenModal, OTPFlag } = useGetters({
+const { token, link, isOpenModal } = useGetters({
   token: "auth/token",
-  profile: "auth/profile",
-  OTPFlag: "auth/OTPFlag",
   link: "signLink/link",
   isOpenModal: "signLink/isOpenModal",
 });
 
 const {
+  // doneEditing,
+  publicSignCompleted,
   removeNotification,
-  getPublicLink,
+  getPublicState,
   getUserPrints,
-  doneEditing,
 } = useActions({
   doneEditing: "signLink/doneEditing",
+  publicSignCompleted: "signLink/publicSignCompleted",
   removeNotification: "signLink/removeNotification",
-  getPublicLink: "signLink/getPublicLink",
+  getPublicState: "signLink/getPublicState",
   getUserPrints: "print/getUserPrints",
 });
 
 const redirectToWebsite = ref("");
-const addParticipantModal = ref(false);
-const editSignerModal = ref(false);
 const openNotificationModal = ref(isOpenModal.value);
 const isOpen = ref(false);
 const pageId = ref("");
-const doneModal = ref(false);
-const doneDataUrl = ref("");
 const createModal = ref(false);
+const doneDataUrl = ref("");
 const affixModal = ref(false);
 const updateSignatureModal = ref(false);
-const sealModal = ref(false);
-const createSealModal = ref(false);
-const createStampModal = ref(false);
-const stampModal = ref(false);
 const loading = ref(false);
 const hasRole = ref(false);
 const uri = ref("");
@@ -505,45 +366,6 @@ watch(
   }
 );
 
-const message = "Copied to clipboard!";
-const onCopy = () => {
-  return toast.default(message, {
-    timeout: 5000,
-    position: "top-right",
-  });
-};
-const onError = (e) => {
-  alert("Failed to copy texts", e);
-};
-
-const open = (params) => {
-  isOpen.value = params;
-};
-
-const getDocId = (params) => {
-  pageId.value = params;
-};
-
-const closeNotification = () => {
-  removeNotification(false);
-  window.location.href = redirectToWebsite.value;
-};
-
-const updateModal = () => {
-  affixModal.value = false;
-  updateSignatureModal.value = true;
-};
-
-const updateSeal = () => {
-  sealModal.value = false;
-  createSealModal.value = true;
-};
-
-const updateStamp = () => {
-  stampModal.value = false;
-  createStampModal.value = true;
-};
-
 const exportPDF = (params) => {
   const data = document.getElementById("mainWrapper");
   html2canvas(data).then((canvas) => {
@@ -566,68 +388,92 @@ const exportPDF = (params) => {
       heightLeft -= pageHeight;
     }
 
-    if (params == "done") {
+    if (params === "isComplete") {
+      // doneDataUrl.value = doc.output("datauristring");
       doneDataUrl.value = canvas.toDataURL();
-      doneModal.value = false;
 
-      if (doneDataUrl.value != '') {
+      if (doneDataUrl.value != "") {
+        createModal.value = false;
         isDoneEdit();
       }
 
-      toast.success("Document edited successfully", {
-        timeout: 5000,
-        position: "top-right",
-      });
-
-      return
+      return;
     }
 
     doc.save(link.value.title + ".pdf");
   });
 };
 
-const done = () => {
-  // exportPDF("done")
-  doneModal.value = true;
+const form = ref({ full_name: "", email: "" });
+const isChecked = ref(false);
+const handleCheck = (e) => {
+  isChecked.value = e.target.checked = !e.target.checked;
+};
+
+const submittedForm = () => {
+  if (form.value.full_name == "" || form.value.email == "")
+    return toast.error("Kindly fill out the form", {
+      timeout: 5000,
+      position: "top-right",
+    });
+
+  loading.value = true;
+  exportPDF("isComplete");
 };
 
 const isDoneEdit = () => {
-  let dataObj = {
+  let splittedName = form.value.full_name.split(" ");
+
+  form.value = {
     document_id: uri.value,
+    first_name: splittedName[0],
+    last_name: splittedName[1],
+    email: form.value.email,
     files: [doneDataUrl.value],
   };
-  doneEditing(dataObj);
+  console.log(form.value);
 
+  publicSignCompleted({ id: link.value.parent_id, payload: form.value });
+  form.value = { full_name: "", email: "" };
+  loading.value = false
+
+  // window.location.href = redirectToWebsite.value;
+};
+
+const open = (params) => {
+  isOpen.value = params;
+};
+
+const getDocId = (params) => {
+  pageId.value = params;
+};
+
+const closeNotification = () => {
+  removeNotification(false);
   window.location.href = redirectToWebsite.value;
 };
 
-// const sharedDocument = () => {
-//   // exportPDF("done");
-
-//   loading.value = true;
-
-//   setTimeout(() => {
-//     // isDoneEdit();
-//     loading.value = false;
-//     createModal.value = false;
-//   }, 3000);
-// };
-
-const confirmEdit = () => {
-  loading.value = true;
-  exportPDF("done");
+const updateModal = () => {
+  affixModal.value = false;
+  updateSignatureModal.value = true;
 };
 
 const linkUrl = ref("");
 onMounted(() => {
   redirectToWebsite.value = process.env.VUE_APP_URL_WEBSITE;
   uri.value = route.currentRoute.value.params.document_id;
-  getPublicLink(uri.value)
+  getPublicState(uri.value);
 
   linkUrl.value =
     process.env.NODE_ENV === "development"
       ? process.env.VUE_APP_URL_AUTH_LOCAL
       : process.env.VUE_APP_URL_SIGN_LINK;
+
+  setTimeout(() => {
+    if (window.Tawk_API) {
+      window.Tawk_API.hideWidget();
+    }
+  }, 2000);
 
   if (token.value == null) return;
   if (token.value != "" || token.value != null) {
@@ -635,12 +481,6 @@ onMounted(() => {
     dashboard.value.setToken(token.value);
     getUserPrints(token.value);
   }
-
-  setTimeout(() => {
-    if (window.Tawk_API) {
-      window.Tawk_API.hideWidget();
-    }
-  }, 2000);
 });
 
 // onUnmounted(() => {

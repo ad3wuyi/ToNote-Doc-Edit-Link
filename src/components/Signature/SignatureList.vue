@@ -1,25 +1,22 @@
 <template>
-  <div v-show="!prints.Signature">
-    <p class="text-center"><i>Kindly create your signature(s)</i></p>
-    <button type="button" @click="createSignatureModal = true" class="btn btn-sm btn-primary d-block ms-auto mt-2">
-      <span>Create</span>
-    </button>
-  </div>
+  <div v-if="prints.length != 0">
+    <p class="text-center fw-normal mb-4">Pick a signature to append</p>
+    <div class="grid">
+      <div v-for="(print, index) in prints" :key="index">
+        <label class="form-check-label border position-relative" :for="print.category">
+          <div @click="
+            getImgUrl({ file: print.file, category: print.category, type: print.type })
+          ">
+            <input type="radio" :name="print.category" v-model="selected" class="form-check-input tool_name"
+              :id="print.category" :value="print.category" />
+            <img :src="print.file" class="img-fluid" :alt="print.category" />
+          </div>
 
-  <div v-show="prints.Signature">
-    <p class="text-center fw-normal">Pick a signature to append</p>
-    <div class="grid qwerty">
-      <label v-for="(print, index) in prints.Signature" :key="index" class="form-check-label border" :for="print.id">
-        <div @click="
-          getImgUrl({ category: print.category, type: print.type, print_id: print.id })
-        ">
-          <template v-if="print.user_id">
-            <input type="radio" :name="print.id" v-model="selected" class="form-check-input tool_name" :id="print.id"
-              :value="print.id" />
-            <img :src="print.file" class="img-fluid" width="200" :alt="print.id" height="30" />
-          </template>
-        </div>
-      </label>
+          <span @click="deletePrint(index)"
+            class="btn-outline-danger position-absolute top-0 start-100 translate-middle"
+            style="padding:1px 4px">&cross;</span>
+        </label>
+      </div>
     </div>
 
     <button type="button" class="btn btn-sm btn-primary d-block ms-auto mt-2" :disabled="!isDisabled"
@@ -27,6 +24,9 @@
       <span v-show="loading" class="spinner-border spinner-border-sm"></span>
       <span>Append</span>
     </button>
+  </div>
+  <div v-else>
+    <p class="text-center fw-normal"><i>No signature to append</i></p>
   </div>
 
   <ModalComp :show="createSignatureModal" :footer="false" @close="createSignatureModal = false">
@@ -74,42 +74,45 @@ import SignatureUpload from "@/components/Signature/SignatureUpload.vue";
 
 import { ref, defineEmits, watch } from "vue";
 import { createNamespacedHelpers } from "vuex-composition-helpers/dist";
-const { useGetters } = createNamespacedHelpers("print");
+const { useGetters, useActions } = createNamespacedHelpers("print");
 
 const { prints } = useGetters(["prints"]);
+const { removePrint } = useActions(["removePrint"]);
 
 const createSignatureModal = ref(false);
 const loading = ref(false);
 const isDisabled = ref(false);
 const selected = ref("");
-const printId = ref("");
+const file = ref("");
 
 watch(
   () => prints.value,
   (newValue) => {
+    console.log({ newValue })
     prints.value = newValue;
   }
 );
 
-const toolClass = ref("");
 const category = ref("");
 const type = ref("");
 const getImgUrl = (params) => {
   category.value = params.category;
   type.value = params.type;
-  printId.value = params.print_id;
-  toolClass.value = "tool-box main-element";
+  file.value = params.file;
   isDisabled.value = true;
 };
+
+const deletePrint = (params) => {
+  removePrint(params)
+}
 
 const emit = defineEmits(["selectedSignature"]);
 const uploadSignature = () => {
   const uploadFile = {
-    append_print_id: printId.value,
-    tool_class: toolClass.value,
     category: category.value,
     type: type.value,
     tool_name: "Signature",
+    value: file.value,
   };
 
   emit("selectedSignature", uploadFile);
@@ -123,7 +126,7 @@ const uploadSignature = () => {
 <style scoped>
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   place-items: center;
   gap: 20px;
 }

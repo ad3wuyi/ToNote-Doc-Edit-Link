@@ -40,7 +40,7 @@
         </td>
         <td>
           <span class="badge rounded-pill badge-light-dark fw-normal" style="font-size:10px">
-            {{ linkUrl + "/link/" + doc.id }}
+            {{ linkUrl + "/to-sign/" + doc.id }}
           </span>
         </td>
         <td>
@@ -58,7 +58,8 @@
         <td>
           <div class="d-flex align-items-center">
             <button type="button" class="btn btn-sm btn-outline-primary waves-effect"
-              v-clipboard:copy="linkUrl + '/link/' + doc.id" v-clipboard:success="onCopy" v-clipboard:error="onError">
+              v-clipboard:copy="linkUrl + '/to-sign/' + doc.id" v-clipboard:success="onCopy"
+              v-clipboard:error="onError">
               Copy link
             </button>
             <div class="dropdown">
@@ -298,7 +299,7 @@ onMounted(() => {
         pageLength: 5,
       });
     }
-  }, 100);
+  }, 1000);
 });
 </script>
 

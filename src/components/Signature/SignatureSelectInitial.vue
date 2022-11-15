@@ -33,7 +33,7 @@
               <div class="css-pl8xw2">
                 <div class="css-fv3lde">
                   <span class="css-4x8v88 initials" :class="font" :style="{ fontFamily: font, fontSize: '30px' }">
-                    {{ nameInitials }}
+                    {{ theInit }}
                   </span>
                 </div>
               </div>
@@ -44,7 +44,7 @@
         <span class="d-inline-block">
           <div ref="capture" class="d-inline-block" data-type="Initial"
             style="font-size: 50px; padding: 0 10px; color: #000" :style="{ fontFamily: selectedFont }">
-            {{ nameInitials }}
+            {{ theInit }}
           </div>
         </span>
 
@@ -66,12 +66,11 @@
 import domToImage from "dom-to-image";
 import { ref, defineEmits, watch } from "vue";
 
-import { useGetters, useActions } from "vuex-composition-helpers/dist";
+import { useActions } from "vuex-composition-helpers/dist";
 
-const { profile } = useGetters({
-  profile: "auth/profile",
-  prints: "print/prints",
-});
+// const { profile } = useGetters({
+//   profile: "auth/profile",
+// });
 
 const { savePrint } = useActions({ savePrint: "print/savePrint" });
 
@@ -96,13 +95,11 @@ const getFirstLetters = (str) => {
   return firstLetters;
 };
 
-fullName.value = profile.value.first_name + " " + profile.value.last_name;
-nameInitials.value = getFirstLetters(fullName.value);
-
+const theInit = ref('')
 watch(
   () => nameInitials.value,
   (newValue) => {
-    nameInitials.value = newValue;
+    theInit.value = getFirstLetters(newValue).toUpperCase();
   }
 );
 
@@ -127,7 +124,7 @@ const onCapture = (font) => {
       })
       .then((dataUrl) => {
         imgUrl.value = dataUrl;
-        data.value = { file: dataUrl, type: type, category: "Type" };
+        data.value = { file: dataUrl, type: type, category: "Initial" };
         loading.value = false;
         capturing.value = true;
       })
@@ -160,7 +157,6 @@ const createTypedSignature = () => {
 </script>
 
 <style scoped>
-
 @import "@/assets/css/signature-font-face.css";
 
 .hover {

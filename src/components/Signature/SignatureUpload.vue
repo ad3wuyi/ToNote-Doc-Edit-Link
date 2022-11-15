@@ -1,6 +1,6 @@
 <template>
   <p>MAX FILE SIZE: 2MB</p>
-  <p class="text-danger">{{fileValidated}}</p>
+  <p class="text-danger">{{ fileValidated }}</p>
   <div class="d-flex flex-column justify-content-between align-items-center" style="height: 400px">
     <template v-if="!isUpload">
       <DropZone @drop.prevent="drop" @change="selectedFile">

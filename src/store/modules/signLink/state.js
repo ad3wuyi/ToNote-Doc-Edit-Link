@@ -4,6 +4,7 @@ export default {
   cancel: false,
   isLinkSaved: false,
   doneEditing: null,
+  doneSigning: [],
   resourceTools: [],
   resourceToolWithAsset: [],
   isOpenModal: false,

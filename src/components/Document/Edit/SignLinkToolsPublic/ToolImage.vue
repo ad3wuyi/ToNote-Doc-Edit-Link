@@ -1,11 +1,14 @@
 <template>
-  <template v-if="tool.value == null">
+  <template v-if="tool.append_print == null">
     <Vue3DraggableResizable :key="tool.id" :initH="100" :initW="100" :x="Number(tool.tool_pos_left)"
       :y="Number(tool.tool_pos_top)" v-model:x="x" v-model:y="y" v-model:h="h" v-model:w="w" :parent="true"
       :draggable="profile?.id" :resizable="false" @drag-end="onDragEnd($event, tool)" class="image-area"
-      :handles="['tl', 'tr', 'bl', 'br']" :class="tool.tool_class" :id="tool.tool_id"
-      :data-doc="tool.document_upload_id" :data-name="tool.tool_name" :data-id="tool.id" :data-class="tool.tool_class"
+      :handles="['tl', 'tr', 'bl', 'br']" :data-can-drag-tool="tool.can_drag_tool"
+      :data-can-delete-tool="tool.can_delete_tool" :class="tool.tool_class" :id="tool.tool_id"
+      :data-doc="tool.document_upload_id" :data-name="tool.tool_name" :data-user="tool.user_id"
+      :data-print-id="tool?.append_print?.id" :data-id="tool.id" :data-class="tool.tool_class"
       class-name-active="active-class" class-name-dragging="dragging-class" class-name-handle="handle-class">
+
       <div @click="
         getUserId({
           user: tool.user_id,
@@ -29,7 +32,7 @@
           </svg>
         </span>
 
-        <span v-if="profile?.id" title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
+        <span title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
           @click="remove({ id: tool.id, can_delete: tool.can_delete_tool })" :data-id="tool.id">
           <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
             stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
@@ -46,51 +49,50 @@
   <template v-else>
     <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_width)" :initW="Number(tool.tool_width)" :minW="100"
       :minH="100" :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)" :parent="true" v-model:x="x"
-      v-model:y="y" v-model:h="h" v-model:w="w" :draggable="profile?.id" :resizable="profile?.id"
-      @drag-end="onDragEnd($event, tool)" @resize-end="onResizeEnd(tool, w, h)" class="image-area"
+      v-model:y="y" v-model:h="h" v-model:w="w" :draggable="profile?.id" :resizable="
+      profile?.id" @drag-end="onDragEnd($event, tool)" @resize-end="onResizeEnd(tool, w, h)" class="image-area"
       :lockAspectRatio="false" :handles="['tl', 'tr', 'bl', 'br']" class-name-active="active-class"
       class-name-dragging="dragging-class" class-name-handle="handle-class" class-name-resizing="resizing-class"
-      @dblclick="
-        getUserId({
-          user: tool.user_id,
-          toolName: tool.tool_name,
-          docUpId: tool.document_upload_id,
-          toolId: tool.id,
-        })
+      @dblclick="getUserId({
+        user: tool.user_id,
+        toolName: tool.tool_name,
+        docUpId: tool.document_upload_id,
+        toolId: tool.id,
+      })
       ">
-      <!-- <img :src="tool.value" class="w-100 h-100 obj-fit" :data-name="tool.tool_name" :data-doc="tool.document_upload_id"
-        :data-print-id="tool.append_print.id" /> -->
-      <img :src="tool.value" class="w-100 h-100 obj-fit" />
+      <img :src="tool.append_print.file" class="w-100 h-100 obj-fit" :data-name="tool.tool_name"
+        :data-doc="tool.document_upload_id" :data-print-id="tool.append_print.id" />
+      <template v-if="profile.id == tool.user_id || isOwner">
+        <span title="Drag" class="drag-me">
+          <span class="btn btn-xs btn-secondary rounded-0 movement">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
+              stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
+              <polyline points="5 9 2 12 5 15"></polyline>
+              <polyline points="9 5 12 2 15 5"></polyline>
+              <polyline points="15 19 12 22 9 19"></polyline>
+              <polyline points="19 9 22 12 19 15"></polyline>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <line x1="12" y1="2" x2="12" y2="22"></line>
+            </svg>
+          </span>
 
-      <span title="Drag" class="drag-me">
-        <span class="btn btn-xs btn-secondary rounded-0 movement">
-          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
-            stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-            <polyline points="5 9 2 12 5 15"></polyline>
-            <polyline points="9 5 12 2 15 5"></polyline>
-            <polyline points="15 19 12 22 9 19"></polyline>
-            <polyline points="19 9 22 12 19 15"></polyline>
-            <line x1="2" y1="12" x2="22" y2="12"></line>
-            <line x1="12" y1="2" x2="12" y2="22"></line>
-          </svg>
+          <span title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
+            @click="remove({ id: tool.id, can_delete: tool.can_delete_tool })" :data-id="tool.id">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
+              stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg></span>
         </span>
-
-        <span v-if="profile?.id" title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
-          @click="remove({ id: tool.id, can_delete: tool.can_delete_tool })" :data-id="tool.id">
-          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
-            stroke-linecap="round" stroke-linejoin="round" class="css-i6dzq1">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            <line x1="10" y1="11" x2="10" y2="17"></line>
-            <line x1="14" y1="11" x2="14" y2="17"></line>
-          </svg></span>
-      </span>
+      </template>
       <!-- <ParticipantName :userId="tool.user_id" /> -->
     </Vue3DraggableResizable>
   </template>
 
   <Teleport to="body">
-    <ModalComp :show="uploadImage" :footer="false" :size="'modal-md'" @close="uploadImage = false">
+    <ModalComp :show="uploadImage" :footer="false" :size="'modal-lg'" @close="uploadImage = false">
       <template #header>
         <h4 class="modal-title">Image management</h4>
       </template>
@@ -105,6 +107,7 @@
 <script setup>
 import ModalComp from "@/components/ModalComp.vue";
 import PassportPhotograph from "@/components/Passport/PassportPhotograph.vue";
+// // import ParticipantName from "@/components/Document/Edit/ParticipantName.vue";
 
 import { ref, defineProps, defineEmits } from "vue";
 
@@ -118,10 +121,9 @@ const { profile } = useGetters({
   profile: "auth/profile",
 });
 
-const { editTools, editPublicTools, editToolWithAsset } = useActions({
+const { editTools, editToolWithAsset } = useActions({
   editToolWithAsset: "signLink/editToolWithAsset",
   editTools: "signLink/editTools",
-  editPublicTools: "signLink/editPublicTools",
 });
 
 const x = ref(Number(props.tool.tool_pos_left));
@@ -131,23 +133,17 @@ const h = ref(Number(props.tool.tool_width));
 
 const savePrint = (params) => {
   const formData = {
-    document_id: props.tool?.document_id,
+    append_print_id: params.append_print_id,
     document_upload_id: props.tool.document_upload_id,
-    id: props.tool?.id,
-    signed: false,
+    tool_name: props.tool.tool_name,
     tool_class: "main-element photo-style",
-    tool_pos_left: x.value.toString(),
-    tool_pos_top: y.value.toString(),
-    value: params.value,
-  }
+  };
 
-  editToolWithAsset({ id: props.tool.id, payload: formData, hasAsset: true, hasProfile: profile?.id });
+  editToolWithAsset({ id: props.tool.id, payload: formData, hasAsset: true });
 };
 
 const emit = defineEmits(["remove"]);
-const remove = (params) => {
-  emit("remove", params);
-};
+const remove = (params) => { emit("remove", params) };
 
 const uploadImage = ref(false);
 const getUserId = (params) => {
@@ -160,20 +156,13 @@ const onDragEnd = (e, tool) => {
     tool_pos_left: e.x.toString(),
     tool_pos_top: e.y.toString(),
   };
-
   const dragToUpdate = {
-    document_id: tool?.document_id,
+    append_print_id: tool?.append_print?.id == undefined ? "" : tool?.append_print?.id,
     document_upload_id: tool.document_upload_id,
     tool_pos_left: e.x.toString(),
     tool_pos_top: e.y.toString(),
-    value: tool?.value,
   };
-
-  if (tool.document_id == undefined) {
-    editTools({ id: tool.id, payload: dragToUpdate, toLocal });
-  } else {
-    editPublicTools({ id: tool.id, payload: dragToUpdate, toLocal });
-  }
+  editTools({ id: tool.id, payload: dragToUpdate, toLocal });
 };
 
 const onResizeEnd = (tool, w, h) => {
@@ -184,18 +173,12 @@ const onResizeEnd = (tool, w, h) => {
   };
 
   const resizeToUpdate = {
-    document_id: tool?.document_id,
+    append_print_id: tool.append_print.id == undefined ? "" : tool.append_print.id,
     document_upload_id: tool.document_upload_id,
     tool_width: w.toString(),
     tool_height: h.toString(),
-    value: tool?.value,
   };
-
-  if (tool.document_id == undefined) {
-    editTools({ id: tool.id, payload: resizeToUpdate, toLocal });
-  } else {
-    editPublicTools({ id: tool.id, payload: resizeToUpdate, toLocal });
-  }
+  editTools({ id: tool.id, payload: resizeToUpdate, toLocal });
 };
 </script>
 

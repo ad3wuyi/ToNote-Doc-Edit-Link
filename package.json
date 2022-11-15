@@ -26,6 +26,7 @@
     "pdfvuer": "^2.0.1",
     "signature_pad": "^4.0.5",
     "simple-vue-camera": "^1.1.2",
+    "uuid": "^9.0.0",
     "vee-validate": "^4.5.11",
     "vue": "^3.2.36",
     "vue-advanced-cropper": "^2.8.6",

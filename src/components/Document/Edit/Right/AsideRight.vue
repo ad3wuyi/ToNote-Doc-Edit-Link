@@ -3,46 +3,21 @@
     <div class="sidebar">
       <div class="email-app-sidebar">
         <div class="email-app-menu">
-          <div class="sidebar-menu-list sidebar-nav sticky shadow" style="width: 260px;">
+          <div class="sidebar-menu-list sidebar-nav sticky shadow" style="width: 260px">
             <template v-if="profile?.id">
               <div class="list-group list-group-messages">
-                <div class="list-group-item list-group-item-action border-bottom">
-                  Tool Management
-                </div>
-
-                <div class="list-group-item list-group-item-action border-bottom">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                      Added Tool ({{ workingTools.length > 0 ? workingTools.length : 0 }})
-                    </div>
+                <div class="list-group-item border-bottom">
+                  <!-- <div class="d-flex justify-content-between align-items-center"> -->
+                  <div>
+                    Added Tool ({{ workingTools.length > 0 ? workingTools.length : 0 }})
+                    <!-- </div> -->
                   </div>
-                </div>
-
-                <div class="list-group-item list-group-item-action border-bottom">
-                  <p>Signers ({{ link?.participants_count }})</p>
-
-                  <div class="avatar-group">
-                    <div v-for="(init, index) in link?.participants" data-popup="tooltip-custom" data-bs-placement="top"
-                      :title="init.user.first_name + ' ' + init.user.last_name" class="avatar pull-up"
-                      :data-bs-original-title="init.user.first_name" :data-id="init.id" :key="index">
-                      <div class="avatar-content text-uppercase">
-                        {{
-                            getFirstLetters(init.user.first_name + " " + init.user.last_name)
-                        }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div role="button" class="list-group-item list-group-item-action border-bottom"
-                  @click="editSignerModal = true">
-                  <span class="isHover">View all signers <span>&rightarrow;</span></span>
                 </div>
               </div>
             </template>
             <template v-else>
               <div class="list-group-item border-bottom">
-                <label class="form-label">Coming Soon!</label>
+                <h5 class="form-label">Coming Soon!</h5>
               </div>
             </template>
           </div>
@@ -50,211 +25,20 @@
       </div>
     </div>
   </div>
-
-  <ModalComp :show="editSignerModal" :footer="false" @close="closeSignerModal">
-    <template #header>
-      <h5 class="modal-title">Edit participants</h5>
-    </template>
-
-    <template #body>
-      <form @submit.prevent="onEditParticipant">
-        <div id="addSignerErrorMsg" class="text-center text-danger"></div>
-        <div class="row gx-1" v-for="(participant, index) in participants" :key="index">
-          <div class="col-md-3 col-12">
-            <div class="mb-1">
-              <label class="form-label" for="first-name">First Name</label>
-              <input type="text" name="first_name" v-model="participant.user.first_name"
-                class="form-control form-control-sm" />
-            </div>
-          </div>
-          <div class="col-md-3 col-12">
-            <div class="mb-1">
-              <label class="form-label" for="last-name-column">Last Name</label>
-              <input type="text" name="last_name" v-model="participant.user.last_name"
-                class="form-control form-control-sm" />
-            </div>
-          </div>
-          <!-- <div class="col-md-3 col-12">
-          <div class="mb-1">
-            <label class="form-label" for="phone-column">Phone</label>
-            <input  type="phone" name="phone"
-                v-model="participant.user.phone" class="form-control form-control-sm" />
-          </div>
-        </div> -->
-          <div class="col-md-3 col-12">
-            <div class="mb-1">
-              <label class="form-label" for="email-id-column">Email</label>
-              <input type="email" name="email" v-model="participant.user.email" class="form-control form-control-sm" />
-            </div>
-          </div>
-          <div class="col-md-3 col-12">
-            <div class="mb-1">
-              <label class="form-label" for="role-column">Role</label>
-              <select name="role" v-model="participant.role" class="form-select form-control-sm" required>
-                <option value="">select role</option>
-                <option :selected="participant.role == 'Signer' ? true : false">
-                  Signer
-                </option>
-                <option :selected="participant.role == 'Viewer' ? true : false">
-                  Viewer
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div class="col-md-12">
-            <small role="button" style="font-size: small" class="text-danger" @click="remove(participant.id)">
-              Remove
-            </small>
-          </div>
-          <hr />
-        </div>
-
-        <div class="row">
-          <div class="col-12">
-            <button type="submit" class="btn btn-sm btn-primary waves-effect waves-float waves-light d-block ms-auto">
-              Update
-            </button>
-          </div>
-        </div>
-      </form>
-    </template>
-  </ModalComp>
-
-  <ModalComp :show="removeParticipantModal" :size="'modal-sm'" @close="removeParticipantModal = false">
-    <template #header>
-      <h4 class="text-danger mb-0">
-        <Icon icon="eva:alert-triangle-outline" style="margin-bottom: 3px" />
-        Alert
-      </h4>
-    </template>
-    <template #body>
-      <h5 class="modal-title text-center">
-        Are you sure you want to remove this signer?
-      </h5>
-      <p class="fw-normal text-center">
-        This will remove all tools added in the signer's name
-      </p>
-    </template>
-    <template #footer>
-      <div class="d-flex justify-content-end align-items-center">
-        <button class="btn btn-sm btn-outline-danger" @click="deleteParticipant">
-          Yes Remove
-        </button>
-      </div>
-    </template>
-  </ModalComp>
 </template>
 
 <script setup>
-import { Icon } from "@iconify/vue";
-import ModalComp from "@/components/ModalComp.vue";
+import { computed } from "vue";
+import { useGetters } from "vuex-composition-helpers/dist";
 
-import { computed, onMounted, ref, defineEmits, defineProps, watch } from "vue";
-import { useGetters, useActions } from "vuex-composition-helpers/dist";
-
-const { link, profile, workingTools } = useGetters({
+const { profile, workingTools } = useGetters({
   profile: "auth/profile",
   link: "signLink/link",
   workingTools: "signLink/workingTools",
 });
 
-const { removeParticipant, editParticipant } = useActions({
-  removeParticipant: "document/removeParticipant",
-  editParticipant: "document/editParticipant",
-});
-
 workingTools.value = computed(() => {
   return workingTools.value;
-});
-
-const props = defineProps({ isOpen: Boolean });
-const emit = defineEmits(['close'])
-
-watch(
-  () => [link.value?.participants, props.isOpen],
-  ([newUserDoc, newOpen]) => {
-    participants.value = newUserDoc
-    if (newOpen) { editSignerModal.value = newOpen }
-  }
-);
-
-const isOwner = ref(false);
-const removeParticipantModal = ref(false);
-const editSignerModal = ref(false);
-const fullName = ref("");
-const participantId = ref("");
-const nameInitials = ref("");
-const initialObj = ref([]);
-const participants = ref(null);
-
-participants.value = link.value?.participants;
-
-const closeSignerModal = () => {
-  editSignerModal.value = false
-  emit('close', true)
-}
-
-const getFirstLetters = (str) => {
-  const firstLetters = str
-    .split(" ")
-    .map((word) => word[0])
-    .join("");
-
-  return firstLetters;
-};
-
-const onEditParticipant = () => {
-  let formObj = [];
-  participants.value.map((obj) => {
-    formObj.push({
-      document_id: link?.value.id,
-      document_participant_id: obj.id,
-      first_name: obj.user.first_name,
-      last_name: obj.user.last_name,
-      email: obj.user.email,
-      phone: obj.user.phone,
-      role: obj.role,
-    });
-  });
-
-  editParticipant(formObj);
-  editSignerModal.value = false;
-  emit('close', true)
-};
-
-const remove = (params) => {
-  removeParticipantModal.value = true;
-  participantId.value = params;
-};
-
-const deleteParticipant = () => {
-  removeParticipant(participantId.value);
-  removeParticipantModal.value = false;
-};
-
-onMounted(() => {
-  initialObj.value = [];
-  if (participants.value == undefined) return;
-  participants.value.map((params) => {
-    fullName.value = params.user.first_name + " " + params.user.last_name;
-    nameInitials.value = getFirstLetters(fullName.value);
-    initialObj.value.push({
-      id: params.id,
-      initials: nameInitials.value,
-      fullName: fullName.value,
-    });
-  });
-
-  if (
-    link?.value.participants != undefined ||
-    link?.value.participants.length > 0
-  ) {
-    link?.value.participants.map((participant) => {
-      if (participant.user.id === profile.value.id)
-        return (isOwner.value = participant.ownerDocument);
-    });
-  }
 });
 </script>
 
@@ -263,51 +47,16 @@ onMounted(() => {
   background: transparent !important;
 }
 
+.list-group-item:hover {
+  color: #6E6B7B !important;
+}
+
 .sidebar-nav.sticky {
   position: fixed !important;
   top: 165px;
   bottom: 0;
   background-color: #fff;
 }
-
-.isHover {
-  background-image: linear-gradient(to right, #003bb3, #003bb3 50%, #000 50%);
-  background-size: 200% 100%;
-  background-position: -100%;
-  display: inline-block;
-  padding: 5px 0;
-  position: relative;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transition: all 0.3s ease-in-out;
-}
-
-.isHover:before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  border-radius: 4px;
-  background-color: #003bb3;
-  bottom: 0;
-  left: 0;
-  transform-origin: right;
-  transform: scaleX(0);
-  transition: transform 0.3s ease-in-out;
-}
-
-.isHover:hover {
-  background-position: 0;
-}
-
-.isHover:hover::before {
-  transform-origin: left;
-  transform: scaleX(1);
-}
-
-/* .email-application .content-area-wrapper .sidebar .email-app-sidebar {
-  width: 225px !important;
-} */
 
 @media screen and (max-width: 1160px) {
   .custom-md-none {

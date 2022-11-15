@@ -135,18 +135,11 @@
             </button>
           </a>
         </li>
-        <li class="nav-item" v-show="hasRole">
-          <a class="nav-link nav-link-style">
-            <button class="btn btn-sm btn-primary waves-effect" @click="done">
-              Finish
-            </button>
-          </a>
-        </li>
         <li class="nav-item d-none d-sm-block">
           <a class="nav-link nav-link-style">
             <button class="btn btn-sm btn-primary waves-effect waves-float waves-light" @click="createModal = true"
               style="margin-right: 5px">
-              Create
+              Create Link
             </button>
           </a>
         </li>
@@ -154,7 +147,8 @@
     </div>
   </nav>
 
-  <div class="content-area-wrapper container-xxl p-0 mt-5 overflow-x-scroll border-0">
+  <div class="content-area-wrapper container-xxl p-0 mt-5 overflow-x-scroll border-0"
+    style="position:static !important">
     <AsideLeft :chunkFileId="pageId" :isOpen="editSignerModal" @close="editSignerModal = false" />
     <MainContent @docId="getDocId" @open="open" />
     <AsideRight />
@@ -164,24 +158,27 @@
     <AsideBottom :chunkFileId="pageId" :isOpen="addParticipantModal" @close="addParticipantModal = false" />
   </div>
 
-  <ModalComp :show="createModal" :size="'modal-md'" :closeBtn="false">
+  <ModalComp :show="createModal" :size="'modal-md'" :footer="false" @close="createModal = false">
     <template #header>
       <h5 class="modal-title">Created Link</h5>
     </template>
 
     <template #body>
       <p class="text-center">Kindly find the generated link below</p>
-      <p class="text-center" style="font-size: 10px">
-        <code class="text-center">{{ linkUrl + '/link/' + uri }}</code>
-      </p>
-      <button type="button" class="btn btn-sm btn-outline-dark waves-effect d-block mx-auto"
-        v-clipboard:copy="linkUrl + '/link/' + uri" v-clipboard:success="onCopy" v-clipboard:error="onError">
-        Copy link
-      </button>
-    </template>
 
-    <template #footer>
-      <button class="btn btn-sm btn-secondary" @click="createModal = false">Close</button>
+      <div class="mb-2">
+        <p class="text-center" style="font-size: 10px">
+          <code class="text-center">{{ linkUrl + '/to-sign/' + uri }}</code>
+        </p>
+        <button type="button" class="btn btn-sm btn-outline-dark waves-effect d-block mx-auto"
+          v-clipboard:copy="linkUrl + '/to-sign/' + uri" v-clipboard:success="onCopy" v-clipboard:error="onError">
+          Copy link
+        </button>
+      </div>
+
+      <div class="modal-footer pb-0 pe-0">
+        <button type="button" class="btn btn-sm btn-primary" @click="done">Done</button>
+      </div>
     </template>
   </ModalComp>
 
@@ -410,7 +407,7 @@
     </template>
 
     <template #body>
-      <p class="text-center"><i>Please confirm that you are done editing.</i></p>
+      <p class="text-center"><i>Please confirm that you are done signing.</i></p>
     </template>
 
     <template #footer>
@@ -650,8 +647,7 @@ const exportPDF = (params) => {
 };
 
 const done = () => {
-  // exportPDF("done")
-  doneModal.value = true;
+  route.push({ name: 'Document', query: { status: 'sign' } })
 };
 
 const isDoneEdit = () => {

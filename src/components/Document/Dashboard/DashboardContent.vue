@@ -7,23 +7,8 @@
             <div class="d-flex justify-content-between align-items-center header-actions text-nowrap mx-1 row mt-75">
               <div class="col-sm-12 col-lg-12">
                 <div v-if="dashboard.status != 'Sign'" class="card-header d-flex justify-content-lg-between py-1 p-0">
-                  <h4 class="card-title">My Files</h4>
+                  <h4 class="card-title text-capitalize">{{ dashboard.status }} Files</h4>
 
-                  <div class="d-none">
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Upload
-                      </button>
-                      <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">File Upload</a>
-                        <a class="dropdown-item" href="#">Folder Upload</a>
-                      </div>
-                    </div>
-                    <button class="btn btn-primary ms-2" @click="folderModal = true">
-                      New Folder
-                    </button>
-                  </div>
                   <a :href="redirectToESign + '/document/upload?qt=' + token" class="btn btn-sm btn-primary"
                     v-show="dashboard.status != 'Deleted'">
                     Sign a Document
@@ -59,7 +44,7 @@
                       </template>
                       <template v-else>
                         <button type="button" class="btn btn-sm btn-primary" @click="deleteDocument('delete', '')">
-                          Deleted
+                          Delete
                         </button>
                       </template>
                     </div>
@@ -221,9 +206,7 @@
                         <tr class="even text-center">
                           <td colspan="5" class="pt-3">
                             <i>No Items Found in
-                              {{
-                                  dashboard.status == "Deleted" ? "Trash" : dashboard.status
-                              }}</i>
+                              {{ dashboard.status == "Deleted" ? "Trash" : dashboard.status }}</i>
                           </td>
                         </tr>
                       </template>
@@ -231,7 +214,7 @@
                   </table>
                 </template>
                 <template v-else>
-                  <DashboardSignLink @showDeleteButton="showButton" />
+                  <DashboardSignLink @showDeleteButton="showButton" :key="signLinkKey" />
                 </template>
               </div>
             </div>
@@ -315,6 +298,7 @@ import DashboardSignLink from "./DashboardSignLink.vue";
 const toast = useToast();
 const route = useRouter();
 
+const signLinkKey = ref(0);
 const redirectToESign = ref("");
 const hasMultipleSelection = ref(false);
 const isHidden = ref(false);
@@ -363,6 +347,7 @@ watch(
       theDoc.value = newUserDoc;
     }
 
+    reRender()
     closed.value = true;
     if (newDocStatus != oldDocStatus) {
       closed.value = true;
@@ -392,10 +377,17 @@ watch(
   }
 );
 
+const reRender = () => {
+  signLinkKey.value += 1;
+};
+
 const showButton = (params) => {
   hasMultipleSelection.value = params.show
   docIds.value = params.signLinkDocIds
-  isDeleteOrRestore.value = params?.showModal
+  if (params.showModal) {
+    action.value = 'delete'
+    isDeleteOrRestore.value = params?.showModal
+  }
 }
 
 const editId = ref("");

@@ -53,12 +53,12 @@
 import domToImage from "dom-to-image";
 import { ref, watch, defineEmits } from "vue";
 
-import { useGetters, useActions } from "vuex-composition-helpers/dist";
+import { useActions } from "vuex-composition-helpers/dist";
 
-const { profile } = useGetters({
-  profile: "auth/profile",
-  prints: "print/prints",
-});
+// const { profile } = useGetters({
+//   profile: "auth/profile",
+//   prints: "print/prints",
+// });
 
 const { savePrint } = useActions({ savePrint: "print/savePrint" });
 
@@ -72,8 +72,6 @@ const selectedFont = ref("");
 
 const fonts = ["Great Vibes", "Arizonia"];
 const fullName = ref("");
-
-fullName.value = profile.value.first_name + " " + profile.value.last_name;
 
 watch(
   () => fullName.value,
@@ -125,6 +123,7 @@ const createTypedSignature = () => {
     value: fullName.value,
   };
 
+  console.log(data.value.file)
   savePrint(formData);
   emit("close", true);
 

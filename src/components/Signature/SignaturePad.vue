@@ -3,7 +3,7 @@
     <div class="grid-8 px-0">
       <div class="my-1">Draw your signature in the tool box</div>
       <div :style="{ width: w, height: h }" @touchmove.prevent>
-        <canvas :id="state.uid" class="canvas shadow" :data-uid="state.uid" :disabled="state?.disabled"></canvas>
+        <canvas :id="state?.uid" class="canvas shadow" :data-uid="state.uid" :disabled="state?.disabled"></canvas>
       </div>
     </div>
 
@@ -15,53 +15,28 @@
         <label class="btn btn-sm btn-outline-primary waves-effect" for="btnradioclear" @click="clear">Clear</label>
       </div>
 
-      <template v-if="prints.Signature || prints.Signature != undefined">
-        <div v-for="(sign, index) in prints.Signature" :key="index">
-          <template v-if="sign.category == 'Draw'">
-            <div class="grid-draw">
-              <img :src="sign.file" class="img-thumbnail" style="width: 155px" alt="Signature" />
-            </div>
-          </template>
+      <template v-if="imgBase64.length > 0">
+        <cropper ref="cropped" class="example-cropper" :src="imgBase64" />
+        <div class="text-center my-1">
+          <button class="btn btn-sm btn-primary" @click="cropImage">Crop</button>
         </div>
-        <template v-if="imgBase64.length > 0">
-          <cropper ref="cropped" :src="imgBase64" />
-          <div class="text-center">
-            <button class="btn btn-sm btn-primary my-1" @click="cropImage">Crop</button>
-          </div>
-          <template v-if="prevImg != ''">
-            <img :src="prevImg" class="img-thumbnail d-block mx-auto" alt="preview" />
-          </template>
-          <template v-else>
-            <img src="@/assets/empty.png" class="img-thumbnail d-block mx-auto" width="150" alt="preview" />
-          </template>
-        </template>
-      </template>
-      <template v-else>
-        <template v-if="imgBase64.length > 0">
-          <cropper ref="cropped" class="example-cropper" :src="imgBase64" />
-          <div class="text-center">
-            <button class="btn btn-sm btn-primary" @click="cropImage">Crop</button>
-          </div>
-          <template v-if="prevImg != ''">
-            <img :src="prevImg" class="img-thumbnail d-block mx-auto" alt="preview" />
-          </template>
-          <template v-else>
-            <img src="@/assets/empty.png" class="img-thumbnail d-block mx-auto" width="150" alt="Preview" />
-          </template>
-          <!-- <img :src="imgBase64" class="img-thumbnail" style="width:155px" alt="Signature" /> -->
+        <template v-if="prevImg != ''">
+          <img :src="prevImg" class="img-thumbnail d-block mx-auto" alt="preview" />
         </template>
         <template v-else>
-          <img src="@/assets/empty.png" class="img-thumbnail" style="width: 155px" alt="Signature" />
+          <img src="@/assets/empty.png" class="img-thumbnail d-block mx-auto" width="150" alt="Preview" />
         </template>
+        <!-- <img :src="imgBase64" class="img-thumbnail" style="width:155px" alt="Signature" /> -->
       </template>
+      <template v-else>
+        <img src="@/assets/empty.png" class="img-thumbnail" style="width: 155px" alt="Signature" />
+      </template>
+      <!-- </template> -->
     </div>
   </div>
 
   <button class="btn btn-primary d-block ms-auto mt-2" ref="create" @click="createDrawSignature">
-    <template v-if="prints.Signature == undefined || prints.Signature.length <= 0">
-      Create
-    </template>
-    <template v-else> Update </template>
+    Create
   </button>
 </template>
 
@@ -69,6 +44,7 @@
 import SignaturePad from "signature_pad";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
+import { v4 as uuidv4 } from 'uuid';
 import {
   defineProps,
   onMounted,
@@ -80,8 +56,8 @@ import {
 } from "vue";
 
 import { createNamespacedHelpers } from "vuex-composition-helpers/dist";
-const { useActions, useGetters } = createNamespacedHelpers(["print"]);
-const { prints } = useGetters(["prints"]);
+const { useActions } = createNamespacedHelpers(["print"]);
+// const { prints } = useGetters(["prints"]);
 const { savePrint } = useActions(["savePrint"]);
 
 const emit = defineEmits(["close"]);
@@ -137,8 +113,6 @@ let state = reactive({
   uid: "",
 });
 
-state.uid = "canvas" + Math.random();
-
 let sigOptions = Object.keys(props.sigOption);
 for (let item of sigOptions) {
   // eslint-disable-next-line vue/no-setup-props-destructure
@@ -157,7 +131,7 @@ watch(
 );
 
 const draw = () => {
-  let canvas = document.getElementById(state.uid);
+  let canvas = document.getElementById(state?.uid);
   state.sig = new SignaturePad(canvas, state.option);
 
   function resizeCanvas(c) {
@@ -262,7 +236,12 @@ const cropImage = () => {
 
 onMounted(() => {
   create.value.disabled = true;
-  draw();
+  state.uid = uuidv4();
+  if (state.uid != '') {
+    setTimeout(() => {
+      draw();
+    }, 1000);
+  }
 });
 
 defineExpose({
