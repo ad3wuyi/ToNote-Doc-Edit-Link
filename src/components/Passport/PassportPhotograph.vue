@@ -35,28 +35,21 @@
       <TopTabList title="Select">
         <div class="d-flex justify-content-between align-items-center flex-column" style="min-height: 18rem">
           <template v-if="prints.length > 0">
-            <div class="grid grid__3">
-              <div v-for="(print, index) in prints" :key="index">
-                <label v-if="print.type === 'Photograph'" class="form-check-label border position-relative"
-                  :for="print.category">
-                  <div @click="
-                    getPrintId({ file: print.file, category: print.category, type: print.type })
-                  ">
-                    <input type="radio" :name="print.category" v-model="selected" class="form-check-input tool_name"
-                      :id="print.category" :value="print.category" />
-                    <img :src="print.file" class="img-fluid" :alt="print.category" />
+            <div v-for="(print, index) in prints" :key="index">
+              <label v-if="print.type === 'Photograph'" class="form-check-label border position-relative"
+                :for="print.category">
+                <div @click="
+                  getPrintId({ file: print.file, category: print.category, type: print.type })
+                ">
+                  <input type="radio" :name="print.category" v-model="selected" class="form-check-input tool_name"
+                    :id="print.category" :value="print.category" />
+                  <img :src="print.file" class="img-fluid" :alt="print.category" />
 
-                    <span @click="deletePrint(index)"
-                      class="btn-outline-danger position-absolute top-0 start-100 translate-middle"
-                      style="padding:1px 4px">&cross;</span>
-                  </div>
-                </label>
-                <div v-else>
-                  <p class="grid grid__1 text-center" style="height: 20vh">
-                    <i>kindly upload or take a snapshot of photograph!</i>
-                  </p>
+                  <span @click="deletePrint(index)"
+                    class="btn-outline-danger position-absolute top-0 start-100 translate-middle"
+                    style="padding:1px 4px">&cross;</span>
                 </div>
-              </div>
+              </label>
             </div>
           </template>
           <template v-else>
@@ -65,11 +58,13 @@
             </p>
           </template>
 
-          <button type="button" class="btn btn-sm btn-primary d-block ms-auto" :class="{ disabled: !isSelected }"
-            @click="affixPassport">
-            <span v-show="isLoading" class="spinner-border spinner-border-sm"></span>
-            <span>Append</span>
-          </button>
+          <div class="modal-footer justify-content-center w-100 mt-2 pb-0">
+            <button type="button" class="btn btn-sm btn-primary" :class="{ disabled: !isSelected }"
+              @click="affixPassport">
+              <span v-show="isLoading" class="spinner-border spinner-border-sm"></span>
+              <span>Append</span>
+            </button>
+          </div>
         </div>
       </TopTabList>
 
@@ -115,7 +110,7 @@
             </button>
           </div>
 
-          <PassportCamera v-if="isCameraOpen" @close="closeSnap" @affix="fromSnap" />
+          <PassportCamera v-if="isCameraOpen" @close="closeSnap" @getFile="getPrintId" @affix="affixPassport" />
         </div>
       </TopTabList>
     </TopTabWrapper>
@@ -227,7 +222,7 @@ const uploadPhotograph = () => {
   const uploadPassport = {
     file: preview.value,
     type: "Photograph",
-    category: "Upload",
+    category: "Passport",
   };
 
   savePrint(uploadPassport);
@@ -267,14 +262,14 @@ const affixPassport = () => {
   }, 1000);
 };
 
-const fromSnap = (params) => {
-  const uploadPassport = { append_print_id: params.append_print_id };
+// const fromSnap = (params) => {
+//   const uploadPassport = { append_print_id: params.append_print_id };
 
-  emit("selectedPassport", uploadPassport);
+//   emit("selectedPassport", uploadPassport);
 
-  loading.value = true;
-  setTimeout(() => { loading.value = false }, 1000);
-};
+//   loading.value = true;
+//   setTimeout(() => { loading.value = false }, 1000);
+// };
 
 const proceedToDelete = () => {
   isLoading.value = false;

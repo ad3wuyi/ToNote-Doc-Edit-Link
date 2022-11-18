@@ -2,7 +2,7 @@
   <template v-if="tool.value == null">
     <Vue3DraggableResizable :key="tool.id" :initH="100" :initW="100" :x="Number(tool.tool_pos_left)"
       :y="Number(tool.tool_pos_top)" v-model:x="x" v-model:y="y" v-model:h="h" v-model:w="w" :parent="true"
-      :draggable="profile?.id" :resizable="false" @drag-end="onDragEnd($event, tool)" class="image-area"
+      :draggable="profile?.id" :resizable="false" @drag-end="dragEnd($event, tool)" class="image-area"
       :handles="['tl', 'tr', 'bl', 'br']" :class="tool.tool_class" :id="tool.tool_id"
       :data-doc="tool.document_upload_id" :data-name="tool.tool_name" :data-id="tool.id" :data-class="tool.tool_class"
       class-name-active="active-class" class-name-dragging="dragging-class" class-name-handle="handle-class">
@@ -47,10 +47,9 @@
     <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_width)" :initW="Number(tool.tool_width)" :minW="100"
       :minH="100" :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)" :parent="true" v-model:x="x"
       v-model:y="y" v-model:h="h" v-model:w="w" :draggable="profile?.id" :resizable="profile?.id"
-      @drag-end="onDragEnd($event, tool)" @resize-end="onResizeEnd(tool, w, h)" class="image-area"
-      :lockAspectRatio="false" :handles="['tl', 'tr', 'bl', 'br']" class-name-active="active-class"
-      class-name-dragging="dragging-class" class-name-handle="handle-class" class-name-resizing="resizing-class"
-      @dblclick="
+      @drag-end="dragEnd($event, tool)" @resize-end="resizeEnd(tool, w, h)" class="image-area" :lockAspectRatio="false"
+      :handles="['tl', 'tr', 'bl', 'br']" class-name-active="active-class" class-name-dragging="dragging-class"
+      class-name-handle="handle-class" class-name-resizing="resizing-class" @dblclick="
         getUserId({
           user: tool.user_id,
           toolName: tool.tool_name,
@@ -105,20 +104,21 @@
 <script setup>
 import ModalComp from "@/components/ModalComp.vue";
 import PassportPhotograph from "@/components/Passport/PassportPhotograph.vue";
+import { useDragResizeComposable } from "@/composables/useDragResize";
 
 import { ref, defineProps, defineEmits } from "vue";
 
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
-// import { useToast } from "vue-toast-notification";
 
-// const toast = useToast();
+const { dragEnd, resizeEnd } = useDragResizeComposable()
+
 const props = defineProps({ tool: Object, owner: Object });
 
 const { profile } = useGetters({
   profile: "auth/profile",
 });
 
-const { editTools, editPublicTools, editToolWithAsset } = useActions({
+const { editToolWithAsset } = useActions({
   editToolWithAsset: "signLink/editToolWithAsset",
   editTools: "signLink/editTools",
   editPublicTools: "signLink/editPublicTools",
@@ -136,6 +136,8 @@ const savePrint = (params) => {
     id: props.tool?.id,
     signed: false,
     tool_class: "main-element photo-style",
+    tool_width: w.value.toString(),
+    tool_height: h.value.toString(),
     tool_pos_left: x.value.toString(),
     tool_pos_top: y.value.toString(),
     value: params.value,
@@ -152,50 +154,6 @@ const remove = (params) => {
 const uploadImage = ref(false);
 const getUserId = (params) => {
   if (params.toolName == "Photo") uploadImage.value = true;
-};
-
-const onDragEnd = (e, tool) => {
-  let toLocal = {
-    id: tool.id,
-    tool_pos_left: e.x.toString(),
-    tool_pos_top: e.y.toString(),
-  };
-
-  const dragToUpdate = {
-    document_id: tool?.document_id,
-    document_upload_id: tool.document_upload_id,
-    tool_pos_left: e.x.toString(),
-    tool_pos_top: e.y.toString(),
-    value: tool?.value,
-  };
-
-  if (tool.document_id == undefined) {
-    editTools({ id: tool.id, payload: dragToUpdate, toLocal });
-  } else {
-    editPublicTools({ id: tool.id, payload: dragToUpdate, toLocal });
-  }
-};
-
-const onResizeEnd = (tool, w, h) => {
-  let toLocal = {
-    id: tool.id,
-    tool_width: w.toString(),
-    tool_height: h.toString(),
-  };
-
-  const resizeToUpdate = {
-    document_id: tool?.document_id,
-    document_upload_id: tool.document_upload_id,
-    tool_width: w.toString(),
-    tool_height: h.toString(),
-    value: tool?.value,
-  };
-
-  if (tool.document_id == undefined) {
-    editTools({ id: tool.id, payload: resizeToUpdate, toLocal });
-  } else {
-    editPublicTools({ id: tool.id, payload: resizeToUpdate, toLocal });
-  }
 };
 </script>
 

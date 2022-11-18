@@ -73,9 +73,7 @@
                           }" />
                         </template>
                         <template v-else>
-                          <ToolWithCommonAsset @remove="remove" :tool="tool" :owner="{
-                            user: profile,
-                          }" :print="tool" />
+                          <ToolDefault @remove="remove" :tool="tool" />
                         </template>
                       </template>
                     </div>
@@ -106,10 +104,9 @@ import { Icon } from "@iconify/vue";
 import "jquery/dist/jquery.min";
 import $ from "jquery";
 import { dashboard } from "@/store/dashboard";
-import ToolDefault from "@/components/Document/Edit/Tools/ToolDefault.vue";
-import ToolImage from "@/components/Document/Edit/Tools/ToolImage.vue";
+import ToolDefault from "@/components/Document/Edit/Tools/ToolSignature.vue";
+import ToolImage from "@/components/Document/Edit/Tools/ToolPassport.vue";
 import ToolTextArea from "@/components/Document/Edit/Tools/ToolTextArea.vue";
-import ToolWithCommonAsset from "@/components/Document/Edit/Tools/ToolWithCommonAsset.vue";
 import RenderPage from "./RenderPage.vue";
 
 import { ref, onMounted, watch } from "vue";
@@ -146,7 +143,6 @@ watch(
     if (newToolWithAsset != oldToolWithAsset) {
       let check = JSON.parse(localStorage.getItem("vuex"));
       theTools.value = check.signLink.resourceTools;
-      console.log(theTools.value);
     }
   },
   { deep: true }

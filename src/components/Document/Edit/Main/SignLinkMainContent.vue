@@ -44,27 +44,14 @@
                   <template v-if="theTools?.length != 0 && documentHeight">
                     <div v-for="(tool, index) in theTools" :key="index" class="parent"
                       :style="{ height: documentHeight + 'px' }">
-                      <template v-if="tool.value == null">
-                        <template v-if="tool.tool_name == 'Textarea'">
-                          <ToolTextArea @remove="remove" :tool="tool" />
-                        </template>
-                        <template v-else-if="tool.tool_name == 'Photo'">
-                          <ToolImage @remove="remove" :tool="tool" />
-                        </template>
-                        <template v-else>
-                          <ToolDefault @remove="remove" :tool="tool" />
-                        </template>
+                      <template v-if="tool.tool_name == 'Textarea'">
+                        <ToolTextArea @remove="remove" :tool="tool" />
+                      </template>
+                      <template v-else-if="tool.tool_name == 'Photo'">
+                        <ToolPassport @remove="remove" :tool="tool" />
                       </template>
                       <template v-else>
-                        <template v-if="tool.tool_name == 'Textarea'">
-                          <ToolTextArea @remove="remove" :tool="tool" />
-                        </template>
-                        <template v-else-if="tool.tool_name == 'Photo'">
-                          <ToolImage @remove="remove" :tool="tool" />
-                        </template>
-                        <template v-else>
-                          <ToolWithCommonAsset @remove="remove" :tool="tool" />
-                        </template>
+                        <ToolSignature @remove="remove" :tool="tool" />
                       </template>
                     </div>
                   </template>
@@ -91,10 +78,10 @@ import { Icon } from "@iconify/vue";
 import "jquery/dist/jquery.min";
 import $ from "jquery";
 import { dashboard } from "@/store/dashboard";
-import ToolDefault from "@/components/Document/Edit/Tools/ToolDefault.vue";
-import ToolImage from "@/components/Document/Edit/Tools/ToolImage.vue";
+import ToolSignature from "@/components/Document/Edit/Tools/ToolSignature.vue";
+import ToolPassport from "@/components/Document/Edit/Tools/ToolPassport.vue";
 import ToolTextArea from "@/components/Document/Edit/Tools/ToolTextArea.vue";
-import ToolWithCommonAsset from "@/components/Document/Edit/Tools/ToolWithCommonAsset.vue";
+// import ToolWithCommonAsset from "@/components/Document/Edit/Tools/ToolWithCommonAsset.vue";
 import RenderPage from "./RenderPage.vue";
 
 import { ref, onMounted, watch } from "vue";

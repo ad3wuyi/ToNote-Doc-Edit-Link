@@ -197,7 +197,7 @@
 
       <div class="divider"></div>
 
-      <SignaturePrint @selectedSignature="savePrint" />
+      <SignatureList :footer="false" @selectedSignature="savePrint" />
     </template>
   </ModalComp>
 
@@ -288,12 +288,12 @@ import SignLinkMainContent from "@/components/Document/Edit/Main/SignLinkMainCon
 import LeftTabWrapper from "@/components/Tab/TabLeftNav/LeftTabWrapper.vue";
 import LeftTabList from "@/components/Tab/TabLeftNav/LeftTabList.vue";
 
-import SignaturePrint from "@/components/Signature/SignaturePrint.vue";
+import SignatureList from "@/components/Signature/SignatureList.vue";
 import SignaturePad from "@/components/Signature/SignaturePad.vue";
 
-import SignatureSelectFull from "@/components/Signature/SignatureSelectFull.vue";
+import SignatureSelectFull from "@/components/Signature/SignatureTextFull.vue";
 import SignatureUpload from "@/components/Signature/SignatureUpload.vue";
-import SignatureSelectInitial from "@/components/Signature/SignatureSelectInitial.vue";
+import SignatureSelectInitial from "@/components/Signature/SignatureTextInitial.vue";
 
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -389,8 +389,8 @@ const exportPDF = (params) => {
     }
 
     if (params === "isComplete") {
-      // doneDataUrl.value = doc.output("datauristring");
-      doneDataUrl.value = canvas.toDataURL();
+      const thePDF = 'data:application/pdf;base64,' + btoa(doc.output())
+      doneDataUrl.value = thePDF;
 
       if (doneDataUrl.value != "") {
         createModal.value = false;
@@ -431,13 +431,10 @@ const isDoneEdit = () => {
     email: form.value.email,
     files: [doneDataUrl.value],
   };
-  console.log(form.value);
 
-  publicSignCompleted({ id: link.value.parent_id, payload: form.value });
+  publicSignCompleted({ id: uri.value, payload: form.value });
   form.value = { full_name: "", email: "" };
   loading.value = false
-
-  // window.location.href = redirectToWebsite.value;
 };
 
 const open = (params) => {

@@ -2,6 +2,7 @@ import SignLink from "@/api/SignLink";
 import { useToast } from "vue-toast-notification";
 import router from "@/router/router";
 import store from "@/store";
+
 const toast = useToast();
 
 export const getLinks = ({ commit }) => {
@@ -236,7 +237,6 @@ export const editPublicTools = ({ commit }, formData) => {
   if (index !== -1) { parsedData.splice(index, 1, formData.payload) }
 
   commit("SET_TOOLS", parsedData)
-  console.log({ parsedData });
 
   SignLink.updatePublicTool(formData.id, formData.payload)
     .then(() => {
@@ -260,8 +260,6 @@ export const editToolWithAsset = ({ commit }, formData) => {
           commit("SET_LINK", response.data.data);
         })
 
-      console.log({ parsedData });
-
       formData.hasAsset ? commit("SET_TOOL_WITH_ASSET", parsedData) : commit("SET_TOOLS", parsedData)
     })
     .catch((error) => {
@@ -272,14 +270,35 @@ export const editToolWithAsset = ({ commit }, formData) => {
 export const publicSignCompleted = ({ commit }, formData) => {
   SignLink.linkCompleted(formData.id, formData.payload)
     .then((response) => {
-      commit("SET_PRINTS", []);
-      commit("SET_LINK_COMPLETED", []);
-      console.log(response.data.data)
+      commit("SET_TOOLS", [])
 
       toast.success(`${response.data.data.message}`, {
         timeout: 5000,
         position: "top-right",
       });
+
+      setTimeout(() => {
+        window.localStorage.removeItem('vuex');
+        window.location.href = process.env.VUE_APP_URL_WEBSITE;
+      }, 2000);
+    })
+    .catch((error) => {
+      if (error.response.status == 422) {
+        toast.error(`${error.response.data.message}`, {
+          timeout: 5000,
+          position: "top-right",
+        });
+      }
+    });
+};
+
+export const getSignLinkResponses = ({ commit }, formData) => {
+  SignLink.allSignLinkResponses(formData)
+    .then((response) => {
+      commit("SET_SIGN_LINK_RESPONSES", response.data.data);
+    })
+    .catch((error) => {
+      console.log(error);
     });
 };
 

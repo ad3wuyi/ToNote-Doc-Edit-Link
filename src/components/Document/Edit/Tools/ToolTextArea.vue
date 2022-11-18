@@ -3,7 +3,7 @@
   <template v-if="tool.value == null">
     <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_height)" :initW="Number(tool.tool_width)" :minW="70"
       :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)" v-model:x="x" v-model:y="y" v-model:h="h"
-      v-model:w="w" :parent="true" @drag-end="onDragEnd($event, tool)" @resize-end="onResizeEnd(tool, w, h)"
+      v-model:w="w" :parent="true" @drag-end="dragEnd($event, tool)" @resize-end="resizeEnd(tool, w, h)"
       :data-doc="tool.document_upload_id" :data-id="tool.id" class-name-active="active-class"
       class-name-dragging="dragging-class" class-name-handle="handle-class" class-name-resizing="resizing-class">
 
@@ -46,7 +46,7 @@
   <template v-else>
     <Vue3DraggableResizable :key="tool.id" :initH="Number(tool.tool_height)" :initW="Number(tool.tool_width)" :minW="70"
       :x="Number(tool.tool_pos_left)" :y="Number(tool.tool_pos_top)" v-model:x="x" v-model:y="y" v-model:h="h"
-      v-model:w="w" :parent="true" @drag-end="onDragEnd($event, tool)" @resize-end="onResizeEnd(tool, w, h)"
+      v-model:w="w" :parent="true" @drag-end="dragEnd($event, tool)" @resize-end="resizeEnd(tool, w, h)"
       :data-doc="tool.document_upload_id" :data-id="tool.id" class-name-active="active-class"
       class-name-dragging="dragging-class" class-name-handle="handle-class" class-name-resizing="resizing-class">
       <div class="text-wrapper">
@@ -92,6 +92,9 @@
 
 import { defineProps, ref } from "vue";
 import { useActions, useGetters } from "vuex-composition-helpers/dist";
+import { useDragResizeComposable } from "@/composables/useDragResize";
+
+const { dragEnd, resizeEnd } = useDragResizeComposable()
 
 const props = defineProps({ tool: Object, owner: Object });
 
@@ -104,9 +107,7 @@ const { profile } = useGetters({
   profile: "auth/profile",
 });
 
-const { editTools, editPublicTools, editToolWithAsset, removeTool } = useActions({
-  editTools: "signLink/editTools",
-  editPublicTools: "signLink/editPublicTools",
+const { editToolWithAsset, removeTool } = useActions({
   editToolWithAsset: "signLink/editToolWithAsset",
   removeTool: "signLink/removeTool",
 });
@@ -116,7 +117,6 @@ const remove = (params) => {
 };
 
 const textInput = (e) => {
-
   editToolWithAsset({
     id: e.dataset.id,
     payload: {
@@ -128,50 +128,6 @@ const textInput = (e) => {
     },
     hasProfile: profile?.id
   });
-};
-
-const onDragEnd = (e, tool) => {
-  let toLocal = {
-    id: tool.id,
-    tool_pos_left: e.x.toString(),
-    tool_pos_top: e.y.toString(),
-  };
-
-  const dragToUpdate = {
-    document_id: tool?.document_id,
-    document_upload_id: tool.document_upload_id,
-    tool_pos_left: e.x.toString(),
-    tool_pos_top: e.y.toString(),
-    value: tool?.value,
-  };
-
-  if (tool.document_id == undefined) {
-    editTools({ id: tool.id, payload: dragToUpdate, toLocal });
-  } else {
-    editPublicTools({ id: tool.id, payload: dragToUpdate, toLocal });
-  }
-};
-
-const onResizeEnd = (tool, w, h) => {
-  let toLocal = {
-    id: tool.id,
-    tool_width: w.toString(),
-    tool_height: h.toString(),
-  };
-
-  const resizeToUpdate = {
-    document_id: tool?.document_id,
-    document_upload_id: tool.document_upload_id,
-    tool_width: w.toString(),
-    tool_height: h.toString(),
-    value: tool?.value,
-  };
-
-  if (tool.document_id == undefined) {
-    editTools({ id: tool.id, payload: resizeToUpdate, toLocal });
-  } else {
-    editPublicTools({ id: tool.id, payload: resizeToUpdate, toLocal });
-  }
 };
 </script>
 

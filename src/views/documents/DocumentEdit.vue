@@ -254,7 +254,7 @@
 
       <div class="divider"></div>
 
-      <SignaturePrint @selectedSignature="savePrint" />
+      <SignatureList @selectedSignature="savePrint" />
     </template>
   </ModalComp>
 
@@ -455,12 +455,12 @@ import AsideBottom from "@/components/Document/Edit/Mobile/AsideBottom.vue";
 import LeftTabWrapper from "@/components/Tab/TabLeftNav/LeftTabWrapper.vue";
 import LeftTabList from "@/components/Tab/TabLeftNav/LeftTabList.vue";
 
-import SignaturePrint from "@/components/Signature/SignaturePrint.vue";
+import SignatureList from "@/components/Signature/SignatureList.vue";
 import SignaturePad from "@/components/Signature/SignaturePad.vue";
 
-import SignatureSelectFull from "@/components/Signature/SignatureSelectFull.vue";
+import SignatureSelectFull from "@/components/Signature/SignatureTextFull.vue";
 import SignatureUpload from "@/components/Signature/SignatureUpload.vue";
-import SignatureSelectInitial from "@/components/Signature/SignatureSelectInitial.vue";
+import SignatureSelectInitial from "@/components/Signature/SignatureTextInitial.vue";
 
 import SealDigitalCreate from "@/components/Notary/Seal/SealDigitalCreate.vue";
 import SealList from "@/components/Notary/Seal/SealList.vue";

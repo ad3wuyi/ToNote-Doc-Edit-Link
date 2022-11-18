@@ -1,10 +1,8 @@
 import Print from "@/api/Print";
 import { useToast } from "vue-toast-notification";
-import { prints } from './getters';
 const toast = useToast();
 
 export const getUserPrints = ({ commit }) => {
-  console.log(prints)
   commit("SET_PRINTS", []);
 };
 
@@ -43,6 +41,11 @@ export const editPrint = ({ commit }, formData) => {
 };
 
 export const removePrint = ({ commit }, formData) => {
-  console.log({ formData })
   commit("SET_DELETE", formData);
+};
+
+export const emptyPrint = ({ commit }, formData) => {
+  if (formData) {
+    commit("SET_PRINTS", []);
+  }
 };

@@ -9,6 +9,7 @@ const SIGN_LINK_PUBLIC_STATE = "signlink-public-state";
 const SIGN_LINK_PUBLIC_TOOL = "signlink-public-annotation";
 
 const SIGN_LINK_COMPLETED = "signlink-complete";
+const SIGN_LINK_RESPONSE = "signlink-responses";
 
 const DOCUMENT_DELETE = "document-multiple-delete";
 const SIGN_LINK_DONE = "document-participants-done";
@@ -36,6 +37,10 @@ export default {
 
   linkCompleted(id, data) {
     return Api.put(`${SIGN_LINK_COMPLETED}/${id}`, data);
+  },
+
+  allSignLinkResponses(id) {
+    return Api.get(`${SIGN_LINK_RESPONSE}/${id}`);
   },
 
   store(data) {

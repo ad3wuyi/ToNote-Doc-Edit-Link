@@ -44,8 +44,9 @@
           </span>
         </td>
         <td>
-          <span role="button" class="badge rounded-pill badge-light-success fw-normal" @click="editModal = true">
-            {{ doc.participants_count }}
+          <span role="button" class="badge rounded-pill badge-light-success fw-normal"
+            @click="showResponse({ id: doc.id, doc: doc })">
+            {{ doc.response_count > 0 ? doc.response_count : 0 }}
             response(s)
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -141,31 +142,60 @@
     </tbody>
   </table>
 
-  <ModalComp :show="editModal" :size="'modal-lg'" :footer="false" @close="editModal = false">
+  <ModalComp :show="editModal" :size="'modal-lg'" @close="editModal = false">
     <template #header>
-      <h4 class="modal-title mb-0">Details</h4>
+      <h4 class="modal-title mb-0">Responses</h4>
     </template>
 
     <template #body>
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="text-capitalize mb-3">Title: {{ docTitle }}</h4>
+        <p class="mb-3">Created at: {{ dateTime(createdAt) }}</p>
+      </div>
       <table class="table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Updated at</th>
+            <th>S/N</th>
+            <th>Full name</th>
+            <th>Email</th>
+            <th>Signed at</th>
           </tr>
         </thead>
         <tbody>
-          <tr></tr>
+          <template v-if="!isLoading">
+            <template v-if="signLinkResponses.length > 0">
+              <tr v-for="(sign, index) in signLinkResponses" :key="index">
+                <td>{{ ++index }}</td>
+                <td>{{ sign.first_name + ' ' + sign.last_name }}</td>
+                <td>{{ sign.email ?? 'Not available' }}</td>
+                <td>{{ dateTime(sign.updated_at) }}</td>
+              </tr>
+            </template>
+            <template v-else>
+              <tr>
+                <td colspan="4" class="text-center"><i>No record found</i></td>
+              </tr>
+            </template>
+          </template>
+          <template v-else>
+            <tr>
+              <td colspan="4">
+                <div class="my-2 text-center">
+                  <span class="spinner-border spinner-border-sm"></span> Loading...
+                </div>
+              </td>
+            </tr>
+          </template>
         </tbody>
       </table>
     </template>
 
-    <!-- <template #footer>
-      <button type="button" class="btn btn-primary me-1 waves-effect waves-float waves-light" data-bs-dismiss="modal">
-        Create
+    <template #footer>
+      <button type="button" class="btn btn-secondary me-1 waves-effect waves-float waves-light"
+        @click="editModal = false">
+        Close
       </button>
-    </template> -->
+    </template>
   </ModalComp>
 </template>
 
@@ -178,15 +208,21 @@ import { useActions, useGetters } from "vuex-composition-helpers/dist";
 import { useToast } from "vue-toast-notification";
 import { useRouter } from "vue-router";
 
+import moment from "moment";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-bs5";
 import $ from "jquery";
+
+const dateTime = (value) => {
+  return moment(value).format("Do MMM YYYY, hh:mm A");
+};
 
 const emit = defineEmits(['close'])
 
 const route = useRouter();
 const toast = useToast();
 
+const isLoading = ref(false);
 const editModal = ref(false);
 const isHidden = ref(false);
 const hasMultipleSelection = ref(false);
@@ -194,15 +230,17 @@ const isCheckAll = ref(false);
 const isDeleteOrRestore = ref(false);
 const docIds = ref([]);
 
-const { links } = useGetters({
+const { links, signLinkResponses } = useGetters({
   links: "signLink/links",
   link: "signLink/link",
+  signLinkResponses: "signLink/signLinkResponses",
   receivedDocuments: "signLink/ReceivedDocuments",
 });
 
-const { getLinks } = useActions({
+const { getLinks, getSignLinkResponses } = useActions({
   getLinks: "signLink/getLinks",
   getLink: "signLink/getLink",
+  getSignLinkResponses: "signLink/getSignLinkResponses",
   getDeletedLinks: "signLink/getDeletedLinks",
 });
 
@@ -216,10 +254,21 @@ watch(
   }
 );
 
+const docTitle = ref('')
+const createdAt = ref('')
+const showResponse = (params) => {
+  isLoading.value = editModal.value = true
+  docTitle.value = params.doc.title
+  createdAt.value = params.doc.created_at
+  getSignLinkResponses(params.doc.id)
+
+  setTimeout(() => {
+    isLoading.value = false
+  }, 1000);
+}
+
 // const editId = ref("");
 const getDocument = (params) => {
-  // getLink(params.id);
-
   if (params.isView && params.status == "Sign") {
     return route.push({ name: "document.show", params: { document_id: params.id } });
   }
@@ -227,10 +276,6 @@ const getDocument = (params) => {
   if (params.isEdit === true) {
     return route.push({ name: "document.edit", params: { document_id: params.id } });
   }
-
-  // isLoading.value = isHidden.value = true;
-  // editId.value = params.id;
-  // setTimeout(() => (isLoading.value = false), 2000);
 };
 
 const checkAll = () => {

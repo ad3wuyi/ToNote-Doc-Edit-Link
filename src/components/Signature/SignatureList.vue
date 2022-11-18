@@ -1,9 +1,10 @@
 <template>
   <div v-if="prints.length != 0">
-    <p class="text-center fw-normal mb-4">Pick a signature to append</p>
+    <p class="text-center fw-normal mb-4" v-if="footer">Pick a signature to append</p>
     <div class="grid">
-      <div v-for="(print, index) in prints" :key="index">
-        <label class="form-check-label border position-relative" :for="print.category">
+      <template v-for="(print, index) in prints" :key="index">
+        <label v-if="print.category != 'Passport'" class="form-check-label border position-relative mb-1"
+          :for="print.category">
           <div @click="
             getImgUrl({ file: print.file, category: print.category, type: print.type })
           ">
@@ -16,14 +17,15 @@
             class="btn-outline-danger position-absolute top-0 start-100 translate-middle"
             style="padding:1px 4px">&cross;</span>
         </label>
-      </div>
+      </template>
     </div>
 
-    <button type="button" class="btn btn-sm btn-primary d-block ms-auto mt-2" :disabled="!isDisabled"
-      @click="uploadSignature">
-      <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-      <span>Append</span>
-    </button>
+    <div class="modal-footer w-100 mt-2 px-0 pb-0">
+      <button v-if="footer" type="button" class="btn btn-primary" :disabled="!isDisabled" @click="uploadSignature">
+        <span v-show="loading" class="spinner-border spinner-border-sm"></span>
+        <span>Append</span>
+      </button>
+    </div>
   </div>
   <div v-else>
     <p class="text-center fw-normal"><i>No signature to append</i></p>
@@ -45,11 +47,9 @@
         </LeftTabList>
 
         <LeftTabList title="Upload">
-          <!-- <div class="row"> -->
           <div class="position-relative">
             <SignatureUpload @close="createSignatureModal = false" />
           </div>
-          <!-- </div> -->
         </LeftTabList>
       </LeftTabWrapper>
       <div class="row">
@@ -69,10 +69,10 @@ import ModalComp from "@/components/ModalComp.vue";
 import LeftTabWrapper from "@/components/Tab/TabLeftNav/LeftTabWrapper.vue";
 import LeftTabList from "@/components/Tab/TabLeftNav/LeftTabList.vue";
 import SignaturePad from "@/components/Signature/SignaturePad.vue";
-import SignatureSelectFull from "@/components/Signature/SignatureSelectFull.vue";
+import SignatureSelectFull from "@/components/Signature/SignatureTextFull.vue";
 import SignatureUpload from "@/components/Signature/SignatureUpload.vue";
 
-import { ref, defineEmits, watch } from "vue";
+import { ref, defineEmits, defineProps, watch } from "vue";
 import { createNamespacedHelpers } from "vuex-composition-helpers/dist";
 const { useGetters, useActions } = createNamespacedHelpers("print");
 
@@ -88,7 +88,6 @@ const file = ref("");
 watch(
   () => prints.value,
   (newValue) => {
-    console.log({ newValue })
     prints.value = newValue;
   }
 );
@@ -105,6 +104,8 @@ const getImgUrl = (params) => {
 const deletePrint = (params) => {
   removePrint(params)
 }
+
+defineProps({ footer: { type: Boolean, default: true } })
 
 const emit = defineEmits(["selectedSignature"]);
 const uploadSignature = () => {

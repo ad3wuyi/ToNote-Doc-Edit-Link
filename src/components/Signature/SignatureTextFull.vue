@@ -123,7 +123,6 @@ const createTypedSignature = () => {
     value: fullName.value,
   };
 
-  console.log(data.value.file)
   savePrint(formData);
   emit("close", true);
 
