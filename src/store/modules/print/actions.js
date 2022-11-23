@@ -1,6 +1,15 @@
-import Print from "@/api/Print";
+import Print from "@/api/modules/Print";
 import { useToast } from "vue-toast-notification";
 const toast = useToast();
+
+
+export const clearPrint = ({ commit }, isClear) => {
+  if (isClear) {
+    commit("SET_PRINTS", []);
+    commit("SET_PRINT", null);
+    commit("SET_PRINT_NOTIFICATION", false);
+  }
+};
 
 export const getUserPrints = ({ commit }) => {
   commit("SET_PRINTS", []);

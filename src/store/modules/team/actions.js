@@ -1,4 +1,4 @@
-import Team from "@/api/Team";
+import Team from "@/api/modules/Team";
 
 export const getTeams = ({ commit }, token) => {
   Team.all(token)

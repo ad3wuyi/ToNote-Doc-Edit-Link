@@ -1,4 +1,4 @@
-import SignLink from "@/api/SignLink";
+import SignLink from "@/api/modules/SignLink";
 import { useToast } from "vue-toast-notification";
 import router from "@/router/router";
 import store from "@/store";

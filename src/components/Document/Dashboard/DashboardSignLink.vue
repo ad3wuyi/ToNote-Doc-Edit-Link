@@ -159,6 +159,7 @@
             <th>Full name</th>
             <th>Email</th>
             <th>Signed at</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -169,17 +170,20 @@
                 <td>{{ sign.first_name + ' ' + sign.last_name }}</td>
                 <td>{{ sign.email ?? 'Not available' }}</td>
                 <td>{{ dateTime(sign.updated_at) }}</td>
+                <td>
+                  <button class="btn btn-sm btn-primary">View</button>
+                </td>
               </tr>
             </template>
             <template v-else>
               <tr>
-                <td colspan="4" class="text-center"><i>No record found</i></td>
+                <td colspan="5" class="text-center"><i>No record found</i></td>
               </tr>
             </template>
           </template>
           <template v-else>
             <tr>
-              <td colspan="4">
+              <td colspan="5">
                 <div class="my-2 text-center">
                   <span class="spinner-border spinner-border-sm"></span> Loading...
                 </div>

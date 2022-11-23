@@ -1,11 +1,23 @@
-import User from "@/api/Auth";
+import User from "@/api/modules/Auth";
 import router from "@/router/router";
 import { useToast } from "vue-toast-notification";
 const toast = useToast();
 
+export const clearToken = ({ commit }) => {
+  commit("SET_TOKEN", null);
+  commit("SET_USER_PROFILE", null);
+  commit("SET_RESEND_OTP", null);
+  commit("SET_FLAG", {})
+  window.localStorage.removeItem('vuex');
+};
+
 export const logoutUser = ({ commit }, formData) => {
   User.logout(formData)
     .then(() => {
+      commit("SET_TOKEN", null);
+      commit("SET_USER_PROFILE", null);
+      commit("SET_RESEND_OTP", null);
+      commit("SET_FLAG", {})
       window.localStorage.removeItem('vuex');
 
       if (process.env.NODE_ENV == 'development') {
@@ -15,8 +27,11 @@ export const logoutUser = ({ commit }, formData) => {
       }
     })
     .catch((error) => {
-      if (error.response.status === 401 || error.response.status == 422) {
+      if (error.response.status === 401 || error.response.status == 422 || error.response.status == 403) {
         commit("SET_TOKEN", null);
+        commit("SET_USER_PROFILE", null);
+        commit("SET_RESEND_OTP", null);
+        commit("SET_FLAG", {})
         router.push({ name: "Login" });
       }
     });

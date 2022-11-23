@@ -1,5 +1,5 @@
-import Document from "@/api/Document";
-import Tool from "@/api/Tool";
+import Document from "@/api/modules/Document";
+import Tool from "@/api/modules/Tool";
 import router from "@/router/router";
 import store from "@/store";
 import { useToast } from "vue-toast-notification";

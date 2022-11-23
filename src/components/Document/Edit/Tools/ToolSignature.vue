@@ -69,6 +69,19 @@
           </svg>
         </span>
 
+        <span title="Edit" class="btn btn-xs btn-secondary rounded-0 edit" @click="getUserId({
+          toolName: tool.tool_name,
+          docUpId: tool.document_upload_id,
+          toolId: tool.id,
+        })">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="feather feather-edit">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+        </span>
+
         <span v-if="profile?.id" title="Remove" class="btn btn-xs btn-secondary rounded-0 remove"
           @click="remove({ id: tool.id })" :data-id="tool.id">
           <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"
@@ -90,6 +103,10 @@
 
       <template #body>
         <LeftTabWrapper>
+          <LeftTabList title="List">
+            <SignatureList @selectedSignature="savePrint" />
+          </LeftTabList>
+
           <LeftTabList title="Draw">
             <SignaturePad @close="swapModal" />
           </LeftTabList>
@@ -154,31 +171,26 @@ const { dragEnd, resizeEnd } = useDragResizeComposable()
 
 const props = defineProps({ tool: Object, owner: Object });
 
-const { profile, print } = useGetters({
+const { profile } = useGetters({
   profile: "auth/profile",
-  print: "print/print",
 });
 
-const { editToolWithAsset, editWithAsset, getUserPrint } = useActions({
-  editTools: "signLink/editTools",
-  editPublicTools: "signLink/editPublicTools",
+const { editToolWithAsset, editWithAsset } = useActions({
   editToolWithAsset: "signLink/editToolWithAsset",
   editWithAsset: "document/editToolWithAsset",
-  getUserPrint: "print/getUserPrint",
 });
 
 const x = ref(Number(props.tool.tool_pos_left));
 const y = ref(Number(props.tool.tool_pos_top));
+const w = ref(Number(props.tool.tool_width));
+const h = ref(Number(props.tool.tool_height));
 
-const documentId = ref(null);
 const affixModal = ref(false);
 const signatureListModal = ref(false);
 const sealModal = ref(false);
 const stampModal = ref(false);
 const initialModal = ref(false);
 const toolId = ref(null);
-const imgWidth = ref(null);
-const imgHeight = ref(null);
 
 const swapModal = () => {
   affixModal.value = false
@@ -191,55 +203,34 @@ const getUserId = (params) => {
   if (params.toolName == "Initial") initialModal.value = true;
   if (params.toolName == "Signature") affixModal.value = true;
 
-  documentId.value = params.docUpId;
   toolId.value = params.toolId;
 };
 
 const savePrint = (params) => {
-  if (params.tool_name == "Seal") {
-    params.tool_width = "100";
-    params.tool_height = "100";
-  } else if (params.tool_name == "Stamp") {
-    params.tool_width = "260";
-    params.tool_height = "100";
-  } else if (params.tool_name == "Signature" && params.category == "Draw") {
+  if (params.category == "Draw") {
     params.tool_width = "100";
     params.tool_height = "50";
-  } else if (params.tool_name == "Signature" && params.category == "Type") {
+  } else if (params.category == "Type") {
     params.tool_width = "150";
     params.tool_height = "40";
-  } else if (params.tool_name == "Initial" && params.category == "Type") {
+  } else if (params.category == "Initial") {
     params.tool_width = "80";
     params.tool_height = "40";
   } else if (params.tool_name == "Signature" && params.category == "Upload") {
-    getUserPrint(params.append_print_id);
-
-    setTimeout(() => {
-      img.src = print.value?.file;
-    }, 1000);
-
-    let img = new Image();
-    img.onload = function () {
-      imgWidth.value = img.width;
-      imgHeight.value = img.height;
-      params.tool_width = imgWidth.value.toString();
-      params.tool_height = imgHeight.value.toString();
-    };
+    params.tool_width = "100";
+    params.tool_height = "62";
   }
-
-  params.document_id = props.tool?.document_id;
-  params.document_upload_id = documentId.value;
 
   const dataObj = {
     document_id: props.tool?.document_id,
-    document_upload_id: documentId.value,
+    document_upload_id: props.tool?.document_upload_id,
     id: props.tool?.id,
     signed: false,
     tool_class: "tool-box main-element",
     tool_height: params.tool_height,
     tool_name: params.tool_name,
-    tool_pos_left: x.value.toString(),
-    tool_pos_top: y.value.toString(),
+    tool_pos_left: props.tool.tool_pos_left,
+    tool_pos_top: props.tool.tool_pos_top,
     tool_width: params.tool_width,
     value: params.value,
   }
@@ -249,7 +240,7 @@ const savePrint = (params) => {
   } else {
     editToolWithAsset({ id: toolId.value, payload: dataObj, hasAsset: true, hasProfile: profile.value?.id });
   }
-  signatureListModal.value = false
+  affixModal.value = signatureListModal.value = false
 };
 
 const emit = defineEmits(["remove"]);

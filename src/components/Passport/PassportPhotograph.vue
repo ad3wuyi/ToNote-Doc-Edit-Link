@@ -142,21 +142,22 @@
 <script setup>
 import { Icon } from "@iconify/vue";
 import DropZone from "@/components/DropZone.vue";
-
-import { ref, defineEmits } from "vue";
-
-import { createNamespacedHelpers } from "vuex-composition-helpers/dist";
 import PassportCamera from "@/components/Passport/PassportCamera.vue";
-
 import TopTabList from "@/components/Tab/TabTopNav/TopTabList.vue";
 import TopTabWrapper from "@/components/Tab/TabTopNav/TopTabWrapper.vue";
 import ModalComp from "@/components/ModalComp.vue";
 
-const { useActions, useGetters } = createNamespacedHelpers("print");
+import { ref, defineEmits } from "vue";
+import { useActions, useGetters } from "vuex-composition-helpers/dist";
 
-const { prints } = useGetters(["prints"]);
-const { savePrint } = useActions(["savePrint"]);
-const { removePrint } = useActions(["removePrint"]);
+const { prints } = useGetters({
+  prints: "print/prints",
+});
+
+const { savePrint, removePrint } = useActions({
+  savePrint: "print/savePrint",
+  removePrint: "print/removePrint",
+});
 
 const dropzoneFile = ref("");
 const preview = ref(null);
@@ -227,6 +228,7 @@ const uploadPhotograph = () => {
 
   savePrint(uploadPassport);
   selectedTitle.value = true;
+  // closeSnap()
 
   loading.value = true;
   isSelected.value = false;
@@ -251,7 +253,8 @@ const toggleCamera = () => {
 };
 
 const affixPassport = () => {
-  const uploadPassport = { value: theFile.value };
+
+  const uploadPassport = { tool_name: 'Photo', value: theFile.value, };
 
   emit("selectedPassport", uploadPassport);
 

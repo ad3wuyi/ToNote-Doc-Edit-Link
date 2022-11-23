@@ -1,4 +1,4 @@
-import Api from "./Api";
+import Api from "../axios/Api";
 
 const END_POINT = "teams";
 

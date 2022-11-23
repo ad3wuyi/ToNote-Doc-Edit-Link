@@ -18,9 +18,9 @@ export const useDragResizeComposable = () => {
       id: tool.id,
       tool_pos_left: e.x.toString(),
       tool_pos_top: e.y.toString(),
+      // tool_width: tool.tool_width,
+      // tool_height: tool.tool_height,
     };
-
-    console.log("DRAG: ", toLocal)
 
     const dragToUpdate = {
       document_id: tool?.document_id,
@@ -43,7 +43,7 @@ export const useDragResizeComposable = () => {
       tool_width: w.toString(),
       tool_height: h.toString(),
     };
-    console.log("resize: ", toLocal)
+
     const resizeToUpdate = {
       document_id: tool?.document_id,
       document_upload_id: tool.document_upload_id,

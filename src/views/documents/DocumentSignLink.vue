@@ -249,7 +249,7 @@
 
       <form @submit.prevent="submittedForm" class="row g-1" novalidate>
         <div class="col-md-6">
-          <label for="full" class="form-label">Full name</label>
+          <label for="full" class="form-label">Enter full name</label>
           <input type="text" class="form-control" id="full" v-model="form.full_name" placeholder="Enter full name" />
         </div>
         <div class="col-md-6">
@@ -391,7 +391,6 @@ const exportPDF = (params) => {
     if (params === "isComplete") {
       const thePDF = 'data:application/pdf;base64,' + btoa(doc.output())
       doneDataUrl.value = thePDF;
-
       if (doneDataUrl.value != "") {
         createModal.value = false;
         isDoneEdit();

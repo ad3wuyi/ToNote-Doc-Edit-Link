@@ -23,55 +23,16 @@
     <div class="modal-footer w-100 mt-2 px-0 pb-0">
       <button v-if="footer" type="button" class="btn btn-primary" :disabled="!isDisabled" @click="uploadSignature">
         <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-        <span>Append</span>
+        <span>Appended</span>
       </button>
     </div>
   </div>
   <div v-else>
     <p class="text-center fw-normal"><i>No signature to append</i></p>
   </div>
-
-  <ModalComp :show="createSignatureModal" :footer="false" @close="createSignatureModal = false">
-    <template #header>
-      <h4 class="modal-title">Create your signature</h4>
-    </template>
-
-    <template #body>
-      <LeftTabWrapper>
-        <LeftTabList title="Draw">
-          <SignaturePad @close="createSignatureModal = false" />
-        </LeftTabList>
-
-        <LeftTabList title="Select">
-          <SignatureSelectFull @close="createSignatureModal = false" />
-        </LeftTabList>
-
-        <LeftTabList title="Upload">
-          <div class="position-relative">
-            <SignatureUpload @close="createSignatureModal = false" />
-          </div>
-        </LeftTabList>
-      </LeftTabWrapper>
-      <div class="row">
-        <div class="col-md-10 ms-auto mt-2">
-          <p>
-            By clicking create, I agree that all signatures, marks or initials created
-            here are as valid as my hand written signature to the extent allowed by law.
-          </p>
-        </div>
-      </div>
-    </template>
-  </ModalComp>
 </template>
 
 <script setup>
-import ModalComp from "@/components/ModalComp.vue";
-import LeftTabWrapper from "@/components/Tab/TabLeftNav/LeftTabWrapper.vue";
-import LeftTabList from "@/components/Tab/TabLeftNav/LeftTabList.vue";
-import SignaturePad from "@/components/Signature/SignaturePad.vue";
-import SignatureSelectFull from "@/components/Signature/SignatureTextFull.vue";
-import SignatureUpload from "@/components/Signature/SignatureUpload.vue";
-
 import { ref, defineEmits, defineProps, watch } from "vue";
 import { createNamespacedHelpers } from "vuex-composition-helpers/dist";
 const { useGetters, useActions } = createNamespacedHelpers("print");
@@ -79,7 +40,6 @@ const { useGetters, useActions } = createNamespacedHelpers("print");
 const { prints } = useGetters(["prints"]);
 const { removePrint } = useActions(["removePrint"]);
 
-const createSignatureModal = ref(false);
 const loading = ref(false);
 const isDisabled = ref(false);
 const selected = ref("");

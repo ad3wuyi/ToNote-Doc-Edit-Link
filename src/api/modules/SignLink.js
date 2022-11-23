@@ -1,4 +1,4 @@
-import Api from "./Api";
+import Api from "../axios/Api";
 
 const SIGN_LINK = "signlink-documents";
 const SIGN_LINK_TOOL = "signlink-annotations";

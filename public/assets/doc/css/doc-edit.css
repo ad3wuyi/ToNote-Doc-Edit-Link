@@ -112,13 +112,18 @@
   padding: 7px !important;
 }
 
+.edit {
+  padding: 7.3px !important;
+}
+
 .bg-fill:hover .drag-me {
   /* background: rgb(7 9 11 / 11%); */
   display: block;
   cursor: move;
 }
 
-.remove:hover {
+.remove:hover,
+.edit:hover {
   background: #999 !important;
   cursor: pointer;
   color: #FFF;

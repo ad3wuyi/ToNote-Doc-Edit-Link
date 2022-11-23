@@ -18,7 +18,8 @@ const { link } = useGetters({
   link: "signLink/link",
 });
 
-const { getPublicLink } = useActions({
+const { clearToken, getPublicLink } = useActions({
+  clearToken: "auth/clearToken",
   getPublicLink: "signLink/getPublicLink",
 });
 
@@ -28,7 +29,6 @@ watch(
   (newLink) => {
     if (newLink) {
       newInstanceId.value = newLink.id
-      console.log("newInstanceId:", newInstanceId.value)
       route.push({ name: 'Link', params: { document_id: newInstanceId.value } })
     } else {
       window.location.href = redirectToWebsite.value;
@@ -41,6 +41,8 @@ const loading = ref(true);
 const uri = ref("");
 
 onMounted(() => {
+  clearToken()
+
   redirectToWebsite.value = process.env.VUE_APP_URL_WEBSITE;
   uri.value = route.currentRoute.value.params.document_id;
   getPublicLink(uri.value);

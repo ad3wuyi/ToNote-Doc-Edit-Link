@@ -1,4 +1,4 @@
-import Api from "./Api";
+import Api from "../axios/Api";
 
 const END_POINT = "document-resource-tools";
 const END_POINT_TOOL = "user-document-resource-tool";
