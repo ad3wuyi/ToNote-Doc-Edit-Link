@@ -148,14 +148,17 @@
     </template>
 
     <template #body>
-      <div class="d-flex justify-content-between align-items-center">
-        <h4 class="text-capitalize mb-3">Title: {{ docTitle }}</h4>
-        <p class="mb-3">Created at: {{ dateTime(createdAt) }}</p>
+      <div class="row mb-2 me-1">
+        <div class="col-md-8">
+          <h4 class="text-capitalize">Title: {{ docTitle }}</h4>
+        </div>
+        <div class="col-md-4">
+          <p>Created at: {{ dateTime(createdAt) }}</p>
+        </div>
       </div>
       <table class="table">
         <thead>
           <tr>
-            <th>S/N</th>
             <th>Full name</th>
             <th>Email</th>
             <th>Signed at</th>
@@ -166,7 +169,6 @@
           <template v-if="!isLoading">
             <template v-if="signLinkResponses.length > 0">
               <tr v-for="(sign, index) in signLinkResponses" :key="index">
-                <td>{{ ++index }}</td>
                 <td>{{ sign.first_name + ' ' + sign.last_name }}</td>
                 <td>{{ sign.email ?? 'Not available' }}</td>
                 <td>{{ dateTime(sign.updated_at) }}</td>

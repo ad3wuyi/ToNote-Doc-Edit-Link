@@ -259,15 +259,15 @@
         <div class="col-12">
           <div class="form-check">
             <input class="form-check-input" id="idCheck" type="checkbox" @change="handleCheck($event)"
-              :checked="!isChecked" />
+              :checked="isChecked" />
             <label class="form-check-label" for="idCheck">
-              Agree to terms and conditions
+              I agree to <a href="https://gettonote.com/privacy" target="_blank">privacy policy &amp; terms</a>
             </label>
           </div>
         </div>
 
         <div class="modal-footer pb-0 pe-0">
-          <button type="submit" class="btn btn-sm btn-primary" :disabled="isChecked || loading">
+          <button type="submit" class="btn btn-sm btn-primary" :disabled="!isChecked || loading">
             <span v-show="loading" class="spinner-border spinner-border-sm"></span>
             <template v-if="!loading">Submit</template>
             <template v-else> Processing...</template>
@@ -406,7 +406,7 @@ const exportPDF = (params) => {
 const form = ref({ full_name: "", email: "" });
 const isChecked = ref(false);
 const handleCheck = (e) => {
-  isChecked.value = e.target.checked = !e.target.checked;
+  isChecked.value = e.target.checked ?? false;
 };
 
 const submittedForm = () => {
