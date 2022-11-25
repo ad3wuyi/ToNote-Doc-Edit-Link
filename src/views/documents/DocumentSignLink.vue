@@ -261,7 +261,9 @@
             <input class="form-check-input" id="idCheck" type="checkbox" @change="handleCheck($event)"
               :checked="isChecked" />
             <label class="form-check-label" for="idCheck">
-              I agree to <a href="https://gettonote.com/privacy" target="_blank">privacy policy &amp; terms</a>
+              I agree to
+              <a href="https://gettonote.com/privacy" target="_blank">privacy policy</a> and
+              <a href="https://gettonote.com/terms" target="_blank">terms</a>
             </label>
           </div>
         </div>
@@ -318,13 +320,13 @@ const { token, link, isOpenModal } = useGetters({
 });
 
 const {
-  // doneEditing,
+  clearPrint,
   publicSignCompleted,
   removeNotification,
   getPublicState,
   getUserPrints,
 } = useActions({
-  doneEditing: "signLink/doneEditing",
+  clearPrint: "print/clearPrint",
   publicSignCompleted: "signLink/publicSignCompleted",
   removeNotification: "signLink/removeNotification",
   getPublicState: "signLink/getPublicState",
@@ -418,6 +420,7 @@ const submittedForm = () => {
 
   loading.value = true;
   exportPDF("isComplete");
+  clearPrint()
 };
 
 const isDoneEdit = () => {

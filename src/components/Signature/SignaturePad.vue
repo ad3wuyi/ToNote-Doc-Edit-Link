@@ -1,13 +1,15 @@
 <template>
   <div class="grid">
     <div class="grid-8 px-0">
-      <div class="my-1">Draw your signature in the tool box</div>
+      <div class="my-1 text-center">Draw your signature in the tool box and click <span
+          class="fw-bolder">GENERATE</span>
+      </div>
       <div :style="{ width: w, height: h }" @touchmove.prevent>
-        <canvas :id="state?.uid" class="canvas shadow" :data-uid="state.uid" :disabled="state?.disabled"></canvas>
+        <canvas :id="state.uid" class="canvas shadow" :data-uid="state.uid" :disabled="state?.disabled"></canvas>
       </div>
     </div>
 
-    <div class="grid-4">
+    <div class="grid-4 text-center">
       <div class="btn-group" role="group" style="margin:10px 0;">
         <input type="radio" class="btn-check" name="signature" id="btnradiogenerate" autocomplete="off" />
         <label class="btn btn-sm btn-primary waves-effect" for="btnradiogenerate" @click="save">Generate</label>
@@ -16,6 +18,8 @@
       </div>
 
       <template v-if="imgBase64.length > 0">
+        <p class="text-center">Crop your signature then click on <span class="fw-bolder">CROP</span></p>
+
         <cropper ref="cropped" class="example-cropper" :src="imgBase64" />
         <div class="text-center my-1">
           <button class="btn btn-sm btn-primary" @click="cropImage">Crop</button>

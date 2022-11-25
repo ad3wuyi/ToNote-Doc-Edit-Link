@@ -3,12 +3,11 @@ import { useToast } from "vue-toast-notification";
 const toast = useToast();
 
 
-export const clearPrint = ({ commit }, isClear) => {
-  if (isClear) {
-    commit("SET_PRINTS", []);
-    commit("SET_PRINT", null);
-    commit("SET_PRINT_NOTIFICATION", false);
-  }
+export const clearPrint = ({ commit }) => {
+  commit("SET_PRINTS", []);
+  commit("SET_PRINT", null);
+  commit("SET_PRINT_NOTIFICATION", false);
+
 };
 
 export const getUserPrints = ({ commit }) => {

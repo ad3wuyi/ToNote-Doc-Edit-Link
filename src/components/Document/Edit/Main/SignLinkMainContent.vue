@@ -47,10 +47,11 @@
                       <template v-if="tool.tool_name == 'Textarea'">
                         <ToolTextArea @remove="remove" :tool="tool" />
                       </template>
-                      <template v-else-if="tool.tool_name == 'Photo'">
+                      <template v-if="tool.tool_name == 'Photo'">
                         <ToolPassport @remove="remove" :tool="tool" />
                       </template>
-                      <template v-else>
+                      <template v-else>NOT SET</template>
+                      <template v-if="tool.tool_name == 'Signature'">
                         <ToolSignature @remove="remove" :tool="tool" />
                       </template>
                     </div>
@@ -87,7 +88,7 @@ import RenderPage from "./RenderPage.vue";
 import { ref, onMounted, watch } from "vue";
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
 
-const { link, workingTools, toolWithAsset } = useGetters({
+const { link, toolWithAsset } = useGetters({
   workingTools: "signLink/workingTools",
   toolWithAsset: "signLink/toolWithAsset",
   link: "signLink/link",
@@ -103,21 +104,13 @@ const theTools = ref([]);
 const documentHeight = ref(0);
 
 watch(
-  () => [link.value, workingTools.value, toolWithAsset.value],
-  ([newDoc, newTool, newToolWithAsset], [oldDoc, oldTool, oldToolWithAsset]) => {
+  () => [link.value, toolWithAsset.value],
+  ([newDoc, newToolWithAsset], [oldDoc, oldToolWithAsset]) => {
     if (oldDoc != newDoc) {
       theDoc.value = newDoc;
-      theTools.value = newDoc.signlink_tools
-    }
-
-    if (oldTool?.length != newTool?.length) {
-      let check = JSON.parse(localStorage.getItem("vuex"));
-      theTools.value = check.signLink.link.signlink_tools;
     }
 
     if (newToolWithAsset != oldToolWithAsset) {
-      // let check = JSON.parse(localStorage.getItem("vuex"));
-      // theTools.value = check.signLink.link.signlink_tools;
       theTools.value = newToolWithAsset;
     }
   },
@@ -150,9 +143,7 @@ function minus() {
 }
 
 onMounted(() => {
-  // setTimeout(() => {
-  //   theTools.value = link.value.signlink_tools;
-  // }, 1000);
+  theTools.value = link.value.signlink_tools;
 });
 </script>
 

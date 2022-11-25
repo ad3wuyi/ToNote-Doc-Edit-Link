@@ -255,12 +255,13 @@ export const editToolWithAsset = ({ commit }, formData) => {
 
       if (index !== -1) { parsedData.splice(index, 1, formData.payload) }
 
+      formData.hasAsset ? commit("SET_TOOL_WITH_ASSET", parsedData) : commit("SET_TOOLS", parsedData)
+
       SignLink.showPublicState(formData.payload.document_id)
         .then((response) => {
           commit("SET_LINK", response.data.data);
         })
 
-      formData.hasAsset ? commit("SET_TOOL_WITH_ASSET", parsedData) : commit("SET_TOOLS", parsedData)
     })
     .catch((error) => {
       console.log(error);

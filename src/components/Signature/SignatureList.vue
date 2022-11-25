@@ -10,7 +10,7 @@
           ">
             <input type="radio" :name="print.category" v-model="selected" class="form-check-input tool_name"
               :id="print.category" :value="print.category" />
-            <img :src="print.file" class="img-fluid" :alt="print.category" />
+            <img :src="print.file" class="img-thumbnail" :alt="print.category" />
           </div>
 
           <span @click="deletePrint(index)"
@@ -23,7 +23,7 @@
     <div class="modal-footer w-100 mt-2 px-0 pb-0">
       <button v-if="footer" type="button" class="btn btn-primary" :disabled="!isDisabled" @click="uploadSignature">
         <span v-show="loading" class="spinner-border spinner-border-sm"></span>
-        <span>Appended</span>
+        <span>Append</span>
       </button>
     </div>
   </div>

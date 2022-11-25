@@ -173,7 +173,7 @@
                 <td>{{ sign.email ?? 'Not available' }}</td>
                 <td>{{ dateTime(sign.updated_at) }}</td>
                 <td>
-                  <button class="btn btn-sm btn-primary">View</button>
+                  <a :href="sign.file_url" class="btn btn-sm btn-primary" target="_blank">View</a>
                 </td>
               </tr>
             </template>
