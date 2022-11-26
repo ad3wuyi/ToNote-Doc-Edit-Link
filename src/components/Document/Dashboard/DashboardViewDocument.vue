@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import RenderPage from "@/components/Document/Edit/Main/RenderPage.vue";
+import RenderPage from "@/components/Document/Edit/Main/RenderPDFDoc.vue";
 import { ref, defineProps, watch } from 'vue'
 import moment from "moment";
 

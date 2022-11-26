@@ -83,7 +83,7 @@ import ToolSignature from "@/components/Document/Edit/Tools/ToolSignature.vue";
 import ToolPassport from "@/components/Document/Edit/Tools/ToolPassport.vue";
 import ToolTextArea from "@/components/Document/Edit/Tools/ToolTextArea.vue";
 // import ToolWithCommonAsset from "@/components/Document/Edit/Tools/ToolWithCommonAsset.vue";
-import RenderPage from "./RenderPage.vue";
+import RenderPage from "./RenderPDFDoc.vue";
 
 import { ref, onMounted, watch } from "vue";
 import { useGetters, useActions } from "vuex-composition-helpers/dist";

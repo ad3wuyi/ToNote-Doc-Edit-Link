@@ -81,13 +81,10 @@ const props = defineProps({ chunkFileId: String, isOpen: Boolean });
 const watchFileId = ref("");
 
 watch(
-  () => [props.chunkFileId],
-  ([newChunkF]) => {
-    if (newChunkF) {
-      watchFileId.value = newChunkF;
-    }
-  },
-  { deep: true }
+  () => props.chunkFileId,
+  (newChunkF) => {
+    watchFileId.value = newChunkF;
+  }
 );
 
 const hasRole = ref(false);
@@ -98,29 +95,6 @@ const tool_id = ref("");
 const tempData = ref(false);
 
 const participantId = ref("");
-
-function getOS() {
-  let userAgent = window.navigator.userAgent,
-    platform = window.navigator.platform,
-    macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"],
-    windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"],
-    iosPlatforms = ["iPhone", "iPad", "iPod"],
-    os = null;
-  if (macosPlatforms.indexOf(platform) !== -1) {
-    os = "Mac OS";
-  } else if (iosPlatforms.indexOf(platform) !== -1) {
-    os = "iOS";
-  } else if (windowsPlatforms.indexOf(platform) !== -1) {
-    os = "Windows";
-  } else if (/Android/.test(userAgent)) {
-    os = "Android";
-  } else if (/Linux/.test(platform)) {
-    os = "Linux";
-  }
-  return os;
-}
-const hasOS = ref("");
-hasOS.value = getOS();
 
 const addMouseMoveListener = (params) => {
   tempData.value = true;

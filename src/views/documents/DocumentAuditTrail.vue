@@ -152,7 +152,7 @@ import moment from "moment";
 
 import { useActions, useGetters } from "vuex-composition-helpers/dist";
 import { useRouter } from "vue-router";
-import RenderPage from "@/components/Document/Edit/Main/RenderPage.vue";
+import RenderPage from "@/components/Document/Edit/Main/RenderPDFDoc.vue";
 import { useToast } from "vue-toast-notification";
 
 const toast = useToast();

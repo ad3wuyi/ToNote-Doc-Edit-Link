@@ -107,7 +107,7 @@ import { dashboard } from "@/store/dashboard";
 import ToolDefault from "@/components/Document/Edit/Tools/ToolSignature.vue";
 import ToolImage from "@/components/Document/Edit/Tools/ToolPassport.vue";
 import ToolTextArea from "@/components/Document/Edit/Tools/ToolTextArea.vue";
-import RenderPage from "./RenderPage.vue";
+import RenderPage from "./RenderPDFDoc.vue";
 
 import { ref, onMounted, watch } from "vue";
 import { useGetters, useActions } from "vuex-composition-helpers/dist";
