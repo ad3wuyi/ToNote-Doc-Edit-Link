@@ -26,7 +26,7 @@ export const getStatistics = ({ commit }, token) => {
 export const getUserDocumentByStatus = ({ commit }, formData) => {
   Document.allDocumentByStatus(formData)
     .then((response) => {
-      if (!['Received', 'Deleted'].includes(formData)) {
+      if (!['Received', 'Deleted', 'Sign'].includes(formData)) {
         commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
       }
     })
@@ -95,7 +95,7 @@ export const removeDocument = ({ commit }, formData) => {
             commit("SET_DOCUMENT_STATISTICS", response.data);
           })
 
-        if (!['Received', 'Deleted'].includes(capitalizedStatus)) {
+        if (!['Received', 'Deleted', 'Sign'].includes(capitalizedStatus)) {
           Document.allDocumentByStatus(capitalizedStatus)
             .then((response) => {
               commit("SET_DOCUMENTS_BY_STATUS", response.data.data)
