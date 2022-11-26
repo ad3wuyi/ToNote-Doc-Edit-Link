@@ -364,7 +364,7 @@ watch(
       isCheckAll.value = hasMultipleSelection.value = isHidden.value = false;
       docIds.value = [];
 
-      if (!["Received", "Deleted"].includes(newStatus)) {
+      if (!["Received", "Deleted", "Sign"].includes(newStatus)) {
         return getUserDocumentByStatus(newStatus);
       }
       if (newStatus == "Received") {
