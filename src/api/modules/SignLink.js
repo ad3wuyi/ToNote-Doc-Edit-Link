@@ -1,5 +1,6 @@
 import Api from "../axios/Api";
 
+const DOCUMENT_STATISTICS = "document-statistics";
 const SIGN_LINK = "signlink-documents";
 const SIGN_LINK_TOOL = "signlink-annotations";
 const SIGN_LINK_TOOLS = "signlink-annotation-tools";
@@ -17,6 +18,10 @@ const SIGN_LINK_DONE = "document-participants-done";
 export default {
   all(token) {
     return Api.get(`${SIGN_LINK}`, token);
+  },
+
+  documentStatistics(token) {
+    return Api.get(`${DOCUMENT_STATISTICS}`, token);
   },
 
   show(id) {

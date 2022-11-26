@@ -122,7 +122,10 @@ export const removeDocument = ({ commit }, formData) => {
       });
     })
     .catch((error) => {
-      console.log(error)
+      toast.error(`${error.message}`, {
+        timeout: 5000,
+        position: "top-right",
+      });
     });
 };
 
@@ -146,7 +149,10 @@ export const retrieveDocument = ({ commit }, formData) => {
       });
     })
     .catch((error) => {
-      console.log(error)
+      toast.error(`${error.message}`, {
+        timeout: 5000,
+        position: "top-right",
+      });
     });
 };
 
