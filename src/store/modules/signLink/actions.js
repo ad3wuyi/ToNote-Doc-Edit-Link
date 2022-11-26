@@ -87,7 +87,7 @@ export const removeDocument = ({ commit }, formData) => {
             commit("SET_LINK_STATISTICS", response.data);
           })
 
-        if (!['Received', 'Deleted'].includes(capitalizedStatus)) {
+        if (!['Received', 'Deleted', 'Sign'].includes(capitalizedStatus)) {
           SignLink.allDocumentByStatus(capitalizedStatus)
             .then((response) => {
               commit("SET_LINKS_BY_STATUS", response.data.data)
