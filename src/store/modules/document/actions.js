@@ -122,10 +122,7 @@ export const removeDocument = ({ commit }, formData) => {
       });
     })
     .catch((error) => {
-      toast.error(`${error.message}`, {
-        timeout: 5000,
-        position: "top-right",
-      });
+      console.log(error)
     });
 };
 
