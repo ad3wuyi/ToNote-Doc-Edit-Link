@@ -26,6 +26,15 @@ export const getLink = ({ commit }, formData) => {
     });
 };
 
+export const previewResponse = ({ commit }, formData) => {
+  const URL =
+    process.env.NODE_ENV === "development"
+      ? process.env.VUE_APP_URL_AUTH_LOCAL
+      : process.env.VUE_APP_URL_SIGN_LINK;
+  commit("SET_RESPONSE_PREVIEW", formData)
+  window.open(URL + '/document/response', '_blank');
+};
+
 export const getPublicLink = ({ commit }, formData) => {
   SignLink.showPublic(formData)
     .then((response) => {

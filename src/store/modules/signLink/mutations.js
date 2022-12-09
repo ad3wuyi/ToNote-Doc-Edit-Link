@@ -6,6 +6,10 @@ export const SET_LINK = (state, link) => {
   state.link = link;
 };
 
+export const SET_RESPONSE_PREVIEW = (state, preview) => {
+  state.resPreview = preview;
+};
+
 export const SET_SIGN_LINK_RESPONSES = (state, response) => {
   state.responses = response;
 };

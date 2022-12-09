@@ -173,7 +173,7 @@
                 <td>{{ sign.email ?? 'Not available' }}</td>
                 <td>{{ dateTime(sign.updated_at) }}</td>
                 <td>
-                  <a :href="sign.file_url" class="btn btn-sm btn-primary" target="_blank">View</a>
+                  <button class="btn btn-sm btn-primary" @click="showParticipantDoc(sign)">View</button>
                 </td>
               </tr>
             </template>
@@ -243,10 +243,11 @@ const { links, signLinkResponses } = useGetters({
   receivedDocuments: "signLink/ReceivedDocuments",
 });
 
-const { getLinks, getSignLinkResponses } = useActions({
+const { getLinks, getSignLinkResponses, previewResponse } = useActions({
   getLinks: "signLink/getLinks",
   getLink: "signLink/getLink",
   getSignLinkResponses: "signLink/getSignLinkResponses",
+  previewResponse: "signLink/previewResponse",
   getDeletedLinks: "signLink/getDeletedLinks",
 });
 
@@ -273,7 +274,10 @@ const showResponse = (params) => {
   }, 1000);
 }
 
-// const editId = ref("");
+const showParticipantDoc = (params) => {
+  previewResponse({ title: docTitle.value, data: params })
+}
+
 const getDocument = (params) => {
   if (params.isView && params.status == "Sign") {
     return route.push({ name: "document.show", params: { document_id: params.id } });

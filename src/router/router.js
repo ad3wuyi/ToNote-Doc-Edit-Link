@@ -23,6 +23,11 @@ const DocumentView = () =>
     /* webpackChunkName: "show-link" */ "@/views/documents/DocumentView.vue"
   );
 
+const DocumentResponse = () =>
+  import(
+    /* webpackChunkName: "response-link" */ "@/views/documents/DocumentResponse.vue"
+  );
+
 const DocumentAuditTrail = () =>
   import(
     /* webpackChunkName: "audit-trail" */ "@/views/documents/DocumentAuditTrail.vue"
@@ -216,6 +221,24 @@ const routes = [
             {
               property: "og:description",
               content: "The view link page of ToNote.",
+            },
+          ],
+        },
+      },
+      {
+        path: "response",
+        name: "document.response",
+        component: DocumentResponse,
+        meta: {
+          title: "Response | ToNote",
+          metaTags: [
+            {
+              name: "description",
+              content: "The view participant response of ToNote.",
+            },
+            {
+              property: "og:description",
+              content: "The view participant response of ToNote.",
             },
           ],
         },
