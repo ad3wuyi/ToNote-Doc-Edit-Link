@@ -59,10 +59,12 @@ import {
   defineEmits,
 } from "vue";
 
-import { createNamespacedHelpers } from "vuex-composition-helpers/dist";
-const { useActions } = createNamespacedHelpers(["print"]);
-// const { prints } = useGetters(["prints"]);
-const { savePrint } = useActions(["savePrint"]);
+
+import { useActions } from "vuex-composition-helpers/dist";
+
+const { savePrint } = useActions({
+  savePrint: "printSignLink/savePrint",
+});
 
 const emit = defineEmits(["close"]);
 
