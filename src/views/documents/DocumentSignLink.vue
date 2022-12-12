@@ -326,11 +326,11 @@ const {
   getPublicState,
   getUserPrints,
 } = useActions({
-  clearPrint: "print/clearPrint",
+  clearPrint: "printSignLink/clearPrint",
   publicSignCompleted: "signLink/publicSignCompleted",
   removeNotification: "signLink/removeNotification",
   getPublicState: "signLink/getPublicState",
-  getUserPrints: "print/getUserPrints",
+  getUserPrints: "printSignLink/getUserPrints",
 });
 
 const redirectToWebsite = ref("");

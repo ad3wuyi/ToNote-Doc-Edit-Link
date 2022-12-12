@@ -15,6 +15,7 @@ import team from "@/store/modules/team";
 import document from "@/store/modules/document";
 import print from "@/store/modules/print";
 import signLink from "@/store/modules/signLink";
+import printSignLink from "@/store/modules/printSignLink";
 import tool from "@/store/modules/tool";
 
 const modules = {
@@ -24,6 +25,7 @@ const modules = {
   document,
   print,
   signLink,
+  printSignLink,
   tool,
 };
 

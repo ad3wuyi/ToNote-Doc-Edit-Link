@@ -109,13 +109,13 @@ import { ref, defineEmits, watch } from "vue";
 import { useActions, useGetters } from "vuex-composition-helpers/dist";
 
 const { prints, isSaved } = useGetters({
-  prints: "print/prints",
-  isSaved: "print/isSaved",
+  prints: "printSignLink/prints",
+  isSaved: "printSignLink/isSaved",
 });
 
 const { savePrint, removePrint } = useActions({
-  savePrint: "print/savePrint",
-  removePrint: "print/removePrint",
+  savePrint: "printSignLink/savePrint",
+  removePrint: "printSignLink/removePrint",
 });
 
 const spinner = ref(false);

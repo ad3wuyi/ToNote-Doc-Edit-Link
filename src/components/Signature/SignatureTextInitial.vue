@@ -72,7 +72,7 @@ import { useActions } from "vuex-composition-helpers/dist";
 //   profile: "auth/profile",
 // });
 
-const { savePrint } = useActions({ savePrint: "print/savePrint" });
+const { savePrint } = useActions({ savePrint: "printSignLink/savePrint" });
 
 const selected = ref("");
 const imgUrl = ref("");

@@ -34,11 +34,17 @@
 
 <script setup>
 import { ref, defineEmits, defineProps, watch } from "vue";
-import { createNamespacedHelpers } from "vuex-composition-helpers/dist";
-const { useGetters, useActions } = createNamespacedHelpers("print");
 
-const { prints } = useGetters(["prints"]);
-const { removePrint } = useActions(["removePrint"]);
+import { useActions, useGetters } from "vuex-composition-helpers/dist";
+
+const { prints } = useGetters({
+  prints: "printSignLink/prints",
+});
+
+const { removePrint } = useActions({
+  removePrint: "printSignLink/removePrint",
+});
+
 
 const loading = ref(false);
 const isDisabled = ref(false);

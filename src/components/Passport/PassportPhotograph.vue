@@ -151,12 +151,12 @@ import { ref, defineEmits } from "vue";
 import { useActions, useGetters } from "vuex-composition-helpers/dist";
 
 const { prints } = useGetters({
-  prints: "print/prints",
+  prints: "printSignLink/prints",
 });
 
 const { savePrint, removePrint } = useActions({
-  savePrint: "print/savePrint",
-  removePrint: "print/removePrint",
+  savePrint: "printSignLink/savePrint",
+  removePrint: "printSignLink/removePrint",
 });
 
 const dropzoneFile = ref("");

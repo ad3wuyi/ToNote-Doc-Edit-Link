@@ -60,7 +60,7 @@ import { useActions } from "vuex-composition-helpers/dist";
 //   prints: "print/prints",
 // });
 
-const { savePrint } = useActions({ savePrint: "print/savePrint" });
+const { savePrint } = useActions({ savePrint: "printSignLink/savePrint" });
 
 const imgUrl = ref("");
 const selected = ref("");
