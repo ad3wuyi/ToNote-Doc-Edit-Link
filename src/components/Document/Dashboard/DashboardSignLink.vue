@@ -142,7 +142,7 @@
     </tbody>
   </table>
 
-  <ModalComp :show="editModal" :size="'modal-lg'" @close="editModal = false">
+  <ModalComp :show="responseModal" :size="'modal-lg'" @close="responseModal = false">
     <template #header>
       <h4 class="modal-title mb-0">Responses</h4>
     </template>
@@ -198,7 +198,7 @@
 
     <template #footer>
       <button type="button" class="btn btn-secondary me-1 waves-effect waves-float waves-light"
-        @click="editModal = false">
+        @click="responseModal = false">
         Close
       </button>
     </template>
@@ -229,7 +229,7 @@ const route = useRouter();
 const toast = useToast();
 
 const isLoading = ref(false);
-const editModal = ref(false);
+const responseModal = ref(false);
 const isHidden = ref(false);
 const hasMultipleSelection = ref(false);
 const isCheckAll = ref(false);
@@ -264,7 +264,7 @@ watch(
 const docTitle = ref('')
 const createdAt = ref('')
 const showResponse = (params) => {
-  isLoading.value = editModal.value = true
+  isLoading.value = responseModal.value = true
   docTitle.value = params.doc.title
   createdAt.value = params.doc.created_at
   getSignLinkResponses(params.doc.id)
@@ -276,6 +276,7 @@ const showResponse = (params) => {
 
 const showParticipantDoc = (params) => {
   previewResponse({ title: docTitle.value, data: params })
+  responseModal.value = false
 }
 
 const getDocument = (params) => {

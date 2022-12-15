@@ -293,6 +293,12 @@ export const publicSignCompleted = ({ commit }, formData) => {
       }, 2000);
     })
     .catch((error) => {
+      if (error.response.status == 409) {
+        toast.error(`${error.response.data.data.error}`, {
+          timeout: 5000,
+          position: "top-right",
+        });
+      }
       if (error.response.status == 422) {
         toast.error(`${error.response.data.message}`, {
           timeout: 5000,
